@@ -12,7 +12,18 @@ function isActiveHref(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
-const DARK_HERO_ROUTES = new Set(["/", "/about"]);
+const DARK_HERO_ROUTES = new Set([
+  "/",
+  "/about",
+  "/contact",
+  "/resources",
+  "/insights",
+  "/ai-fluency-cohort",
+  "/the-solomon-engine",
+  "/for-organizations",
+  "/for-organizations/workshops",
+  "/our-ai-return",
+]);
 
 export function HeaderNav({ navItems }: { navItems: NavItem[] }) {
   const [scrolled, setScrolled] = useState(false);
