@@ -47,7 +47,7 @@ export function HeaderNav({ navItems }: { navItems: NavItem[] }) {
           isScrolled ? "bg-white text-[#0c2940] shadow-md py-3" : "bg-transparent text-white py-5"
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-5">
           <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center space-x-3 group">
               <div className="relative w-12 h-8 overflow-hidden transition-transform duration-300 group-hover:scale-105">
