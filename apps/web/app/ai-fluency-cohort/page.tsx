@@ -101,7 +101,7 @@ export default function AiFluencyCohortPage() {
             </p>
           </div>
           <a
-            href="/resources"
+            href="/resources/manager-recommendation-letter"
             className="inline-flex items-center space-x-2 bg-[#f8c51c] hover:bg-[#e0b016] text-[#0c2940] font-inter font-semibold px-6 py-3.5 rounded-lg shadow-lg transition-all whitespace-nowrap"
           >
             <Download className="w-4 h-4" />
