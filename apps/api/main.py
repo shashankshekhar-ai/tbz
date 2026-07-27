@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from core.config import settings
-from routers import admin, assessment, forms, health, leads, resources
+from routers import admin, assessment, columbus, forms, health, leads, resources
 
 logging.basicConfig(
     level=logging.DEBUG if settings.debug else logging.INFO,
@@ -69,3 +69,4 @@ app.include_router(forms.router)
 app.include_router(resources.router)
 app.include_router(admin.router)
 app.include_router(assessment.router)
+app.include_router(columbus.router)

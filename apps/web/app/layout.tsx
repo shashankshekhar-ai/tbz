@@ -4,6 +4,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { ColumbusWidget } from "@/components/columbus/ColumbusWidget";
 import { getSiteSettings } from "@/lib/cms";
 import { buildOrganizationJsonLd } from "@/lib/jsonLd";
 
@@ -52,6 +53,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <Header />
         <main className="flex-1 pt-20">{children}</main>
         <Footer />
+        <ColumbusWidget />
       </body>
     </html>
   );
