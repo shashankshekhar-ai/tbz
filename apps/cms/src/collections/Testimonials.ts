@@ -2,6 +2,9 @@ import type { CollectionConfig } from "payload";
 
 export const Testimonials: CollectionConfig = {
   slug: "testimonials",
+  access: {
+    read: () => true,
+  },
   admin: {
     useAsTitle: "name",
     defaultColumns: ["name", "company", "featured"],
@@ -34,13 +37,19 @@ export const Testimonials: CollectionConfig = {
       name: "featured",
       type: "checkbox",
       defaultValue: false,
-      admin: { position: "sidebar", description: "Show on homepage" },
+      access: {
+    read: () => true,
+  },
+  admin: { position: "sidebar", description: "Show on homepage" },
     },
     {
       name: "order",
       type: "number",
       defaultValue: 0,
-      admin: { position: "sidebar" },
+      access: {
+    read: () => true,
+  },
+  admin: { position: "sidebar" },
     },
     {
       name: "context",
@@ -51,7 +60,10 @@ export const Testimonials: CollectionConfig = {
         { label: "Speaking", value: "speaking" },
         { label: "The Solomon Engine", value: "solomon-engine" },
       ],
-      admin: { position: "sidebar" },
+      access: {
+    read: () => true,
+  },
+  admin: { position: "sidebar" },
     },
   ],
 };

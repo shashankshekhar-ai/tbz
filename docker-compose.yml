@@ -16,6 +16,24 @@ services:
       timeout: 5s
       retries: 5
 
+  cms:
+    build:
+      context: .
+      dockerfile: apps/cms/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "3003:3003"
+    environment:
+      DATABASE_URI: postgresql://tbg:tbg_dev@postgres:5432/tbg_cms
+      PAYLOAD_SECRET: ${PAYLOAD_SECRET:-changeme_in_production}
+      NEXT_PUBLIC_WEB_URL: http://localhost:3002
+      AI_PROVIDER: ${AI_PROVIDER:-gemini}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
   api:
     build:
       context: ./apps/api
@@ -25,9 +43,13 @@ services:
       - "8000:8000"
     environment:
       DATABASE_URL: postgresql://tbg:tbg_dev@postgres:5432/tbg_api
+      AI_PROVIDER: ${AI_PROVIDER:-gemini}
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
       DEBUG: "true"
       ENVIRONMENT: development
+    volumes:
+      - api_reports:/app/data/reports
     depends_on:
       postgres:
         condition: service_healthy
@@ -43,7 +65,9 @@ services:
       NEXT_PUBLIC_CMS_URL: http://cms:3003
       NEXT_PUBLIC_API_URL: http://api:8000
     depends_on:
+      - cms
       - api
 
 volumes:
   pgdata:
+  api_reports:

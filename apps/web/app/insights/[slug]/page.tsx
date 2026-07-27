@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getPostBySlug } from "@/lib/cms";
+import { buildArticleJsonLd } from "@/lib/jsonLd";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -26,8 +27,14 @@ export default async function PostPage({ params }: Props) {
   const post = await getPostBySlug(slug).catch(() => null);
   if (!post) notFound();
 
+  const articleJsonLd = buildArticleJsonLd(post);
+
   return (
     <article className="max-w-3xl mx-auto px-4 sm:px-6 py-16">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
       <header className="mb-10">
         <p className="text-sm text-gray-400 mb-3">
           {post.publishedAt

@@ -2,6 +2,9 @@ import type { CollectionConfig } from "payload";
 
 export const FAQs: CollectionConfig = {
   slug: "faqs",
+  access: {
+    read: () => true,
+  },
   admin: {
     useAsTitle: "question",
     defaultColumns: ["question", "category", "order"],
@@ -28,13 +31,19 @@ export const FAQs: CollectionConfig = {
         { label: "The Solomon Engine", value: "solomon-engine" },
         { label: "Ethics & Compliance", value: "ethics" },
       ],
-      admin: { position: "sidebar" },
+      access: {
+    read: () => true,
+  },
+  admin: { position: "sidebar" },
     },
     {
       name: "order",
       type: "number",
       defaultValue: 0,
-      admin: { position: "sidebar" },
+      access: {
+    read: () => true,
+  },
+  admin: { position: "sidebar" },
     },
   ],
 };

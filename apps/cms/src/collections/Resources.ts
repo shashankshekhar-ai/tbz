@@ -2,6 +2,9 @@ import type { CollectionConfig } from "payload";
 
 export const Resources: CollectionConfig = {
   slug: "resources",
+  access: {
+    read: () => true,
+  },
   admin: {
     useAsTitle: "title",
     defaultColumns: ["title", "resourceType", "gated", "status"],
@@ -17,7 +20,10 @@ export const Resources: CollectionConfig = {
       type: "text",
       required: true,
       unique: true,
-      admin: { position: "sidebar" },
+      access: {
+    read: () => true,
+  },
+  admin: { position: "sidebar" },
     },
     {
       name: "status",
@@ -28,7 +34,10 @@ export const Resources: CollectionConfig = {
         { label: "Draft", value: "draft" },
         { label: "Published", value: "published" },
       ],
-      admin: { position: "sidebar" },
+      access: {
+    read: () => true,
+  },
+  admin: { position: "sidebar" },
     },
     {
       name: "resourceType",
@@ -42,13 +51,19 @@ export const Resources: CollectionConfig = {
         { label: "Case Study", value: "case-study" },
         { label: "Tool", value: "tool" },
       ],
-      admin: { position: "sidebar" },
+      access: {
+    read: () => true,
+  },
+  admin: { position: "sidebar" },
     },
     {
       name: "gated",
       type: "checkbox",
       defaultValue: true,
-      admin: { position: "sidebar", description: "Require email capture to download" },
+      access: {
+    read: () => true,
+  },
+  admin: { position: "sidebar", description: "Require email capture to download" },
     },
     {
       name: "featuredImage",
@@ -64,12 +79,18 @@ export const Resources: CollectionConfig = {
       name: "file",
       type: "upload",
       relationTo: "media",
-      admin: { condition: (data) => data.gated },
+      access: {
+    read: () => true,
+  },
+  admin: { condition: (data) => data.gated },
     },
     {
       name: "externalUrl",
       type: "text",
-      admin: { description: "Use if resource lives outside S3" },
+      access: {
+    read: () => true,
+  },
+  admin: { description: "Use if resource lives outside S3" },
     },
     {
       name: "tags",
@@ -82,6 +103,14 @@ export const Resources: CollectionConfig = {
       fields: [
         { name: "title", type: "text" },
         { name: "description", type: "textarea" },
+        {
+          name: "aiSummary",
+          type: "textarea",
+          admin: {
+            description:
+              "GEO: a direct, quotable 2-3 sentence summary for AI answer engines (ChatGPT, Perplexity, Gemini) to cite. Separate from the meta description — write it to be extracted verbatim, not to entice a click.",
+          },
+        },
       ],
     },
   ],

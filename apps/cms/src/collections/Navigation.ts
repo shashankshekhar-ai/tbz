@@ -2,9 +2,12 @@ import type { CollectionConfig } from "payload";
 
 export const Navigation: CollectionConfig = {
   slug: "navigation",
+  access: {
+    read: () => true,
+  },
   admin: {
     useAsTitle: "label",
-    defaultColumns: ["label", "href", "order", "enabled"],
+    defaultColumns: ["label", "href", "location", "footerGroup", "order", "enabled"],
   },
   fields: [
     {
@@ -18,23 +21,58 @@ export const Navigation: CollectionConfig = {
       required: true,
     },
     {
+      name: "location",
+      type: "select",
+      required: true,
+      defaultValue: "header",
+      options: [
+        { label: "Header", value: "header" },
+        { label: "Footer", value: "footer" },
+      ],
+      access: {
+        read: () => true,
+      },
+      admin: { position: "sidebar" },
+    },
+    {
+      name: "footerGroup",
+      type: "text",
+      admin: {
+        position: "sidebar",
+        description: "Footer column heading (e.g. 'Programs', 'Company'). Only used when Location is Footer.",
+        condition: (data) => data.location === "footer",
+      },
+      access: {
+        read: () => true,
+      },
+    },
+    {
       name: "order",
       type: "number",
       required: true,
       defaultValue: 0,
-      admin: { position: "sidebar" },
+      access: {
+    read: () => true,
+  },
+  admin: { position: "sidebar" },
     },
     {
       name: "enabled",
       type: "checkbox",
       defaultValue: true,
-      admin: { position: "sidebar" },
+      access: {
+    read: () => true,
+  },
+  admin: { position: "sidebar" },
     },
     {
       name: "openInNewTab",
       type: "checkbox",
       defaultValue: false,
-      admin: { position: "sidebar" },
+      access: {
+    read: () => true,
+  },
+  admin: { position: "sidebar" },
     },
     {
       name: "children",

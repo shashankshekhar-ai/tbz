@@ -2,6 +2,9 @@ import type { CollectionConfig } from "payload";
 
 export const Posts: CollectionConfig = {
   slug: "posts",
+  access: {
+    read: () => true,
+  },
   admin: {
     useAsTitle: "title",
     defaultColumns: ["title", "author", "publishedAt", "status"],
@@ -20,7 +23,10 @@ export const Posts: CollectionConfig = {
       type: "text",
       required: true,
       unique: true,
-      admin: { position: "sidebar" },
+      access: {
+    read: () => true,
+  },
+  admin: { position: "sidebar" },
     },
     {
       name: "status",
@@ -31,18 +37,27 @@ export const Posts: CollectionConfig = {
         { label: "Draft", value: "draft" },
         { label: "Published", value: "published" },
       ],
-      admin: { position: "sidebar" },
+      access: {
+    read: () => true,
+  },
+  admin: { position: "sidebar" },
     },
     {
       name: "publishedAt",
       type: "date",
-      admin: { position: "sidebar", date: { pickerAppearance: "dayAndTime" } },
+      access: {
+    read: () => true,
+  },
+  admin: { position: "sidebar", date: { pickerAppearance: "dayAndTime" } },
     },
     {
       name: "author",
       type: "text",
       defaultValue: "Paige Bradbury",
-      admin: { position: "sidebar" },
+      access: {
+    read: () => true,
+  },
+  admin: { position: "sidebar" },
     },
     {
       name: "featuredImage",
@@ -69,6 +84,14 @@ export const Posts: CollectionConfig = {
         { name: "title", type: "text" },
         { name: "description", type: "textarea" },
         { name: "ogImage", type: "upload", relationTo: "media" },
+        {
+          name: "aiSummary",
+          type: "textarea",
+          admin: {
+            description:
+              "GEO: a direct, quotable 2-3 sentence summary for AI answer engines (ChatGPT, Perplexity, Gemini) to cite. Separate from the meta description — write it to be extracted verbatim, not to entice a click.",
+          },
+        },
       ],
     },
   ],

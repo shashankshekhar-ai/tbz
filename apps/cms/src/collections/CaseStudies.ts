@@ -2,6 +2,9 @@ import type { CollectionConfig } from "payload";
 
 export const CaseStudies: CollectionConfig = {
   slug: "case-studies",
+  access: {
+    read: () => true,
+  },
   admin: {
     useAsTitle: "title",
     defaultColumns: ["title", "client", "service", "status"],
@@ -20,7 +23,10 @@ export const CaseStudies: CollectionConfig = {
       type: "text",
       required: true,
       unique: true,
-      admin: { position: "sidebar" },
+      access: {
+    read: () => true,
+  },
+  admin: { position: "sidebar" },
     },
     {
       name: "status",
@@ -31,12 +37,18 @@ export const CaseStudies: CollectionConfig = {
         { label: "Draft", value: "draft" },
         { label: "Published", value: "published" },
       ],
-      admin: { position: "sidebar" },
+      access: {
+    read: () => true,
+  },
+  admin: { position: "sidebar" },
     },
     {
       name: "client",
       type: "text",
-      admin: { position: "sidebar" },
+      access: {
+    read: () => true,
+  },
+  admin: { position: "sidebar" },
     },
     {
       name: "service",
@@ -47,7 +59,10 @@ export const CaseStudies: CollectionConfig = {
         { label: "The Solomon Engine", value: "solomon-engine" },
         { label: "Speaking", value: "speaking" },
       ],
-      admin: { position: "sidebar" },
+      access: {
+    read: () => true,
+  },
+  admin: { position: "sidebar" },
     },
     {
       name: "featuredImage",
@@ -91,6 +106,14 @@ export const CaseStudies: CollectionConfig = {
       fields: [
         { name: "title", type: "text" },
         { name: "description", type: "textarea" },
+        {
+          name: "aiSummary",
+          type: "textarea",
+          admin: {
+            description:
+              "GEO: a direct, quotable 2-3 sentence summary for AI answer engines (ChatGPT, Perplexity, Gemini) to cite. Separate from the meta description — write it to be extracted verbatim, not to entice a click.",
+          },
+        },
       ],
     },
   ],
