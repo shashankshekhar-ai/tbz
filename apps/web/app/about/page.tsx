@@ -250,6 +250,28 @@ export default function AboutPage() {
 
       <PartnerGrid partners={partners} />
 
+      {/* Partner Spotlight */}
+      <section id="partner-spotlight" className="py-20 bg-white relative">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="rounded-2xl border-2 border-[#39918d]/40 bg-[#F7F8F9] p-8 sm:p-12 flex flex-col sm:flex-row items-center gap-10">
+            <div className="w-20 h-20 rounded-2xl bg-[#0c2940] flex items-center justify-center text-white text-2xl font-montserrat font-extrabold flex-shrink-0">
+              FA
+            </div>
+            <div>
+              <span className="text-xs font-inter font-bold tracking-widest text-[#39918d] uppercase block mb-2">
+                Partner Spotlight
+              </span>
+              <h2 className="text-2xl sm:text-3xl font-montserrat font-bold text-[#0c2940] mb-3">Falcon AI</h2>
+              <p className="text-sm sm:text-base font-roboto text-[#60707A] leading-relaxed">
+                Falcon AI partners with The Bradbury Group on applied model evaluation and secure
+                deployment architecture — helping our enterprise cohorts move from pilot to
+                production with verifiable governance controls in place.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <TestimonialCarousel testimonials={testimonials} />
 
       {/* Philosophy */}
