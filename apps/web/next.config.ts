@@ -12,6 +12,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "tbg-platform-media.s3.amazonaws.com",
       },
+      {
+        protocol: "https",
+        hostname: "tbg-cms.buildwithshashank.com",
+      },
     ],
   },
 };

@@ -36,6 +36,7 @@ class Settings(BaseSettings):
         "http://localhost:3000",
         "http://localhost:3002",
         "http://localhost:3001",
+        "https://tbz-web.vercel.app",
     ]
 
     class Config:

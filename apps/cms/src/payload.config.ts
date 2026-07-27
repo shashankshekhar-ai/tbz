@@ -54,6 +54,16 @@ export default buildConfig({
     },
   },
   endpoints: [pageAgentChatEndpoint, pageAgentApplyEndpoint, contentAgentChatEndpoint, contentAgentApplyEndpoint],
+  cors: [
+    "http://localhost:3002",
+    "https://tbz-web.vercel.app",
+    "https://tbg-cms.buildwithshashank.com",
+  ],
+  csrf: [
+    "http://localhost:3002",
+    "https://tbz-web.vercel.app",
+    "https://tbg-cms.buildwithshashank.com",
+  ],
   collections: [
     Users,
     Media,
