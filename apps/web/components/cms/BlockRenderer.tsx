@@ -94,16 +94,19 @@ function HeroBlock({ block }: { block: HeroData }) {
   const isDark = block.theme !== "light";
   return (
     <section
-      className={`py-24 px-6 text-center ${
-        isDark ? "bg-[#0A1628] text-white" : "bg-white text-[#0A1628]"
+      className={`relative py-24 px-6 text-center overflow-hidden ${
+        isDark ? "-mt-20 pt-32 bg-[#0c2940] text-white" : "bg-white text-[#0c2940]"
       }`}
     >
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
+      {isDark && (
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#123856_0%,#0c2940_45%,#081b2a_100%)] pointer-events-none" />
+      )}
+      <div className="relative max-w-4xl mx-auto">
+        <h1 className="text-4xl md:text-5xl font-inter font-extrabold mb-6 leading-tight">
           {block.heading}
         </h1>
         {block.subheading && (
-          <p className="text-lg md:text-xl mb-10 opacity-80 max-w-2xl mx-auto">
+          <p className="text-lg md:text-xl font-roboto mb-10 opacity-80 max-w-2xl mx-auto">
             {block.subheading}
           </p>
         )}
@@ -111,7 +114,7 @@ function HeroBlock({ block }: { block: HeroData }) {
           {block.ctaText && block.ctaUrl && (
             <Link
               href={block.ctaUrl}
-              className="bg-[#C9A84C] text-[#0A1628] px-8 py-3 rounded font-semibold hover:bg-[#b8943f] transition-colors"
+              className="bg-[#f8c51c] text-[#0c2940] px-8 py-3.5 rounded-lg font-inter font-semibold hover:bg-[#e0b016] hover:scale-[1.02] shadow-lg transition-all"
             >
               {block.ctaText}
             </Link>
@@ -119,10 +122,10 @@ function HeroBlock({ block }: { block: HeroData }) {
           {block.secondaryCtaText && block.secondaryCtaUrl && (
             <Link
               href={block.secondaryCtaUrl}
-              className={`border px-8 py-3 rounded font-semibold transition-colors ${
+              className={`border px-8 py-3.5 rounded-lg font-inter font-semibold transition-colors ${
                 isDark
-                  ? "border-white text-white hover:bg-white hover:text-[#0A1628]"
-                  : "border-[#0A1628] text-[#0A1628] hover:bg-[#0A1628] hover:text-white"
+                  ? "border-white/30 text-white hover:bg-white/5 hover:border-[#39918d]"
+                  : "border-[#0c2940] text-[#0c2940] hover:bg-[#0c2940] hover:text-white"
               }`}
             >
               {block.secondaryCtaText}
@@ -220,15 +223,15 @@ function CardGridBlock({ block }: { block: CardGridData }) {
       : "grid-cols-1 md:grid-cols-2 lg:grid-cols-3";
 
   return (
-    <section className="py-16 px-6 bg-[#F8F9FA]">
+    <section className="py-16 px-6 bg-[#F7F8F9]">
       <div className="max-w-6xl mx-auto">
         {block.heading && (
-          <h2 className="text-3xl font-bold text-[#0A1628] text-center mb-3">
+          <h2 className="text-3xl font-montserrat font-bold text-[#0c2940] text-center mb-3">
             {block.heading}
           </h2>
         )}
         {block.subheading && (
-          <p className="text-center text-slate-600 mb-10 max-w-2xl mx-auto">
+          <p className="text-center font-roboto text-[#60707A] mb-10 max-w-2xl mx-auto">
             {block.subheading}
           </p>
         )}
@@ -236,12 +239,12 @@ function CardGridBlock({ block }: { block: CardGridData }) {
           {cards.map((card, i) => (
             <div
               key={i}
-              className="bg-white rounded-xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow"
+              className="bg-white rounded-2xl p-6 shadow-sm border border-[#D9E3E6] hover:border-[#39918d] hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
             >
               {card.icon && <div className="text-3xl mb-3">{card.icon}</div>}
-              <h3 className="text-lg font-semibold text-[#0A1628] mb-2">{card.title}</h3>
+              <h3 className="text-lg font-montserrat font-bold text-[#0c2940] mb-2">{card.title}</h3>
               {card.body && (
-                <p className="text-slate-600 text-sm leading-relaxed">{card.body}</p>
+                <p className="text-[#60707A] font-roboto text-sm leading-relaxed">{card.body}</p>
               )}
             </div>
           ))}
@@ -254,25 +257,25 @@ function CardGridBlock({ block }: { block: CardGridData }) {
 function CtaBannerBlock({ block }: { block: CtaBannerData }) {
   const bgClass =
     block.theme === "navy"
-      ? "bg-[#0A1628] text-white"
+      ? "bg-[#0c2940] text-white"
       : block.theme === "white"
-      ? "bg-white text-[#0A1628] border border-slate-200"
-      : "bg-[#C9A84C] text-[#0A1628]";
+      ? "bg-white text-[#0c2940] border border-[#D9E3E6]"
+      : "bg-[#f8c51c] text-[#0c2940]";
 
   return (
     <section className={`py-16 px-6 ${bgClass}`}>
       <div className="max-w-4xl mx-auto text-center">
-        <h2 className="text-3xl font-bold mb-4">{block.heading}</h2>
+        <h2 className="text-3xl font-montserrat font-bold mb-4">{block.heading}</h2>
         {block.subheading && (
-          <p className="text-lg mb-8 opacity-90">{block.subheading}</p>
+          <p className="text-lg font-roboto mb-8 opacity-90">{block.subheading}</p>
         )}
         {block.ctaText && block.ctaUrl && (
           <Link
             href={block.ctaUrl}
-            className={`inline-block px-8 py-3 rounded font-semibold transition-colors ${
+            className={`inline-block px-8 py-3.5 rounded-lg font-inter font-semibold transition-colors ${
               block.theme === "gold" || block.theme === "white"
-                ? "bg-[#0A1628] text-white hover:bg-[#152240]"
-                : "bg-[#C9A84C] text-[#0A1628] hover:bg-[#b8943f]"
+                ? "bg-[#0c2940] text-white hover:bg-[#123856]"
+                : "bg-[#f8c51c] text-[#0c2940] hover:bg-[#e0b016]"
             }`}
           >
             {block.ctaText}

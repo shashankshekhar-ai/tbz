@@ -1,125 +1,146 @@
-import Link from "next/link";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { HomeHero } from "@/components/home/HomeHero";
+import { HomeCarousel, type CarouselSlide } from "@/components/home/HomeCarousel";
+import { ThreePaths, type PathCard } from "@/components/home/ThreePaths";
+import { HowItsDifferent, type DifferentiatorCard } from "@/components/home/HowItsDifferent";
+import { HomeClosingCta } from "@/components/home/HomeClosingCta";
 
-const stats = [
-  { value: "300+", label: "Executives trained" },
-  { value: "40+", label: "Organizations transformed" },
-  { value: "12 wk", label: "Solomon Engine cohort" },
-  { value: "94%", label: "Would recommend" },
+const slides: CarouselSlide[] = [
+  {
+    id: "slide-1",
+    icon: "calendar",
+    title: "Upcoming Cohort",
+    subtitle: "For You dates",
+    dateOrTag: "Q3 2026 Cohort",
+    description: "Registration is open for our 4-week Human-Centered AI Executive Intensive.",
+    linkText: "View Schedule →",
+    linkUrl: "#for-you",
+    accentColor: "#39918d",
+  },
+  {
+    id: "slide-2",
+    icon: "barChart",
+    title: "Industry Report",
+    subtitle: "AI adoption trend",
+    dateOrTag: "July 2026 Edition",
+    description: "Benchmark data on enterprise AI maturity, ROI metrics, and governance models.",
+    linkText: "Download Report →",
+    linkUrl: "#insights",
+    accentColor: "#c57b4b",
+  },
+  {
+    id: "slide-3",
+    icon: "users",
+    title: "TBG News",
+    subtitle: "Team / partnership",
+    dateOrTag: "Press Release",
+    description: "The Bradbury Group expands advisory board with former Fortune 50 CTOs.",
+    linkText: "Read Announcement →",
+    linkUrl: "#about",
+    accentColor: "#39918d",
+  },
+  {
+    id: "slide-4",
+    icon: "presentation",
+    title: "Workshop Spotlight",
+    subtitle: "Community Upskilling",
+    dateOrTag: "Live Masterclass",
+    description: "Interactive session: Designing Governance & Human-in-the-Loop Workflows.",
+    linkText: "Reserve Seat →",
+    linkUrl: "#resources",
+    accentColor: "#c57b4b",
+  },
+  {
+    id: "slide-5",
+    icon: "fileText",
+    title: "From Insights",
+    subtitle: "Latest post",
+    dateOrTag: "5 Min Read",
+    description: "Why prompt engineering is secondary to contextual domain architecture.",
+    linkText: "Read Article →",
+    linkUrl: "#insights",
+    accentColor: "#39918d",
+  },
 ];
 
-const programs = [
+const paths: PathCard[] = [
   {
-    title: "AI Fluency Cohort",
-    href: "/ai-fluency-cohort",
-    description: "Cohort-based AI literacy and workflow transformation for professional teams.",
+    id: "path-for-you",
+    title: "For You",
+    isPrimary: true,
+    description: "Individual executive coaching, personal AI agent workflows, and foundational upskilling.",
+    audience: "Founders, Executives & Solitary Leaders",
+    features: ["1-on-1 Executive AI Strategy", "Custom Agent Workflow Suite", "Personal Productivity Blueprint"],
+    ctaText: "Explore →",
+    ctaTarget: "#for-you",
+    accentColor: "#39918d",
+    iconName: "user",
   },
   {
-    title: "The Solomon Engine",
-    href: "/the-solomon-engine",
-    description: "12-week executive program for senior leaders navigating AI-driven transformation.",
+    id: "path-for-leaders",
+    title: "For Leaders",
+    description: "Team enablement, cross-functional AI alignment, and leadership architecture design.",
+    audience: "VPs, Department Heads & Directors",
+    features: ["Departmental Readiness Audit", "Leadership Upskilling Cohorts", "Ethics & Governance Framework"],
+    ctaText: "Learn more →",
+    ctaTarget: "#for-leaders",
+    accentColor: "#c57b4b",
+    iconName: "crown",
   },
   {
+    id: "path-for-orgs",
     title: "For Organizations",
-    href: "/for-organizations",
-    description: "Custom AI readiness assessments, workshops, and implementation support.",
+    description: "Enterprise-wide AI transformation, custom model integration, and proprietary ROI models.",
+    audience: "CXOs, Enterprise Boards & Enterprise PMOs",
+    features: ["Enterprise AI Architecture", "Proprietary ROI Dashboard", "Full-Stack Agent Deployment"],
+    ctaText: "Explore →",
+    ctaTarget: "#for-organizations",
+    accentColor: "#39918d",
+    iconName: "building",
+  },
+];
+
+const differentiators: DifferentiatorCard[] = [
+  {
+    id: "diff-1",
+    title: "Frameworks, not tutorials",
+    linkText: "See the frameworks →",
+    captionText: "links to Resources",
+    targetSection: "#resources",
+    iconName: "grid",
+    description: "We don't teach tool shortcuts. We deliver repeatable strategic mental models and decision trees.",
+  },
+  {
+    id: "diff-2",
+    title: "People, not the tech stack",
+    linkText: "Learning Architecture Design →",
+    captionText: "links to Learning Architecture Design",
+    targetSection: "#for-leaders",
+    iconName: "people",
+    description: "Technology fails without cultural readiness. We design human workflows that elevate your team.",
+  },
+  {
+    id: "diff-3",
+    title: "Proven, not promised",
+    linkText: "See Our ROI →",
+    captionText: "links to Our ROI for Human-Focused AI",
+    targetSection: "#our-roi",
+    iconName: "shield",
+    description: "Rigorous measurement, verifiable performance benchmarks, and measurable business impact.",
   },
 ];
 
 export default function Home() {
   return (
-    <div>
-      {/* Hero */}
-      <section className="relative -mt-20 pt-32 pb-20 overflow-hidden bg-[#0c2940] text-white">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#123856_0%,#0c2940_45%,#081b2a_100%)] pointer-events-none" />
-
-        <div className="relative max-w-4xl mx-auto text-center px-4">
-          <span className="inline-flex items-center gap-2 text-xs font-inter font-bold tracking-widest uppercase text-[#39918d] mb-5 px-3 py-1 rounded-full border border-[#39918d]/40">
-            <Sparkles className="w-3.5 h-3.5" />
-            AI Readiness &amp; Executive Transformation
-          </span>
-          <h1 className="text-4xl md:text-6xl font-inter font-extrabold mb-6 leading-tight">
-            Build an AI-Ready Organization
-          </h1>
-          <p className="text-lg md:text-xl text-[#D9E3E6] font-roboto max-w-2xl mx-auto mb-8">
-            The Bradbury Group delivers AI fluency programs, executive coaching, and
-            organizational transformation for leaders who refuse to be left behind.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/contact"
-              className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-lg font-inter font-semibold bg-[#f8c51c] text-[#0c2940] hover:bg-[#e0b016] hover:scale-[1.02] shadow-lg transition-all group"
-            >
-              Book a Discovery Call
-              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-            </Link>
-            <Link
-              href="/the-solomon-engine"
-              className="inline-flex items-center justify-center px-8 py-3.5 rounded-lg font-inter font-medium border border-white/30 text-white hover:bg-white/5 hover:border-[#39918d] transition-colors"
-            >
-              Explore The Solomon Engine
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Stats strip */}
-      <section className="bg-[#F7F8F9] border-b border-[#D9E3E6] py-10 px-4">
-        <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-          {stats.map((s) => (
-            <div key={s.label}>
-              <p className="text-3xl font-montserrat font-bold text-[#0c2940]">{s.value}</p>
-              <p className="text-xs font-roboto uppercase tracking-wide text-[#60707A] mt-1">{s.label}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Programs overview */}
-      <section className="py-20 px-4 bg-white">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-montserrat font-bold text-center mb-3 text-[#0c2940]">
-            Programs &amp; Solutions
-          </h2>
-          <p className="text-center font-roboto text-[#60707A] max-w-xl mx-auto mb-12">
-            Three paths to AI fluency — for individuals, executives, and entire organizations.
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {programs.map((program) => (
-              <Link
-                key={program.href}
-                href={program.href}
-                className="group block p-8 rounded-2xl border border-[#D9E3E6] hover:border-[#39918d] hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
-              >
-                <div className="h-9 w-9 rounded-lg bg-[#0c2940] mb-5 flex items-center justify-center text-[#39918d] font-bold group-hover:bg-[#39918d] group-hover:text-white transition-colors">
-                  <ArrowRight className="w-4 h-4" />
-                </div>
-                <h3 className="text-xl font-montserrat font-bold mb-3 text-[#0c2940] group-hover:text-[#39918d] transition-colors">
-                  {program.title}
-                </h3>
-                <p className="text-[#60707A] font-roboto text-sm leading-relaxed">{program.description}</p>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Closing CTA */}
-      <section className="py-20 px-4 bg-[#0c2940] text-white">
-        <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-2xl md:text-3xl font-montserrat font-bold mb-4">Not sure where to start?</h2>
-          <p className="font-roboto text-[#D9E3E6] mb-8">
-            Take our free AI Readiness Assessment and get a personalized maturity score with
-            recommended next steps.
-          </p>
-          <Link
-            href="/assessment"
-            className="inline-flex items-center justify-center px-8 py-3.5 rounded-lg font-inter font-semibold bg-[#f8c51c] text-[#0c2940] hover:bg-[#e0b016] hover:scale-[1.02] shadow-lg transition-all"
-          >
-            Start the Assessment
-          </Link>
-        </div>
-      </section>
+    <div className="space-y-6 pb-12">
+      <HomeHero />
+      <HomeCarousel slides={slides} seeAllText="See All Updates →" />
+      <ThreePaths paths={paths} />
+      <HowItsDifferent differentiators={differentiators} />
+      <HomeClosingCta
+        headline="Not sure which path is right for you?"
+        buttonText="Book a discovery call"
+        subtext="Schedule a confidential 30-minute strategic consultation with our executive team."
+      />
     </div>
   );
 }

@@ -4,10 +4,10 @@ import { arc as d3Arc } from "d3";
 import { useEffect, useRef, useState } from "react";
 
 const MATURITY_COLOR: Record<string, string> = {
-  exploring: "#c9a84c",
-  building: "#e8c97a",
-  scaling: "#4a9d7f",
-  leading: "#0f1e3c",
+  exploring: "#c57b4b",
+  building: "#f8c51c",
+  scaling: "#39918d",
+  leading: "#0c2940",
 };
 
 export function ScoreGauge({

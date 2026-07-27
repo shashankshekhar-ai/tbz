@@ -36,7 +36,7 @@ export default async function PostPage({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
       />
       <header className="mb-10">
-        <p className="text-sm text-gray-400 mb-3">
+        <p className="text-sm font-roboto text-[#BFC9CD] mb-3">
           {post.publishedAt
             ? new Date(post.publishedAt).toLocaleDateString("en-US", {
                 year: "numeric",
@@ -46,12 +46,12 @@ export default async function PostPage({ params }: Props) {
             : ""}
           {post.author ? ` · ${post.author}` : ""}
         </p>
-        <h1 className="text-4xl font-bold text-[var(--color-brand-navy)] mb-4">{post.title}</h1>
-        {post.excerpt && <p className="text-xl text-gray-600">{post.excerpt}</p>}
+        <h1 className="text-4xl font-montserrat font-bold text-[#0c2940] mb-4">{post.title}</h1>
+        {post.excerpt && <p className="text-xl font-roboto text-[#60707A]">{post.excerpt}</p>}
       </header>
-      <div className="prose prose-lg max-w-none">
+      <div className="prose prose-lg max-w-none font-roboto">
         {/* Rich text renderer — Payload lexical content */}
-        <p className="text-gray-500 italic">Content rendering coming in Phase 3 block build-out.</p>
+        <p className="text-[#60707A] italic">Content rendering coming in Phase 3 block build-out.</p>
       </div>
     </article>
   );
