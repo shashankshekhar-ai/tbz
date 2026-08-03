@@ -109,7 +109,7 @@ export async function Footer() {
               className="p-2 rounded-full border border-white/10 hover:border-[#39918d] hover:text-[#39918d] transition-colors"
               aria-label="Website"
             >
-              <Globe className="w-4 h-4" />
+              <Globe className="w-3.5 h-3.5" />
             </a>
           </div>
         </div>

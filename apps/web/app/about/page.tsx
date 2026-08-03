@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { Calendar, Globe, Mic, Brain, UserCheck, ShieldCheck, ArrowUpRight } from "lucide-react";
+import { Calendar, Globe, Mic, Brain, UserCheck, ShieldCheck, ArrowUpRight, Building2 } from "lucide-react";
 import { AboutHero } from "@/components/about/AboutHero";
 import { TestimonialCarousel, type Testimonial } from "@/components/about/TestimonialCarousel";
 import { PartnerGrid, type Partner } from "@/components/about/PartnerGrid";
@@ -123,7 +123,8 @@ const impact = [
   { number: "15+", label: "Years", sublabel: "Experience", Icon: Calendar },
   { number: "Global", label: "Training", sublabel: "Programs", Icon: Globe },
   { number: "Executive", label: "Coaching", sublabel: "Guidance", Icon: UserCheck },
-  { number: "Enterprise", label: "Transformation", sublabel: "Architecture", Icon: Brain },
+  { number: "Enterprise", label: "Transformation", sublabel: "Architecture", Icon: Building2 },
+  { number: "AI Capability", label: "Frameworks", sublabel: "Durable Wins", Icon: Brain },
 ];
 
 export default function AboutPage() {
@@ -142,9 +143,10 @@ export default function AboutPage() {
                   alt="Paige Bradbury — Founder, The Bradbury Group"
                   fill
                   className="object-cover"
+                  style={{ objectPosition: "50% 12%" }}
                   priority
                 />
-                <div className="absolute bottom-6 left-6 right-6 z-10 text-white p-5 rounded-xl backdrop-blur-md bg-[#0c2940]/80 border border-white/20">
+                <div className="absolute bottom-6 left-6 right-6 z-10 text-white p-6 rounded-xl backdrop-blur-md bg-[#0c2940]/80 border border-white/20">
                   <span className="text-xs font-inter font-bold tracking-wider text-[#39918d] uppercase block">
                     Founder &amp; Principal Learning Architect
                   </span>
@@ -287,28 +289,6 @@ export default function AboutPage() {
 
       <PartnerGrid partners={partners} />
 
-      {/* Partner Spotlight */}
-      <section id="partner-spotlight" className="py-20 bg-white relative">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="rounded-2xl border-2 border-[#39918d]/40 bg-[#F7F8F9] p-8 sm:p-12 flex flex-col sm:flex-row items-center gap-10">
-            <div className="w-20 h-20 rounded-2xl bg-[#0c2940] flex items-center justify-center text-white text-2xl font-montserrat font-extrabold flex-shrink-0">
-              FA
-            </div>
-            <div>
-              <span className="text-xs font-inter font-bold tracking-widest text-[#39918d] uppercase block mb-2">
-                Partner Spotlight
-              </span>
-              <h2 className="text-2xl sm:text-3xl font-montserrat font-bold text-[#0c2940] mb-3">Falcon AI</h2>
-              <p className="text-sm sm:text-base font-roboto text-[#60707A] leading-relaxed">
-                Falcon AI partners with The Bradbury Group on applied model evaluation and secure
-                deployment architecture — helping our enterprise cohorts move from pilot to
-                production with verifiable governance controls in place.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
       <TestimonialCarousel testimonials={testimonials} />
 
       {/* Philosophy */}
@@ -329,7 +309,11 @@ export default function AboutPage() {
               >
                 <div className="space-y-4">
                   <div className="w-14 h-14 rounded-xl bg-[#F7F8F9] border border-[#D9E3E6] flex items-center justify-center group-hover:scale-110 group-hover:bg-[#39918d]/10 transition-all">
-                    <item.Icon className="w-8 h-8" style={{ color: item.color }} />
+                    {item.title === "Psychological Safety" ? (
+                      <Image src="/brand/1.png" alt="Psychological Safety" width={32} height={32} className="object-contain" />
+                    ) : (
+                      <item.Icon className="w-8 h-8" style={{ color: item.color }} />
+                    )}
                   </div>
                   <h3 className="text-xl font-montserrat font-bold text-[#0c2940]">{item.title}</h3>
                   <p className="text-sm font-roboto text-[#60707A] leading-relaxed">{item.desc}</p>
@@ -360,7 +344,7 @@ export default function AboutPage() {
 
             <div className="lg:col-span-8 relative">
               <div className="hidden sm:block absolute top-10 left-8 right-8 h-0.5 border-t-2 border-dashed border-[#39918d]/40 z-0" />
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 relative z-10">
+              <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 relative z-10">
                 {impact.map((item) => (
                   <div
                     key={item.label}
