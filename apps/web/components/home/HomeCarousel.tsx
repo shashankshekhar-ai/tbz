@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { Calendar, BarChart2, Users, Presentation, FileText, ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 
@@ -31,8 +31,8 @@ function resolveHref(anchor: string) {
   return ROUTE_MAP[key] ?? "/insights";
 }
 
-function renderIcon(iconName: string) {
-  const props = { className: "w-6 h-6 text-white" };
+function renderIcon(iconName: string, color: string) {
+  const props = { className: "w-5 h-5", style: { color } };
   switch (iconName) {
     case "calendar":
       return <Calendar {...props} />;
@@ -50,116 +50,81 @@ function renderIcon(iconName: string) {
 
 export function HomeCarousel({ slides, seeAllText }: { slides: CarouselSlide[]; seeAllText: string }) {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
-  const touchStartX = useRef<number | null>(null);
+  const visibleCount = 3;
+  const maxIndex = Math.max(0, slides.length - visibleCount);
 
-  useEffect(() => {
-    if (isPaused || slides.length === 0) return;
-    const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % slides.length);
-    }, 4500);
-    return () => clearInterval(timer);
-  }, [isPaused, slides.length]);
-
-  const handlePrev = () => setCurrentIndex((prev) => (prev - 1 + slides.length) % slides.length);
-  const handleNext = () => setCurrentIndex((prev) => (prev + 1) % slides.length);
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
-  };
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    if (touchStartX.current === null) return;
-    const diffX = touchStartX.current - e.changedTouches[0].clientX;
-    if (diffX > 40) handleNext();
-    else if (diffX < -40) handlePrev();
-    touchStartX.current = null;
-  };
+  const prevSlide = () => setCurrentIndex((prev) => (prev > 0 ? prev - 1 : maxIndex));
+  const nextSlide = () => setCurrentIndex((prev) => (prev < maxIndex ? prev + 1 : 0));
 
   return (
-    <section
-      id="whats-moving"
-      className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto focus:outline-none"
-      tabIndex={0}
-      onKeyDown={(e) => {
-        if (e.key === "ArrowLeft") handlePrev();
-        if (e.key === "ArrowRight") handleNext();
-      }}
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
-    >
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-montserrat font-bold text-[#0c2940]">Latest Updates &amp; Industry Briefs</h2>
+    <section id="whats-moving" className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto bg-white">
+      <div className="flex items-center justify-between mb-8">
+        <h2 className="text-2xl sm:text-3xl font-montserrat font-bold text-[#0c2940]">
+          Latest Updates &amp; Industry Briefs
+        </h2>
 
         <div className="flex items-center space-x-2">
           <button
-            onClick={handlePrev}
-            aria-label="Previous slide"
-            className="p-2 rounded-full border border-[#D9E3E6] bg-white text-[#0c2940] hover:bg-[#39918d] hover:text-white hover:border-[#39918d] transition-all shadow-xs"
+            onClick={prevSlide}
+            aria-label="Previous updates"
+            className="w-9 h-9 rounded-full border border-[#D9E3E8] hover:border-[#39918d] bg-white text-[#0c2940] hover:text-[#39918d] flex items-center justify-center transition-colors"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
           <button
-            onClick={handleNext}
-            aria-label="Next slide"
-            className="p-2 rounded-full border border-[#D9E3E6] bg-white text-[#0c2940] hover:bg-[#39918d] hover:text-white hover:border-[#39918d] transition-all shadow-xs"
+            onClick={nextSlide}
+            aria-label="Next updates"
+            className="w-9 h-9 rounded-full border border-[#D9E3E8] hover:border-[#39918d] bg-white text-[#0c2940] hover:text-[#39918d] flex items-center justify-center transition-colors"
           >
             <ChevronRight className="w-5 h-5" />
           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-        {slides.map((slide, index) => {
-          const isActive = index === currentIndex;
-          return (
+      <div className="overflow-hidden">
+        <div
+          className="flex transition-transform duration-500 ease-in-out gap-6"
+          style={{ transform: `translateX(-${currentIndex * (100 / visibleCount)}%)` }}
+        >
+          {slides.map((slide) => (
             <Link
               key={slide.id}
               href={resolveHref(slide.linkUrl)}
-              onClick={() => setCurrentIndex(index)}
-              className={`group relative rounded-[20px] p-6 border transition-all duration-300 flex flex-col justify-between min-h-[240px] ${
-                isActive
-                  ? "bg-white border-[#39918d] shadow-lg ring-2 ring-[#39918d]/20 scale-[1.02]"
-                  : "bg-[#F7F8F9] border-[#D9E3E6] hover:border-[#39918d]/60 hover:bg-white hover:shadow-md"
-              }`}
+              className="w-full min-w-[280px] md:min-w-[calc(33.333%-16px)] bg-white rounded-2xl p-6 border border-[#D9E3E8] shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
             >
               <div>
-                <div
-                  className="w-12 h-12 rounded-full flex items-center justify-center mb-4 transition-transform group-hover:scale-110 shadow-sm"
-                  style={{ backgroundColor: slide.accentColor || "#39918d" }}
-                >
-                  {renderIcon(slide.icon)}
+                <div className="flex items-start justify-between mb-4">
+                  <div className="p-2.5 rounded-xl" style={{ backgroundColor: `${slide.accentColor}1a` }}>
+                    {renderIcon(slide.icon, slide.accentColor)}
+                  </div>
+                  <span className="text-[11px] font-roboto text-[#5d6b74] bg-[#F8FAFB] border border-[#D9E3E8] px-2.5 py-1 rounded-full">
+                    {slide.subtitle}
+                  </span>
                 </div>
 
-                <h3 className="text-lg font-montserrat font-bold text-[#0c2940] leading-tight group-hover:text-[#39918d] transition-colors mb-1">
-                  {slide.title}
-                </h3>
-                <p className="text-xs font-roboto italic text-[#60707A] mb-3">{slide.subtitle}</p>
-                <p className="text-xs text-[#60707A] font-roboto line-clamp-2">{slide.description}</p>
+                <h3 className="text-lg font-montserrat font-semibold text-[#0c2940] mb-2">{slide.title}</h3>
+                <p className="text-xs font-roboto text-[#5d6b74] leading-relaxed mb-6">{slide.description}</p>
               </div>
 
-              <div className="pt-4 border-t border-[#EDF2F4] flex items-center justify-between">
-                <span className="text-[10px] font-mono text-[#60707A] bg-[#EDF2F4] px-2 py-0.5 rounded">
-                  {slide.dateOrTag}
-                </span>
-                <span className="text-xs font-inter font-semibold text-[#39918d] group-hover:translate-x-1 transition-transform">
+              <div className="pt-4 border-t border-[#D9E3E8] flex items-center justify-between text-xs font-medium">
+                <span className="italic text-[#5d6b74] font-roboto">{slide.dateOrTag}</span>
+                <span className="text-[#39918d] hover:text-[#3f6d67] font-semibold font-inter transition-colors">
                   {slide.linkText}
                 </span>
               </div>
             </Link>
-          );
-        })}
+          ))}
+        </div>
       </div>
 
-      <div className="flex items-center justify-center space-x-2 mt-6">
-        {slides.map((_, idx) => (
+      <div className="flex justify-center items-center space-x-2 mt-8">
+        {Array.from({ length: maxIndex + 1 }).map((_, idx) => (
           <button
             key={idx}
             onClick={() => setCurrentIndex(idx)}
             aria-label={`Go to slide ${idx + 1}`}
-            className={`h-2.5 rounded-full transition-all duration-300 ${
-              idx === currentIndex ? "w-8 bg-[#39918d]" : "w-2.5 bg-[#BFC9CD] hover:bg-[#60707A]"
+            className={`h-2.5 rounded-full transition-all ${
+              currentIndex === idx ? "bg-[#39918d] w-6" : "bg-[#D9E3E8] hover:bg-slate-400 w-2.5"
             }`}
           />
         ))}
@@ -168,10 +133,10 @@ export function HomeCarousel({ slides, seeAllText }: { slides: CarouselSlide[]; 
       <div className="text-center mt-6">
         <Link
           href="/insights"
-          className="inline-flex items-center space-x-2 text-sm font-inter font-semibold text-[#39918d] hover:text-[#0c2940] transition-colors group"
+          className="inline-flex items-center gap-1.5 text-xs font-inter font-semibold text-[#5d6b74] hover:text-[#0c2940] transition-colors"
         >
           <span>{seeAllText}</span>
-          <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+          <ArrowRight className="w-3.5 h-3.5 text-[#39918d]" />
         </Link>
       </div>
     </section>

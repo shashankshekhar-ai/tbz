@@ -74,6 +74,7 @@ const paths: PathCard[] = [
     ctaTarget: "#for-you",
     accentColor: "#39918d",
     iconName: "user",
+    columbusTopic: "Individual Executive Coaching & Personal Workflows",
   },
   {
     id: "path-for-leaders",
@@ -85,6 +86,7 @@ const paths: PathCard[] = [
     ctaTarget: "#for-leaders",
     accentColor: "#c57b4b",
     iconName: "crown",
+    columbusTopic: "Team Enablement & Departmental Readiness",
   },
   {
     id: "path-for-orgs",
@@ -96,6 +98,7 @@ const paths: PathCard[] = [
     ctaTarget: "#for-organizations",
     accentColor: "#39918d",
     iconName: "building",
+    columbusTopic: "Enterprise-wide AI Transformation & Architecture",
   },
 ];
 
@@ -131,7 +134,7 @@ const differentiators: DifferentiatorCard[] = [
 
 export default function Home() {
   return (
-    <div className="space-y-6 pb-12">
+    <div className="bg-white">
       <HomeHero />
       <HomeCarousel slides={slides} seeAllText="See All Updates →" />
       <ThreePaths paths={paths} />

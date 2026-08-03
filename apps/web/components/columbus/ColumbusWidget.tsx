@@ -63,6 +63,17 @@ export function ColumbusWidget() {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isOpen]);
 
+  useEffect(() => {
+    function handleOpenColumbus(e: Event) {
+      const topic = (e as CustomEvent<string>).detail;
+      setIsOpen(true);
+      if (topic) handleSendMessage(`Tell me more about: ${topic}`);
+    }
+    window.addEventListener("open-columbus", handleOpenColumbus);
+    return () => window.removeEventListener("open-columbus", handleOpenColumbus);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   function navigate(link: string) {
     const target = ROUTE_MAP[link.replace("#", "")];
     if (target) router.push(target);

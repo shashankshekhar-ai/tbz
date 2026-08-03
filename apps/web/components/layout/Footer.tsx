@@ -138,8 +138,15 @@ export async function Footer() {
           ))}
         </div>
 
+        <div className="pt-2 pb-8 border-t border-white/10 flex items-center justify-center gap-10">
+          <Image src="/brand/2.png" alt="Partner" width={90} height={32} className="h-6 md:h-8 w-auto object-contain opacity-90" />
+          <Image src="/brand/3.png" alt="Partner" width={90} height={32} className="h-6 md:h-8 w-auto object-contain opacity-90" />
+          <Image src="/brand/4.png" alt="Partner" width={90} height={32} className="h-6 md:h-8 w-auto object-contain opacity-90" />
+        </div>
+
         <div className="pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between text-[11px] text-[#BFC9CD] gap-4">
           <span>© {new Date().getFullYear()} The Bradbury Group. All rights reserved.</span>
+          <span className="italic text-[#39918d]">Human-Centered AI Transformation</span>
           <div className="flex items-center space-x-4">
             <Link href="/privacy-policy" className="hover:text-white transition-colors">
               Privacy Policy
