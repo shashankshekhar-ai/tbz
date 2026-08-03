@@ -1,165 +1,91 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Globe } from "lucide-react";
-import { getFooterNavigation, type FooterNavGroup } from "@/lib/cms";
 
-const fallbackGroups: FooterNavGroup[] = [
-  {
-    heading: "AI Fluency",
-    items: [
-      { label: "Overview", href: "/ai-fluency-cohort" },
-      { label: "Literacy → Fluency", href: "/ai-fluency-cohort#philosophy" },
-      { label: "Manager Resources", href: "/ai-fluency-cohort#resources" },
-    ],
-  },
-  {
-    heading: "Solomon Engine",
-    items: [
-      { label: "Overview", href: "/the-solomon-engine" },
-      { label: "For Executives", href: "/the-solomon-engine#executives" },
-      { label: "Apply / Interview", href: "/contact" },
-    ],
-  },
-  {
-    heading: "For Organizations",
-    items: [
-      { label: "Learning Architecture", href: "/for-organizations" },
-      { label: "Embedded Training", href: "/for-organizations#training" },
-      { label: "AI Readiness Assessment", href: "/assessment" },
-    ],
-  },
-  {
-    heading: "Resources",
-    items: [
-      { label: "Downloads", href: "/resources" },
-      { label: "Case Studies", href: "/resources#case-studies" },
-      { label: "Insights", href: "/insights" },
-    ],
-  },
-  {
-    heading: "Company",
-    items: [
-      { label: "About", href: "/about" },
-      { label: "Advisory Board", href: "/about#advisory" },
-      { label: "Contact", href: "/contact" },
-    ],
-  },
-];
-
-export async function Footer() {
-  const cmsGroups = await getFooterNavigation();
-  const groups = cmsGroups.length > 0 ? cmsGroups : fallbackGroups;
-
+export function Footer() {
   return (
-    <footer className="bg-[#0c2940] text-white pt-16 pb-8 border-t border-white/10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-        <div className="flex flex-col md:flex-row md:items-center justify-between pb-8 border-b border-white/10 gap-6">
-          <Link href="/" className="flex items-center space-x-3">
-            <div className="relative w-12 h-8 overflow-hidden">
-              <Image
-                src="/brand/logo-primary.png"
-                alt="The Bradbury Group"
-                fill
-                sizes="48px"
-                style={{ objectFit: "cover", objectPosition: "50% 8%" }}
-              />
+    <footer className="bg-[#0c2940] text-white border-t border-[#39918d]/20 pt-16 pb-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 pb-12 border-b border-white/10">
+          <div className="lg:col-span-5 space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="relative w-10 h-10 shrink-0">
+                <Image src="/brand/White-Monochrome-Text.png" alt="The Bradbury Group" fill sizes="40px" style={{ objectFit: "contain" }} />
+              </div>
             </div>
-            <div className="flex flex-col">
-              <span className="font-inter font-extrabold text-base tracking-wider uppercase">
-                The Bradbury Group
-              </span>
-              <span className="text-[10px] tracking-tight font-roboto text-[#BFC9CD]">
-                Engineering the AI-First Organization
-              </span>
-            </div>
-          </Link>
+            <p className="text-xs font-inter font-semibold text-[#f8c51c] uppercase tracking-wider">
+              Engineering the AI-First Organization
+            </p>
+            <p className="text-xs font-roboto text-[#D9E3E6] leading-relaxed max-w-md">
+              Helping organizations adopt AI responsibly through leadership, learning architecture, governance, and
+              transformation.
+            </p>
+          </div>
 
-          <div className="flex items-center space-x-4 text-[#BFC9CD]">
-            <a
-              href="https://linkedin.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-9 h-9 flex items-center justify-center rounded-full border border-white/10 hover:border-[#39918d] hover:text-[#39918d] transition-colors"
-              aria-label="LinkedIn"
+          <div className="lg:col-span-2 space-y-3">
+            <h4 className="text-[11px] font-montserrat font-bold uppercase tracking-widest text-[#BFC9CD]">
+              Navigation
+            </h4>
+            <ul className="space-y-2 text-xs font-roboto text-[#D9E3E6]">
+              <li>
+                <Link href="/about" className="hover:text-[#f8c51c] transition-colors">About</Link>
+              </li>
+              <li>
+                <Link href="/ai-fluency-cohort" className="hover:text-[#f8c51c] transition-colors">For You</Link>
+              </li>
+              <li>
+                <Link href="/the-solomon-engine" className="hover:text-[#f8c51c] transition-colors">For Leaders</Link>
+              </li>
+              <li>
+                <Link href="/for-organizations" className="hover:text-[#f8c51c] transition-colors">For Organizations</Link>
+              </li>
+            </ul>
+          </div>
+
+          <div className="lg:col-span-2 space-y-3">
+            <h4 className="text-[11px] font-montserrat font-bold uppercase tracking-widest text-[#BFC9CD]">
+              Resources
+            </h4>
+            <ul className="space-y-2 text-xs font-roboto text-[#D9E3E6]">
+              <li>
+                <Link href="/our-ai-return" className="hover:text-[#f8c51c] transition-colors">Our ROI</Link>
+              </li>
+              <li>
+                <Link href="/resources" className="hover:text-[#f8c51c] transition-colors">Resources</Link>
+              </li>
+              <li>
+                <Link href="/insights" className="hover:text-[#f8c51c] transition-colors">Insights</Link>
+              </li>
+              <li>
+                <Link href="/resources#case-studies" className="hover:text-[#f8c51c] transition-colors">Case Studies</Link>
+              </li>
+            </ul>
+          </div>
+
+          <div className="lg:col-span-3 space-y-4">
+            <h4 className="text-[11px] font-montserrat font-bold uppercase tracking-widest text-[#BFC9CD]">
+              Connect
+            </h4>
+            <p className="text-xs font-roboto text-[#D9E3E6] leading-relaxed">
+              Ready to accelerate your organizational AI capability? Contact our executive consulting team.
+            </p>
+            <Link
+              href="/contact"
+              className="inline-block w-full sm:w-auto text-center px-5 py-2.5 rounded text-xs font-inter font-semibold uppercase tracking-wider text-white bg-[#39918d] hover:bg-[#3f6d67] transition-all shadow-md border border-[#39918d]/40"
             >
-              <span className="font-inter font-bold text-xs">in</span>
-            </a>
-            <a
-              href="https://x.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-9 h-9 flex items-center justify-center rounded-full border border-white/10 hover:border-[#39918d] hover:text-[#39918d] transition-colors"
-              aria-label="X (Twitter)"
-            >
-              <span className="font-inter font-bold text-xs">X</span>
-            </a>
-            <a
-              href="https://youtube.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-9 h-9 flex items-center justify-center rounded-full border border-white/10 hover:border-[#39918d] hover:text-[#39918d] transition-colors"
-              aria-label="YouTube"
-            >
-              <span className="font-inter font-bold text-xs">YT</span>
-            </a>
-            <a
-              href="https://thebradburygroup.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-9 h-9 flex items-center justify-center rounded-full border border-white/10 hover:border-[#39918d] hover:text-[#39918d] transition-colors"
-              aria-label="Website"
-            >
-              <Globe className="w-3.5 h-3.5" />
-            </a>
+              Book Discovery Call
+            </Link>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-8 text-xs font-roboto">
-          {groups.map((group) => (
-            <div key={group.heading} className="space-y-3">
-              <span className="font-inter font-bold text-sm text-[#39918d] block uppercase tracking-wider">
-                {group.heading}
-              </span>
-              <ul className="space-y-2 text-[#BFC9CD]">
-                {group.items.map((item) => (
-                  <li key={item.href}>
-                    <Link
-                      href={item.href}
-                      target={item.openInNewTab ? "_blank" : undefined}
-                      rel={item.openInNewTab ? "noopener noreferrer" : undefined}
-                      className="hover:text-white transition-colors"
-                    >
-                      {item.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-
-        <div className="pt-2 pb-8 border-t border-white/10 flex items-center justify-center gap-10">
+        <div className="pt-8 pb-6 flex items-center justify-center gap-8">
           <Image src="/brand/2.png" alt="Partner" width={90} height={32} className="h-6 md:h-8 w-auto object-contain opacity-90" />
           <Image src="/brand/3.png" alt="Partner" width={90} height={32} className="h-6 md:h-8 w-auto object-contain opacity-90" />
           <Image src="/brand/4.png" alt="Partner" width={90} height={32} className="h-6 md:h-8 w-auto object-contain opacity-90" />
         </div>
 
-        <div className="pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between text-[11px] text-[#BFC9CD] gap-4">
-          <span>© {new Date().getFullYear()} The Bradbury Group. All rights reserved.</span>
-          <span className="italic text-[#39918d]">Human-Centered AI Transformation</span>
-          <div className="flex items-center space-x-4">
-            <Link href="/privacy-policy" className="hover:text-white transition-colors">
-              Privacy Policy
-            </Link>
-            <span>|</span>
-            <Link href="/terms-of-use" className="hover:text-white transition-colors">
-              Terms of Use
-            </Link>
-            <span>|</span>
-            <Link href="/cookie-preferences" className="hover:text-white transition-colors">
-              Cookie Preferences
-            </Link>
-          </div>
+        <div className="pt-0 pb-4 flex flex-col sm:flex-row items-center justify-between text-xs text-[#BFC9CD] gap-4">
+          <p>© {new Date().getFullYear()} The Bradbury Group. All rights reserved.</p>
+          <p className="italic text-[#D9E3E6] font-roboto">Human-Centered AI Transformation</p>
         </div>
       </div>
     </footer>
