@@ -78,9 +78,9 @@ export function Footer() {
         </div>
 
         <div className="pt-8 pb-6 flex items-center justify-center gap-8">
-          <Image src="/brand/2.png" alt="Partner" width={90} height={32} className="h-6 md:h-8 w-auto object-contain opacity-90" />
-          <Image src="/brand/3.png" alt="Partner" width={90} height={32} className="h-6 md:h-8 w-auto object-contain opacity-90" />
-          <Image src="/brand/4.png" alt="Partner" width={90} height={32} className="h-6 md:h-8 w-auto object-contain opacity-90" />
+          <Image src="/brand/2.png" alt="Partner" width={180} height={180} className="h-6 md:h-8 w-auto object-contain opacity-90" />
+          <Image src="/brand/3.png" alt="Partner" width={180} height={180} className="h-6 md:h-8 w-auto object-contain opacity-90" />
+          <Image src="/brand/4.png" alt="Partner" width={180} height={180} className="h-6 md:h-8 w-auto object-contain opacity-90" />
         </div>
 
         <div className="pt-0 pb-4 flex flex-col sm:flex-row items-center justify-between text-xs text-[#BFC9CD] gap-4">
