@@ -135,9 +135,9 @@ export default function AboutPage() {
       {/* Founder */}
       <section id="paiges-story" className="py-24 bg-[#F7F8F9] text-[#0c2940] relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-stretch">
             <div className="lg:col-span-5 relative">
-              <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-[#D9E3E6] h-[520px]">
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-[#D9E3E6] h-full min-h-[420px]">
                 <Image
                   src="/brand/paige-headshot.jpg"
                   alt="Paige Bradbury — Founder, The Bradbury Group"

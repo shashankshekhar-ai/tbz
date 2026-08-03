@@ -79,34 +79,34 @@ export async function Footer() {
               href="https://linkedin.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2 rounded-full border border-white/10 hover:border-[#39918d] hover:text-[#39918d] transition-colors"
+              className="w-9 h-9 flex items-center justify-center rounded-full border border-white/10 hover:border-[#39918d] hover:text-[#39918d] transition-colors"
               aria-label="LinkedIn"
             >
-              <span className="font-inter font-bold text-xs px-0.5">in</span>
+              <span className="font-inter font-bold text-xs">in</span>
             </a>
             <a
               href="https://x.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2 rounded-full border border-white/10 hover:border-[#39918d] hover:text-[#39918d] transition-colors"
+              className="w-9 h-9 flex items-center justify-center rounded-full border border-white/10 hover:border-[#39918d] hover:text-[#39918d] transition-colors"
               aria-label="X (Twitter)"
             >
-              <span className="font-inter font-bold text-xs px-0.5">X</span>
+              <span className="font-inter font-bold text-xs">X</span>
             </a>
             <a
               href="https://youtube.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2 rounded-full border border-white/10 hover:border-[#39918d] hover:text-[#39918d] transition-colors"
+              className="w-9 h-9 flex items-center justify-center rounded-full border border-white/10 hover:border-[#39918d] hover:text-[#39918d] transition-colors"
               aria-label="YouTube"
             >
-              <span className="font-inter font-bold text-xs px-0.5">YT</span>
+              <span className="font-inter font-bold text-xs">YT</span>
             </a>
             <a
               href="https://thebradburygroup.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2 rounded-full border border-white/10 hover:border-[#39918d] hover:text-[#39918d] transition-colors"
+              className="w-9 h-9 flex items-center justify-center rounded-full border border-white/10 hover:border-[#39918d] hover:text-[#39918d] transition-colors"
               aria-label="Website"
             >
               <Globe className="w-3.5 h-3.5" />
