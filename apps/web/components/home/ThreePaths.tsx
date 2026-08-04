@@ -48,7 +48,7 @@ export function ThreePaths({ paths }: { paths: PathCard[] }) {
   return (
     <section id="three-paths" className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto bg-white">
       <div className="mb-12">
-        <h2 className="text-2xl sm:text-3xl font-montserrat font-bold text-[#0c2940]">Tailored Strategic Engagement</h2>
+        <h2 className="text-2xl sm:text-3xl font-h2 text-[#0c2940]">Tailored Strategic Engagement</h2>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -66,11 +66,11 @@ export function ThreePaths({ paths }: { paths: PathCard[] }) {
               <div>
                 <div className="flex items-center justify-between mb-6">
                   {isPrimary ? (
-                    <span className="text-[10px] font-montserrat font-bold uppercase tracking-wider px-3 py-1 bg-[#39918d]/15 text-[#39918d] rounded-full border border-[#39918d]/30">
+                    <span className="text-[10px] font-h3 font-bold uppercase tracking-wider px-3 py-1 bg-[#39918d]/15 text-[#39918d] rounded-full border border-[#39918d]/30">
                       PRIMARY
                     </span>
                   ) : (
-                    <span className="text-[10px] font-montserrat font-bold uppercase tracking-wider px-3 py-1 bg-[#c57b4b]/15 text-[#c57b4b] rounded-full border border-[#c57b4b]/30">
+                    <span className="text-[10px] font-h3 font-bold uppercase tracking-wider px-3 py-1 bg-[#c57b4b]/15 text-[#c57b4b] rounded-full border border-[#c57b4b]/30">
                       {path.audience}
                     </span>
                   )}
@@ -83,13 +83,13 @@ export function ThreePaths({ paths }: { paths: PathCard[] }) {
                   </div>
                 </div>
 
-                <h3 className="text-2xl font-montserrat font-bold text-[#0c2940] mb-3">{path.title}</h3>
+                <h3 className="text-2xl font-h2 text-[#0c2940] mb-3">{path.title}</h3>
 
-                <p className="text-xs font-roboto text-[#5d6b74] leading-relaxed mb-8">{path.description}</p>
+                <p className="text-xs font-body text-[#5d6b74] leading-relaxed mb-8">{path.description}</p>
 
                 <ul className="space-y-4 mb-8">
                   {path.features.map((feature) => (
-                    <li key={feature} className="flex items-start gap-3 text-xs font-roboto text-[#5d6b74]">
+                    <li key={feature} className="flex items-start gap-3 text-xs font-body text-[#5d6b74]">
                       <CheckCircle2 className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: path.accentColor }} />
                       <span>{feature}</span>
                     </li>
@@ -100,7 +100,7 @@ export function ThreePaths({ paths }: { paths: PathCard[] }) {
               <div className="pt-6 border-t border-[#D9E3E8] flex items-center justify-between gap-3">
                 <Link
                   href={resolveHref(path.ctaTarget)}
-                  className="inline-flex items-center space-x-2 text-sm font-inter font-semibold transition-colors group/btn"
+                  className="inline-flex items-center space-x-2 text-sm font-semibold transition-colors group/btn"
                   style={{ color: path.accentColor }}
                 >
                   <span>{path.ctaText}</span>
@@ -108,7 +108,7 @@ export function ThreePaths({ paths }: { paths: PathCard[] }) {
                 </Link>
                 <button
                   onClick={() => askColumbus(path.columbusTopic)}
-                  className="inline-flex items-center space-x-1.5 text-[11px] font-roboto font-semibold text-[#60707A] hover:text-[#0c2940] px-3 py-1.5 rounded-lg border border-[#D9E3E6] hover:border-[#39918d] transition-all"
+                  className="inline-flex items-center space-x-1.5 text-[11px] font-semibold text-[#5d6b74] hover:text-[#0c2940] px-3 py-1.5 rounded border border-[#D9E3E8] hover:border-[#39918d] transition-all cursor-pointer"
                 >
                   <MessageSquare className="w-3.5 h-3.5" style={{ color: path.accentColor }} />
                   <span>Ask Columbus</span>

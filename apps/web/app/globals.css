@@ -62,6 +62,33 @@ body {
   font-family: var(--font-roboto), sans-serif;
 }
 
+/* Reference-exact type scale (matches Home-V2/About-V2/columbus-ui index.css) */
+.font-h1 {
+  font-family: var(--font-inter), sans-serif;
+  font-weight: 800;
+}
+
+.font-h2 {
+  font-family: var(--font-montserrat), sans-serif;
+  font-weight: 700;
+}
+
+.font-h3 {
+  font-family: var(--font-montserrat), sans-serif;
+  font-weight: 500;
+}
+
+.font-body {
+  font-family: var(--font-roboto), sans-serif;
+  font-weight: 400;
+}
+
+.font-caption {
+  font-family: var(--font-open-sans), sans-serif;
+  font-style: italic;
+  font-weight: 400;
+}
+
 /* Starfield particle background */
 .starfield-bg {
   background-color: #0c2940;

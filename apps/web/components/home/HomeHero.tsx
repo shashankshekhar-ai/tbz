@@ -27,17 +27,15 @@ export function HomeHero() {
       <div className="relative z-10 max-w-6xl mx-auto w-full">
         <div className="flex flex-col lg:flex-row items-center lg:items-start justify-between gap-10">
           <div className="w-full lg:w-1/2 text-left space-y-6">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#39918d]/15 border border-[#39918d]/30 text-xs font-inter font-medium text-[#f8c51c] tracking-wide">
-              <span className="italic">Enterprise AI Adoption &amp; Transformation</span>
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#39918d]/15 border border-[#39918d]/30 text-xs font-medium text-[#f8c51c] tracking-wide">
+              <span className="font-caption italic">Enterprise AI Adoption &amp; Transformation</span>
             </div>
 
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-inter font-extrabold tracking-tight leading-tight text-white">
-              Human-Centered AI
-              <br />
-              Transformation
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-h1 tracking-tight leading-tight text-white drop-shadow-md">
+              Human-Centered AI Transformation
             </h1>
 
-            <p className="text-base sm:text-lg md:text-xl text-[#a3b8c2] max-w-xl font-roboto leading-relaxed">
+            <p className="text-base sm:text-lg md:text-xl text-slate-300 max-w-3xl font-h3 leading-relaxed">
               Guiding leaders and organizations through a proven capability evolution from awareness to
               sustainable enterprise impact.
             </p>
@@ -57,10 +55,10 @@ export function HomeHero() {
       </div>
 
       <div className="relative z-10 max-w-7xl w-full mx-auto flex justify-center pt-14">
-        <a href="#whats-moving" className="flex flex-col items-center cursor-pointer group">
-          <span className="text-[10px] font-inter tracking-[0.2em] text-[#718898] uppercase font-semibold mb-2 group-hover:text-[#39918d] transition-colors">
-            SCROLL DOWN
-          </span>
+        <a href="#latest-updates" className="flex flex-col items-center gap-2 text-slate-300 hover:text-[#f8c51c] transition-all group cursor-pointer">
+          <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-slate-400 group-hover:text-[#f8c51c]">
+            <span>SCROLL DOWN</span>
+          </div>
           <div className="w-9 h-9 rounded-full border border-slate-600 group-hover:border-[#f8c51c] flex items-center justify-center bg-[#0c2940]/80 backdrop-blur shadow-lg transition-colors">
             <ChevronDown className="w-5 h-5 text-slate-300 group-hover:text-[#f8c51c] animate-bounce" />
           </div>

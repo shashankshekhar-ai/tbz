@@ -24,25 +24,25 @@ export function HomeClosingCta({
         </div>
 
         <div className="relative z-10 max-w-3xl mx-auto space-y-6">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-montserrat font-bold tracking-tight text-white">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-h2 tracking-tight text-white">
             {headline}
           </h2>
 
-          <p className="text-sm sm:text-base text-[#D9E3E6] font-roboto max-w-2xl mx-auto leading-relaxed">
+          <p className="text-sm sm:text-base text-slate-300 font-body max-w-2xl mx-auto leading-relaxed">
             {subtext}
           </p>
 
           <div className="pt-4 flex flex-col items-center gap-3">
             <Link
               href="/contact"
-              className="inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-xl text-sm font-inter font-semibold uppercase tracking-wider text-white bg-[#39918d] hover:bg-[#3f6d67] transition-all shadow-xl hover:shadow-[#39918d]/20 border border-[#39918d]/50 group"
+              className="inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-xl text-sm font-semibold uppercase tracking-wider text-white bg-[#39918d] hover:bg-[#3f6d67] transition-all shadow-xl hover:shadow-[#39918d]/20 border border-[#39918d]/50 group"
             >
               <Calendar className="w-4 h-4 text-[#f8c51c]" />
               <span>{buttonText}</span>
               <ArrowRight className="w-4 h-4 text-white group-hover:translate-x-1.5 transition-transform" />
             </Link>
 
-            <p className="text-[11px] text-[#D9E3E6] font-roboto italic">
+            <p className="text-[11px] text-slate-300 font-caption italic">
               Confidential 30-minute strategic consultation with our senior executive team.
             </p>
           </div>

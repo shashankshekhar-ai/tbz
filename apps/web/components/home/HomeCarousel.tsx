@@ -57,9 +57,9 @@ export function HomeCarousel({ slides, seeAllText }: { slides: CarouselSlide[]; 
   const nextSlide = () => setCurrentIndex((prev) => (prev < maxIndex ? prev + 1 : 0));
 
   return (
-    <section id="whats-moving" className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto bg-white">
+    <section id="latest-updates" className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto bg-white">
       <div className="flex items-center justify-between mb-8">
-        <h2 className="text-2xl sm:text-3xl font-montserrat font-bold text-[#0c2940]">
+        <h2 className="text-2xl sm:text-3xl font-h2 text-[#0c2940]">
           Latest Updates &amp; Industry Briefs
         </h2>
 
@@ -97,18 +97,18 @@ export function HomeCarousel({ slides, seeAllText }: { slides: CarouselSlide[]; 
                   <div className="p-2.5 rounded-xl" style={{ backgroundColor: `${slide.accentColor}1a` }}>
                     {renderIcon(slide.icon, slide.accentColor)}
                   </div>
-                  <span className="text-[11px] font-roboto text-[#5d6b74] bg-[#F8FAFB] border border-[#D9E3E8] px-2.5 py-1 rounded-full">
+                  <span className="text-[11px] font-h3 text-[#5d6b74] bg-[#F8FAFB] border border-[#D9E3E8] px-2.5 py-1 rounded-full">
                     {slide.subtitle}
                   </span>
                 </div>
 
-                <h3 className="text-lg font-montserrat font-semibold text-[#0c2940] mb-2">{slide.title}</h3>
-                <p className="text-xs font-roboto text-[#5d6b74] leading-relaxed mb-6">{slide.description}</p>
+                <h3 className="text-lg font-h3 text-[#0c2940] mb-2">{slide.title}</h3>
+                <p className="text-xs font-body text-[#5d6b74] leading-relaxed mb-6">{slide.description}</p>
               </div>
 
               <div className="pt-4 border-t border-[#D9E3E8] flex items-center justify-between text-xs font-medium">
-                <span className="italic text-[#5d6b74] font-roboto">{slide.dateOrTag}</span>
-                <span className="text-[#39918d] hover:text-[#3f6d67] font-semibold font-inter transition-colors">
+                <span className="font-caption italic text-[#5d6b74]">{slide.dateOrTag}</span>
+                <span className="text-[#39918d] hover:text-[#3f6d67] font-semibold transition-colors">
                   {slide.linkText}
                 </span>
               </div>
@@ -133,7 +133,7 @@ export function HomeCarousel({ slides, seeAllText }: { slides: CarouselSlide[]; 
       <div className="text-center mt-6">
         <Link
           href="/insights"
-          className="inline-flex items-center gap-1.5 text-xs font-inter font-semibold text-[#5d6b74] hover:text-[#0c2940] transition-colors"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#5d6b74] hover:text-[#0c2940] transition-colors"
         >
           <span>{seeAllText}</span>
           <ArrowRight className="w-3.5 h-3.5 text-[#39918d]" />

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Montserrat, Roboto } from "next/font/google";
+import { Inter, Montserrat, Roboto, Open_Sans } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
@@ -27,6 +27,14 @@ const roboto = Roboto({
   display: "swap",
 });
 
+const openSans = Open_Sans({
+  subsets: ["latin"],
+  style: ["italic"],
+  weight: ["400"],
+  variable: "--font-open-sans",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: {
     default: "The Bradbury Group",
@@ -43,7 +51,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const markup = (
     <html
       lang="en"
-      className={`${inter.variable} ${montserrat.variable} ${roboto.variable} h-full antialiased`}
+      className={`${inter.variable} ${montserrat.variable} ${roboto.variable} ${openSans.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-roboto">
         <script

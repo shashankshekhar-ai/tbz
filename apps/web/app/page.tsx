@@ -92,7 +92,7 @@ const paths: PathCard[] = [
     id: "path-for-orgs",
     title: "For Organizations",
     description: "Enterprise-wide AI transformation, custom model integration, and proprietary ROI models.",
-    audience: "CXOs, Enterprise Boards & Enterprise PMOs",
+    audience: "CXOs & Enterprise PMOs",
     features: ["Enterprise AI Architecture", "Proprietary ROI Dashboard", "Full-Stack Agent Deployment"],
     ctaText: "Explore →",
     ctaTarget: "#for-organizations",

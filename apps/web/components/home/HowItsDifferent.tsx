@@ -38,7 +38,7 @@ export function HowItsDifferent({ differentiators }: { differentiators: Differen
   return (
     <section id="how-its-different" className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto bg-white">
       <div className="mb-12">
-        <h2 className="text-2xl sm:text-3xl font-montserrat font-bold text-[#0c2940]">
+        <h2 className="text-2xl sm:text-3xl font-h2 text-[#0c2940]">
           Our Executive Operating Principles
         </h2>
       </div>
@@ -60,17 +60,17 @@ export function HowItsDifferent({ differentiators }: { differentiators: Differen
                   {renderIcon(item.iconName, color)}
                 </div>
 
-                <h3 className="text-xl font-montserrat font-bold text-[#0c2940] mb-3">{item.title}</h3>
+                <h3 className="text-xl font-h2 text-[#0c2940] mb-3">{item.title}</h3>
 
-                <p className="text-xs font-roboto text-[#5d6b74] leading-relaxed mb-8">{item.description}</p>
+                <p className="text-xs font-body text-[#5d6b74] leading-relaxed mb-8">{item.description}</p>
               </div>
 
               <div className="pt-4 border-t border-[#D9E3E8]">
-                <div className="inline-flex items-center gap-1.5 text-xs font-inter font-semibold" style={{ color }}>
+                <div className="inline-flex items-center gap-1.5 text-xs font-semibold" style={{ color }}>
                   <span>{item.linkText}</span>
                   <ArrowRight className="w-3.5 h-3.5" style={{ color }} />
                 </div>
-                <p className="text-[10px] font-roboto italic text-[#5d6b74] mt-1">{item.captionText}</p>
+                <p className="text-[10px] font-caption italic text-[#5d6b74] mt-1">{item.captionText}</p>
               </div>
             </Link>
           );
