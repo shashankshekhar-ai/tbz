@@ -32,3 +32,10 @@ Live build status/guide for the team (what's done, planned, login requirements, 
 ## Important operating rule
 
 Do not let AI coding agents re-decide product strategy. Claude/Codex should execute the plan, not reinterpret the business.
+
+## Current build status
+
+- **Design system**: Home, About, Footer, Header, and the Columbus AI widget are locked to the reference designs unzipped under `/project/tbg/reference/updates/` (Home-V2, About-V2, columbus-ui) — those references are the master design. Match their exact Tailwind classnames, hex colors, and font-utility classes rather than remapping to custom tokens.
+- **Local dev**: `apps`, `apps/cms` (Payload), and `apps/api` (FastAPI) run via the root `docker-compose.yml`, exposed at `localhost:3002`. Standard change loop: `npx tsc --noEmit` (from `apps/web`) → `docker compose build web` → `docker compose up -d web` → curl smoke test.
+- **Deploy**: `apps/web` deploys to Vercel automatically on push to `origin/main`. Local docker rebuild is separate from the Vercel deploy — a `git push` is required for prod to pick up changes.
+- **CI**: the GitHub Actions workflow (`.github/workflows/ci.yml`) was removed — pre-existing lint/typecheck debt across `apps/api` and `apps/web` predates active work on this repo and isn't gating deploys.

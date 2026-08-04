@@ -8,9 +8,9 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 pb-12 border-b border-slate-800">
           <div className="lg:col-span-5 space-y-4">
             <div className="flex items-center gap-3">
-              <Image src="/brand/White-Monochrome-Text.png" alt="The Bradbury Group" width={160} height={40} className="h-10 w-auto" />
+              <Image src="/brand/White-Monochrome-Text.png" alt="The Bradbury Group" width={160} height={40} className="h-[calc(var(--spacing)*15)] w-auto" />
             </div>
-            <p className="text-xs font-h3 font-semibold text-[#f8c51c] uppercase tracking-wider">
+            <p className="text-[10px] font-h3 font-semibold text-[#f8c51c] uppercase tracking-wider">
               Engineering the AI-First Organization
             </p>
             <p className="text-xs font-body text-slate-300 leading-relaxed max-w-md">
@@ -75,9 +75,9 @@ export function Footer() {
         </div>
 
         <div className="pt-8 pb-6 flex items-center justify-center gap-8">
-          <Image src="/brand/2.png" alt="Partner 2" width={180} height={180} className="h-6 md:h-8 w-auto opacity-90" />
-          <Image src="/brand/3.png" alt="Partner 3" width={180} height={180} className="h-6 md:h-8 w-auto opacity-90" />
-          <Image src="/brand/4.png" alt="Partner 4" width={180} height={180} className="h-6 md:h-8 w-auto opacity-90" />
+          <Image src="/brand/2.png" alt="Partner 2" width={180} height={180} className="w-6 md:w-8 h-auto opacity-90" />
+          <Image src="/brand/3.png" alt="Partner 3" width={180} height={180} className="w-6 md:w-8 h-auto opacity-90" />
+          <Image src="/brand/4.png" alt="Partner 4" width={180} height={180} className="w-6 md:w-8 h-auto opacity-90" />
         </div>
 
         <div className="pt-0 pb-4 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-4">

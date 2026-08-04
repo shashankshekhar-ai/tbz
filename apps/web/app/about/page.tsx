@@ -19,13 +19,6 @@ const founderStats = [
   { label: "Learning Architect", value: "AI", icon: Brain, color: "#f8c51c" },
 ];
 
-const team = [
-  { id: "1", name: "Paige Bradbury", role: "Founder & Principal Learning Architect" },
-  { id: "2", name: "Team Member", role: "Coming Soon" },
-  { id: "3", name: "Team Member", role: "Coming Soon" },
-  { id: "4", name: "Team Member", role: "Coming Soon" },
-];
-
 const advisoryBoard = [
   { id: "1", title: "AI Strategy & Innovation", status: "Coming Soon", role: "Specialist Advisor" },
   { id: "2", title: "Workforce Development", status: "Coming Soon", role: "Specialist Advisor" },
@@ -213,36 +206,6 @@ export default function AboutPage() {
                 ))}
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Our Team */}
-      <section id="our-team" className="py-20 bg-white text-[#0c2940] relative">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="space-y-2 mb-12 text-center">
-            <span className="text-xs font-inter font-bold tracking-widest text-[#39918d] uppercase block">
-              Our Team
-            </span>
-            <h2 className="text-3xl sm:text-4xl font-montserrat font-bold text-[#0c2940]">The People Behind TBG</h2>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {team.map((member) => (
-              <div
-                key={member.id}
-                className="rounded-2xl border border-[#D9E3E6] p-6 text-center hover:border-[#39918d] hover:shadow-lg transition-all duration-300"
-              >
-                <div className="w-16 h-16 rounded-full bg-[#EDF2F4] border border-[#D9E3E6] mx-auto mb-4 flex items-center justify-center text-[#39918d] font-montserrat font-bold text-lg">
-                  {member.name
-                    .split(" ")
-                    .map((n) => n[0])
-                    .join("")}
-                </div>
-                <h3 className="text-base font-montserrat font-bold text-[#0c2940]">{member.name}</h3>
-                <p className="text-xs font-roboto text-[#60707A] mt-1">{member.role}</p>
-              </div>
-            ))}
           </div>
         </div>
       </section>
