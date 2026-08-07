@@ -41,10 +41,6 @@ export function HomeClosingCta({
               <span>{buttonText}</span>
               <ArrowRight className="w-4 h-4 text-white group-hover:translate-x-1.5 transition-transform" />
             </Link>
-
-            <p className="text-[11px] text-slate-300 font-caption italic">
-              Confidential 30-minute strategic consultation with our senior executive team.
-            </p>
           </div>
         </div>
       </div>

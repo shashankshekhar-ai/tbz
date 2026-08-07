@@ -1,4 +1,5 @@
 import { HomeHero } from "@/components/home/HomeHero";
+import { MeetColumbus } from "@/components/home/MeetColumbus";
 import { HomeCarousel, type CarouselSlide } from "@/components/home/HomeCarousel";
 import { ThreePaths, type PathCard } from "@/components/home/ThreePaths";
 import { HowItsDifferent, type DifferentiatorCard } from "@/components/home/HowItsDifferent";
@@ -36,7 +37,7 @@ const slides: CarouselSlide[] = [
     description: "The Bradbury Group expands advisory board with former Fortune 50 CTOs.",
     linkText: "Read Announcement →",
     linkUrl: "#about",
-    accentColor: "#39918d",
+    accentColor: "#3f6d67",
   },
   {
     id: "slide-4",
@@ -47,7 +48,7 @@ const slides: CarouselSlide[] = [
     description: "Interactive session: Designing Governance & Human-in-the-Loop Workflows.",
     linkText: "Reserve Seat →",
     linkUrl: "#resources",
-    accentColor: "#c57b4b",
+    accentColor: "#0c2940",
   },
   {
     id: "slide-5",
@@ -65,37 +66,37 @@ const slides: CarouselSlide[] = [
 const paths: PathCard[] = [
   {
     id: "path-for-you",
-    title: "For You",
+    title: "Build Your Own AI Fluency",
     isPrimary: true,
-    description: "Individual executive coaching, personal AI agent workflows, and foundational upskilling.",
-    audience: "Founders, Executives & Solitary Leaders",
-    features: ["1-on-1 Executive AI Strategy", "Custom Agent Workflow Suite", "Personal Productivity Blueprint"],
-    ctaText: "Explore →",
-    ctaTarget: "#for-you",
+    description:
+      "A structured program for individual professionals — practical skills, real frameworks, built for sustainable professional leverage.",
+    audience: "",
+    ctaTarget: "#about",
+    columbusButtonText: "Explore AI Fluency Cohort",
     accentColor: "#39918d",
     iconName: "user",
     columbusTopic: "Individual Executive Coaching & Personal Workflows",
   },
   {
     id: "path-for-leaders",
-    title: "For Leaders",
-    description: "Team enablement, cross-functional AI alignment, and leadership architecture design.",
+    title: "A Strategic Partner for Executives",
+    description:
+      "A private, one-on-one engagement for leaders who need to build an AI strategy they can execute with confidence.",
     audience: "VPs, Department Heads & Directors",
-    features: ["Departmental Readiness Audit", "Leadership Upskilling Cohorts", "Ethics & Governance Framework"],
-    ctaText: "Learn more →",
-    ctaTarget: "#for-leaders",
+    ctaTarget: "#about",
+    columbusButtonText: "Learn About The Solomon Engine",
     accentColor: "#c57b4b",
     iconName: "crown",
     columbusTopic: "Team Enablement & Departmental Readiness",
   },
   {
     id: "path-for-orgs",
-    title: "For Organizations",
-    description: "Enterprise-wide AI transformation, custom model integration, and proprietary ROI models.",
+    title: "Bring AI Fluency to Your Team",
+    description:
+      "Training, learning architecture, and community workshops built for organizations who want to roll out AI at scale.",
     audience: "CXOs & Enterprise PMOs",
-    features: ["Enterprise AI Architecture", "Proprietary ROI Dashboard", "Full-Stack Agent Deployment"],
-    ctaText: "Explore →",
-    ctaTarget: "#for-organizations",
+    ctaTarget: "#about",
+    columbusButtonText: "Explore Organizational Partnerships",
     accentColor: "#39918d",
     iconName: "building",
     columbusTopic: "Enterprise-wide AI Transformation & Architecture",
@@ -105,30 +106,22 @@ const paths: PathCard[] = [
 const differentiators: DifferentiatorCard[] = [
   {
     id: "diff-1",
-    title: "Frameworks, not tutorials",
-    linkText: "See the frameworks →",
-    captionText: "links to Resources",
-    targetSection: "#resources",
+    title: "Built on structure, not screenshots.",
     iconName: "grid",
-    description: "We don't teach tool shortcuts. We deliver repeatable strategic mental models and decision trees.",
+    description: "We explore how to think with AI, not which buttons to click.",
   },
   {
     id: "diff-2",
-    title: "People, not the tech stack",
-    linkText: "Learning Architecture Design →",
-    captionText: "links to Learning Architecture Design",
-    targetSection: "#for-leaders",
+    title: "People-first.",
     iconName: "people",
-    description: "Technology fails without cultural readiness. We design human workflows that elevate your team.",
+    description:
+      "Every learning journey starts with how people actually learn and adopt new skills — not just the tools themselves.",
   },
   {
     id: "diff-3",
-    title: "Proven, not promised",
-    linkText: "See Our ROI →",
-    captionText: "links to Our ROI for Human-Focused AI",
-    targetSection: "#our-roi",
+    title: "Proven, not promised.",
     iconName: "shield",
-    description: "Rigorous measurement, verifiable performance benchmarks, and measurable business impact.",
+    description: "Every framework we use has been vetted and tested with real clients.",
   },
 ];
 
@@ -136,13 +129,14 @@ export default function Home() {
   return (
     <div className="bg-white">
       <HomeHero />
+      <MeetColumbus />
       <HomeCarousel slides={slides} seeAllText="See All Updates →" />
       <ThreePaths paths={paths} />
       <HowItsDifferent differentiators={differentiators} />
       <HomeClosingCta
         headline="Not sure which path is right for you?"
         buttonText="Book a discovery call"
-        subtext="Schedule a confidential 30-minute strategic consultation with our executive team."
+        subtext="Talk it through with us directly."
       />
     </div>
   );

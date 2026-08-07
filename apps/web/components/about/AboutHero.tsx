@@ -1,14 +1,17 @@
-import Image from "next/image";
 import { ArrowRight, ChevronDown, PlayCircle } from "lucide-react";
 
 export function AboutHero() {
   return (
     <section
       id="hero"
-      className="relative -mt-20 min-h-screen pt-28 pb-16 bg-[#0c2940] text-white overflow-hidden flex flex-col justify-between"
+      className="relative -mt-20 min-h-screen pt-28 pb-16 text-white overflow-hidden flex flex-col justify-between"
+      style={{
+        backgroundImage: "url('/brand/website-about-page.png')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+      }}
     >
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#123856_0%,#0c2940_45%,#081b2a_100%)] pointer-events-none" />
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full my-auto">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
           <div className="lg:col-span-6 space-y-6">
@@ -32,7 +35,7 @@ export function AboutHero() {
             <div className="pt-2 flex flex-wrap items-center gap-4">
               <a
                 href="#founder"
-                className="bg-[#39918d] hover:bg-[#2d7774] text-white font-inter font-semibold text-sm px-6 py-3.5 rounded-lg shadow-lg hover:shadow-[#39918d]/30 hover:scale-[1.02] transition-all duration-200 flex items-center space-x-2 group"
+                className="bg-[#c57b4b] hover:bg-[#2d7774] text-white font-inter font-semibold text-sm px-6 py-3.5 rounded-lg shadow-lg hover:shadow-[#39918d]/30 hover:scale-[1.02] transition-all duration-200 flex items-center space-x-2 group"
               >
                 <span>Meet Paige</span>
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
@@ -49,15 +52,7 @@ export function AboutHero() {
           </div>
 
           <div className="lg:col-span-6 relative min-h-[460px] sm:min-h-[520px] flex items-center justify-center">
-            <div className="relative w-full h-[480px] sm:h-[520px] flex items-center justify-center">
-              <Image
-                src="/brand/Intelligence.png"
-                alt="AI Intelligence Illustration"
-                width={800}
-                height={800}
-                className="w-[90%] h-auto max-w-2xl object-contain"
-              />
-            </div>
+            <div className="relative w-full h-[480px] sm:h-[520px] flex items-center justify-center" />
           </div>
         </div>
       </div>

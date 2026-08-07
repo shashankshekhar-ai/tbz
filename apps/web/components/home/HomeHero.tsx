@@ -1,68 +1,46 @@
 "use client";
 
-import Image from "next/image";
 import { ChevronDown } from "lucide-react";
 
 export function HomeHero() {
   return (
     <section
       id="hero"
-      className="relative -mt-20 w-full starfield-bg text-white min-h-[85vh] flex flex-col justify-center pt-28 pb-12 px-4 sm:px-6 lg:px-8 overflow-hidden"
+      className="relative -mt-20 min-h-[100vh] flex flex-col justify-center items-center overflow-hidden text-white px-4 sm:px-6 lg:px-8 pt-28 pb-20"
+      style={{
+        backgroundImage: "url('/brand/hero-image-bg.png')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+      }}
     >
-      <div className="absolute inset-0 pointer-events-none opacity-20 z-0">
-        <svg className="w-full h-full">
-          <line x1="15%" y1="20%" x2="35%" y2="40%" stroke="#39918d" strokeWidth="0.5" strokeDasharray="3 3" opacity="0.4" />
-          <line x1="35%" y1="40%" x2="65%" y2="30%" stroke="#39918d" strokeWidth="0.5" opacity="0.4" />
-          <line x1="65%" y1="30%" x2="85%" y2="60%" stroke="#c57b4b" strokeWidth="0.5" strokeDasharray="4 4" opacity="0.3" />
-          <line x1="25%" y1="70%" x2="55%" y2="80%" stroke="#39918d" strokeWidth="0.5" opacity="0.3" />
-          <circle cx="15%" cy="20%" r="2" fill="#ffffff" />
-          <circle cx="35%" cy="40%" r="3" fill="#f8c51c" />
-          <circle cx="65%" cy="30%" r="2.5" fill="#39918d" />
-          <circle cx="85%" cy="60%" r="3" fill="#c57b4b" />
-          <circle cx="25%" cy="70%" r="2" fill="#ffffff" />
-          <circle cx="55%" cy="80%" r="3" fill="#f8c51c" />
-        </svg>
-      </div>
+      <div className="absolute inset-0 bg-black/35" />
 
       <div className="relative z-10 max-w-6xl mx-auto w-full">
-        <div className="flex flex-col lg:flex-row items-center lg:items-start justify-between gap-10">
-          <div className="w-full lg:w-1/2 text-left space-y-6">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#39918d]/15 border border-[#39918d]/30 text-xs font-medium text-[#f8c51c] tracking-wide">
-              <span className="font-caption italic">Enterprise AI Adoption &amp; Transformation</span>
-            </div>
+        <div className="max-w-3xl space-y-6">
+          <h1 className="text-4xl md:text-5xl font-h1 leading-tight tracking-tight">
+            Stop Implementing AI Tools.
+            <br />
+            Start Architecting Human Performance.
+          </h1>
 
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-h1 tracking-tight leading-tight text-white drop-shadow-md">
-              Human-Centered AI Transformation
-            </h1>
-
-            <p className="text-base sm:text-lg md:text-xl text-slate-300 max-w-3xl font-h3 leading-relaxed">
-              Guiding leaders and organizations through a proven capability evolution from awareness to
-              sustainable enterprise impact.
-            </p>
-          </div>
-
-          <div className="w-full lg:w-1/2 flex justify-center lg:justify-end items-center">
-            <Image
-              src="/brand/hero-illustration-v2.png"
-              alt="The Bradbury Group — AI transformation illustration"
-              width={420}
-              height={420}
-              priority
-              className="w-64 sm:w-80 md:w-96 lg:w-80 xl:w-96 h-auto object-contain rounded-md shadow-xl"
-            />
-          </div>
+          <p className="text-lg md:text-xl text-slate-200 font-h3 leading-relaxed max-w-2xl">
+            Talk to Columbus in the corner —
+            tell us what you&apos;re working through, and our team will follow up personally.
+          </p>
         </div>
-      </div>
 
-      <div className="relative z-10 max-w-7xl w-full mx-auto flex justify-center pt-14">
-        <a href="#latest-updates" className="flex flex-col items-center gap-2 text-slate-300 hover:text-[#f8c51c] transition-all group cursor-pointer">
-          <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-slate-400 group-hover:text-[#f8c51c]">
-            <span>SCROLL DOWN</span>
-          </div>
-          <div className="w-9 h-9 rounded-full border border-slate-600 group-hover:border-[#f8c51c] flex items-center justify-center bg-[#0c2940]/80 backdrop-blur shadow-lg transition-colors">
-            <ChevronDown className="w-5 h-5 text-slate-300 group-hover:text-[#f8c51c] animate-bounce" />
-          </div>
-        </a>
+        <div className="mt-24 flex justify-center">
+          <a href="#latest-updates" className="flex flex-col items-center gap-2 group">
+            <span className="text-xs tracking-[0.25em] text-slate-300 group-hover:text-[#f8c51c]">
+              SCROLL DOWN
+            </span>
+
+            <div className="w-11 h-11 rounded-full border border-slate-400 flex items-center justify-center group-hover:border-[#f8c51c] transition">
+              <ChevronDown className="w-5 h-5 animate-bounce group-hover:text-[#f8c51c]" />
+            </div>
+          </a>
+        </div>
       </div>
     </section>
   );

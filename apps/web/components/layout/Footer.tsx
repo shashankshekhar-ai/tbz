@@ -63,7 +63,7 @@ export function Footer() {
               Connect
             </h4>
             <p className="text-xs font-body text-slate-300 leading-relaxed">
-              Ready to accelerate your organizational AI capability? Contact our executive consulting team.
+              Ready to accelerate your organizational AI capability? Contact our C-suite consulting team.
             </p>
             <Link
               href="/contact"
@@ -74,10 +74,9 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="pt-8 pb-6 flex items-center justify-center gap-8">
-          <Image src="/brand/2.png" alt="Partner 2" width={180} height={180} className="w-6 md:w-8 h-auto opacity-90" />
-          <Image src="/brand/3.png" alt="Partner 3" width={180} height={180} className="w-6 md:w-8 h-auto opacity-90" />
-          <Image src="/brand/4.png" alt="Partner 4" width={180} height={180} className="w-6 md:w-8 h-auto opacity-90" />
+        <div className="pt-0 pb-0 flex items-center justify-center gap-8">
+          <Image src="/brand/2.png" alt="Partner 2" width={180} height={180} className="h-10 md:h-20 w-auto opacity-90" />
+          <Image src="/brand/3.png" alt="Partner 3" width={180} height={180} className="h-10 md:h-20 w-auto opacity-90" />
         </div>
 
         <div className="pt-0 pb-4 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-4">

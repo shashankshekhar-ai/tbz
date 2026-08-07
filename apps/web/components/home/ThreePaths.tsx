@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { User, Crown, Building, ArrowRight, CheckCircle2, MessageSquare } from "lucide-react";
+import { User, Crown, Building, ArrowRight, MessageSquare } from "lucide-react";
 
 export interface PathCard {
   id: string;
@@ -9,9 +9,8 @@ export interface PathCard {
   isPrimary?: boolean;
   description: string;
   audience: string;
-  features: string[];
-  ctaText: string;
   ctaTarget: string;
+  columbusButtonText: string;
   accentColor: string;
   iconName: "user" | "crown" | "building";
   columbusTopic: string;
@@ -25,6 +24,7 @@ const ROUTE_MAP: Record<string, string> = {
   "for-you": "/ai-fluency-cohort",
   "for-leaders": "/the-solomon-engine",
   "for-organizations": "/for-organizations",
+  about: "/about",
 };
 
 function resolveHref(anchor: string) {
@@ -32,7 +32,7 @@ function resolveHref(anchor: string) {
 }
 
 function renderIcon(iconName: string, accentColor: string) {
-  const props = { className: "w-6 h-6", style: { color: accentColor } };
+  const props = { className: "w-5 h-5", style: { color: accentColor } };
   switch (iconName) {
     case "user":
       return <User {...props} />;
@@ -46,9 +46,9 @@ function renderIcon(iconName: string, accentColor: string) {
 
 export function ThreePaths({ paths }: { paths: PathCard[] }) {
   return (
-    <section id="three-paths" className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto bg-white">
+    <section id="tailored-engagement" className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto bg-white">
       <div className="mb-12">
-        <h2 className="text-2xl sm:text-3xl font-h2 text-[#0c2940]">Tailored Strategic Engagement</h2>
+        <h2 className="text-2xl sm:text-3xl font-h2 text-[#0c2940]">Already Know What You Need? Explore Directly.</h2>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -70,48 +70,46 @@ export function ThreePaths({ paths }: { paths: PathCard[] }) {
                       PRIMARY
                     </span>
                   ) : (
-                    <span className="text-[10px] font-h3 font-bold uppercase tracking-wider px-3 py-1 bg-[#c57b4b]/15 text-[#c57b4b] rounded-full border border-[#c57b4b]/30">
+                    <span
+                      className="text-[10px] font-h3 font-bold uppercase tracking-wider px-3 py-1 rounded-full border"
+                      style={{
+                        backgroundColor: path.accentColor === "#c57b4b" ? "#c57b4b26" : "#F8FAFB",
+                        color: path.accentColor === "#c57b4b" ? "#c57b4b" : "#5d6b74",
+                        borderColor: path.accentColor === "#c57b4b" ? "#c57b4b4d" : "#D9E3E8",
+                      }}
+                    >
                       {path.audience}
                     </span>
                   )}
 
                   <div
                     className="p-2 rounded-full border"
-                    style={{ backgroundColor: isPrimary ? "#F8FAFB" : `${path.accentColor}1a`, borderColor: isPrimary ? "#D9E3E8" : `${path.accentColor}4d` }}
+                    style={{ backgroundColor: isPrimary ? "#F8FAFB" : `${path.accentColor}1a`, borderColor: isPrimary ? "#D9E3E8" : "transparent" }}
                   >
-                    {renderIcon(path.iconName, path.accentColor)}
+                    {renderIcon(path.iconName, isPrimary ? "#0c2940" : path.accentColor)}
                   </div>
                 </div>
 
                 <h3 className="text-2xl font-h2 text-[#0c2940] mb-3">{path.title}</h3>
 
-                <p className="text-xs font-body text-[#5d6b74] leading-relaxed mb-8">{path.description}</p>
-
-                <ul className="space-y-4 mb-8">
-                  {path.features.map((feature) => (
-                    <li key={feature} className="flex items-start gap-3 text-xs font-body text-[#5d6b74]">
-                      <CheckCircle2 className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: path.accentColor }} />
-                      <span>{feature}</span>
-                    </li>
-                  ))}
-                </ul>
+                <p className="text-normal font-body text-[#5d6b74] leading-relaxed mb-8">{path.description}</p>
               </div>
 
-              <div className="pt-6 border-t border-[#D9E3E8] flex items-center justify-between gap-3">
+              <div className="pt-6 border-t border-[#D9E3E8] flex items-center justify-between">
                 <Link
                   href={resolveHref(path.ctaTarget)}
-                  className="inline-flex items-center space-x-2 text-sm font-semibold transition-colors group/btn"
-                  style={{ color: path.accentColor }}
+                  className="text-xs font-semibold flex items-center gap-1 transition-colors"
+                  style={{ color: isPrimary ? "#0c2940" : path.accentColor }}
                 >
-                  <span>{path.ctaText}</span>
-                  <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+                  <span />
+                  <ArrowRight className="w-3.5 h-3.5" style={{ color: path.accentColor }} />
                 </Link>
                 <button
                   onClick={() => askColumbus(path.columbusTopic)}
-                  className="inline-flex items-center space-x-1.5 text-[11px] font-semibold text-[#5d6b74] hover:text-[#0c2940] px-3 py-1.5 rounded border border-[#D9E3E8] hover:border-[#39918d] transition-all cursor-pointer"
+                  className="text-[11px] font-semibold text-[#5d6b74] hover:text-[#0c2940] px-3 py-1.5 rounded border border-[#D9E3E8] flex items-center gap-1.5 transition-all cursor-pointer"
                 >
                   <MessageSquare className="w-3.5 h-3.5" style={{ color: path.accentColor }} />
-                  <span>Ask Columbus</span>
+                  <span>{path.columbusButtonText}</span>
                 </button>
               </div>
             </div>
