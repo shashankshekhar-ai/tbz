@@ -23,16 +23,18 @@ export function AIPulseAvatar({
 
   return (
     <div className="relative inline-flex items-center justify-center">
-      <div
-        className={`absolute rounded-full border border-[#f8c51c] ${sizeMap[size]} ${
-          isSpeaking || isListening ? "animate-ping" : "opacity-20 scale-105"
-        }`}
-      />
-      <div
-        className={`absolute rounded-full border border-[#39918d] ${sizeMap[size]} ${
-          isSpeaking || isListening ? "animate-ping" : "opacity-20 scale-110"
-        }`}
-      />
+      <div className={`absolute inset-0 overflow-hidden rounded-full ${sizeMap[size]}`}>
+        <div
+          className={`absolute inset-0 rounded-full border border-[#f8c51c] ${
+            isSpeaking || isListening ? "animate-ping" : "opacity-20 scale-105"
+          }`}
+        />
+        <div
+          className={`absolute inset-0 rounded-full border border-[#39918d] ${
+            isSpeaking || isListening ? "animate-ping" : "opacity-20 scale-110"
+          }`}
+        />
+      </div>
 
       <div
         className={`relative rounded-full bg-white flex items-center justify-center p-1 border border-[#39918d]/30 shadow-md transition-all duration-500 ${sizeMap[size]} ${
@@ -57,13 +59,14 @@ export function AIPulseAvatar({
       </div>
 
       {showMicBadge && (
-        <div className="absolute -bottom-1 -right-1 bg-white border border-[#39918d]/40 text-[#0c2940] rounded-full p-1 shadow-md flex items-center gap-1">
-          <div className={`relative ${micAnimated || isListening ? "text-[#39918d]" : "text-slate-400"}`}>
-            <Mic size={13} className={isListening ? "animate-bounce" : ""} />
-            {(micAnimated || isListening) && (
-              <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-[#f8c51c] rounded-full animate-ping" />
-            )}
-          </div>
+        <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-white border border-[#39918d]/40 text-[#0c2940] rounded-full shadow-md flex items-center justify-center overflow-hidden">
+          <Mic
+            size={13}
+            className={`${micAnimated || isListening ? "text-[#39918d]" : "text-slate-400"} ${isListening ? "animate-bounce" : ""}`}
+          />
+          {(micAnimated || isListening) && (
+            <span className="absolute top-0.5 right-0.5 w-2 h-2 bg-[#f8c51c] rounded-full animate-ping" />
+          )}
         </div>
       )}
     </div>
