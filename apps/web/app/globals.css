@@ -126,11 +126,15 @@ body {
 
 /* Glow effects */
 .glow-teal {
-  box-shadow: 0 0 25px rgba(57, 145, 141, 0.35);
+  background: radial-gradient(circle at 50% 50%, rgba(57, 145, 141, 0.1) 0%, rgba(248, 250, 252, 0) 70%);
 }
 
 .glow-gold {
   box-shadow: 0 0 20px rgba(248, 197, 28, 0.4);
+}
+
+.glow-copper {
+  background: radial-gradient(circle at 50% 50%, rgba(197, 123, 75, 0.08) 0%, rgba(248, 250, 252, 0) 70%);
 }
 
 /* Custom scrollbar */
