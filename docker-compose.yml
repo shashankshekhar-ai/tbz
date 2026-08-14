@@ -125,6 +125,10 @@ services:
       context: ./infra/claude-agent
       dockerfile: Dockerfile
     environment:
+      # Leave unset to use browser/device-code login instead (`claude` stores
+      # the session in claude_agent_home, persisted across runs). Only set
+      # this if you'd rather pay per-token via the API instead of using an
+      # existing Claude subscription's included usage.
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
     volumes:
       - ./apps/web:/workspace/apps/web
@@ -135,6 +139,8 @@ services:
       - claude_agent_transcripts:/transcripts
     networks:
       - sandbox
+    stdin_open: true
+    tty: true
 
 networks:
   sandbox: {}
