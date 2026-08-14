@@ -30,6 +30,7 @@ services:
       AI_PROVIDER: ${AI_PROVIDER:-gemini}
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
       GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      CMS_SERVICE_TOKEN: ${CMS_SERVICE_TOKEN:-}
     depends_on:
       postgres:
         condition: service_healthy
@@ -68,6 +69,79 @@ services:
       - cms
       - api
 
+  # Standalone ops+content agent — proposes content/nav/git/docker/sql actions,
+  # executes only what a human approves via the UI. Not exposed publicly
+  # (127.0.0.1-only); holds docker-socket + repo access other services don't get.
+  # See docs/planning/14_DECISION_LOG.md (D9) and apps/aiwebmaster/README if present.
+  aiwebmaster:
+    build:
+      context: ./apps/aiwebmaster
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8110:8010"
+    environment:
+      SESSION_SECRET: ${SESSION_SECRET:-}
+      AIWEBMASTER_ADMIN_EMAIL: ${AIWEBMASTER_ADMIN_EMAIL:-}
+      AIWEBMASTER_ADMIN_PASSWORD: ${AIWEBMASTER_ADMIN_PASSWORD:-}
+      CMS_SERVICE_TOKEN: ${CMS_SERVICE_TOKEN:-}
+      AI_PROVIDER: ${AI_PROVIDER:-gemini}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      CMS_URL: http://cms:3003
+      REPO_PATH: /repo
+      API_DATABASE_URL: postgresql://tbg:tbg_dev@postgres:5432/tbg_api
+      CMS_DATABASE_URL: postgresql://tbg:tbg_dev@postgres:5432/tbg_cms
+      AUTH0_DOMAIN: ${AUTH0_DOMAIN:-}
+      AUTH0_CLIENT_ID: ${AUTH0_CLIENT_ID:-}
+      AUTH0_CLIENT_SECRET: ${AUTH0_CLIENT_SECRET:-}
+      AUTH0_REDIRECT_URI: ${AUTH0_REDIRECT_URI:-http://localhost:8110/api/auth/auth0/callback}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - .:/repo
+      - aiwebmaster_data:/app/data
+      # Mount a dedicated deploy-only SSH key here if git push should work:
+      # - ${AIWEBMASTER_DEPLOY_SSH_KEY_PATH:-/dev/null}:/root/.ssh/id_deploy:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+      cms:
+        condition: service_started
+
+  # Isolated Claude Code CLI sandbox — full agentic tool access (its own
+  # file-edit + bash, no propose/approve gate), but structurally cut off
+  # from prod: own network (`sandbox`, not attached to any other service —
+  # cannot resolve or route to postgres/cms-prod/etc even if instructed to),
+  # no docker socket, no root .env, no prod DB creds. Only the dev app
+  # source directories are bind-mounted, read-write. Every code/docker/git/
+  # sql/publish action still goes through AIwebmaster's existing propose->
+  # approve->RBAC->audit pipeline unchanged — this container can edit dev
+  # source files, nothing more.
+  #
+  # Not a long-running service: invoke on demand, e.g.
+  #   docker compose run --rm claude-agent "add a loading spinner to the contact form"
+  claude-agent:
+    build:
+      context: ./infra/claude-agent
+      dockerfile: Dockerfile
+    environment:
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+    volumes:
+      - ./apps/web:/workspace/apps/web
+      - ./apps/cms:/workspace/apps/cms
+      - ./apps/api:/workspace/apps/api
+      - ./apps/aiwebmaster:/workspace/apps/aiwebmaster
+      - claude_agent_home:/root/.claude
+      - claude_agent_transcripts:/transcripts
+    networks:
+      - sandbox
+
+networks:
+  sandbox: {}
+
 volumes:
   pgdata:
   api_reports:
+  aiwebmaster_data:
+  claude_agent_home:
+  claude_agent_transcripts:

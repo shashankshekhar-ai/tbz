@@ -1,0 +1,63 @@
+# Production overlay — a second local stack, same host, same source/build
+# contexts as docker-compose.yml, deployed to separately via AIwebmaster's
+# "publish" action (core/executors.py::run_publish). See docs/planning/
+# 14_DECISION_LOG.md (D9) for why this is same-host rather than a separate
+# server for now.
+#
+# Usage: docker compose -f docker-compose.yml -f docker-compose.prod.yml -p rewamped-site up -d cms-prod web-prod api-prod
+services:
+  cms-prod:
+    build:
+      context: .
+      dockerfile: apps/cms/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "3103:3003"
+    environment:
+      DATABASE_URI: postgresql://tbg:tbg_dev@postgres:5432/tbg_cms_prod
+      PAYLOAD_SECRET: ${PAYLOAD_SECRET:-changeme_in_production}
+      NEXT_PUBLIC_WEB_URL: https://tbz-web.vercel.app
+      AI_PROVIDER: ${AI_PROVIDER:-gemini}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      CMS_SERVICE_TOKEN: ${CMS_SERVICE_TOKEN:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  api-prod:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8003:8000"
+    environment:
+      DATABASE_URL: postgresql://tbg:tbg_dev@postgres:5432/tbg_api_prod
+      AI_PROVIDER: ${AI_PROVIDER:-gemini}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      DEBUG: "false"
+      ENVIRONMENT: production
+    volumes:
+      - api_reports_prod:/app/data/reports
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  web-prod:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "3102:3002"
+    environment:
+      NEXT_PUBLIC_CMS_URL: http://cms-prod:3003
+      NEXT_PUBLIC_API_URL: http://api-prod:8000
+    depends_on:
+      - cms-prod
+      - api-prod
+
+volumes:
+  api_reports_prod:

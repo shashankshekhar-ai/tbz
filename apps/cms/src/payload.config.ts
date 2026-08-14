@@ -16,6 +16,7 @@ import { Navigation } from "./collections/Navigation";
 import { SiteSettings } from "./globals/SiteSettings";
 import { pageAgentChatEndpoint, pageAgentApplyEndpoint } from "./endpoints/pageAgent";
 import { contentAgentChatEndpoint, contentAgentApplyEndpoint } from "./endpoints/contentAgent";
+import { navigationUpsertEndpoint } from "./endpoints/navigation";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -53,7 +54,13 @@ export default buildConfig({
       ],
     },
   },
-  endpoints: [pageAgentChatEndpoint, pageAgentApplyEndpoint, contentAgentChatEndpoint, contentAgentApplyEndpoint],
+  endpoints: [
+    pageAgentChatEndpoint,
+    pageAgentApplyEndpoint,
+    contentAgentChatEndpoint,
+    contentAgentApplyEndpoint,
+    navigationUpsertEndpoint,
+  ],
   cors: [
     "http://localhost:3002",
     "https://tbz-web.vercel.app",

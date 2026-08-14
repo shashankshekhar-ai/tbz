@@ -8,7 +8,12 @@ import {
   type AgentPageState,
 } from "../lib/pageAgent";
 
+// Accepts either a logged-in Payload admin session, or the shared service
+// token AIwebmaster authenticates with (it has no Payload session).
 async function requireAdmin(req: PayloadRequest): Promise<Response | null> {
+  const serviceToken = process.env.CMS_SERVICE_TOKEN;
+  const header = req.headers.get("x-service-token");
+  if (serviceToken && header === serviceToken) return null;
   if (!req.user) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
