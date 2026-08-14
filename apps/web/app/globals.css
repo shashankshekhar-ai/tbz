@@ -137,6 +137,57 @@ body {
   background: radial-gradient(circle at 50% 50%, rgba(197, 123, 75, 0.08) 0%, rgba(248, 250, 252, 0) 70%);
 }
 
+/* Insight article body typography (no @tailwindcss/typography plugin installed) */
+.insight-body {
+  font-family: var(--font-roboto), sans-serif;
+  color: var(--color-brand-navy);
+  font-size: 1.0625rem;
+  line-height: 1.75;
+}
+
+.insight-body > * + * {
+  margin-top: 1.25em;
+}
+
+.insight-body h2,
+.insight-body h3 {
+  font-family: var(--font-montserrat), sans-serif;
+  font-weight: 700;
+  color: var(--color-brand-navy);
+  margin-top: 2em;
+}
+
+.insight-body h2 {
+  font-size: 1.5rem;
+}
+
+.insight-body h3 {
+  font-size: 1.25rem;
+}
+
+.insight-body ul,
+.insight-body ol {
+  padding-left: 1.5em;
+}
+
+.insight-body ul {
+  list-style: disc;
+}
+
+.insight-body ol {
+  list-style: decimal;
+}
+
+.insight-body a {
+  color: var(--color-brand-teal);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.insight-body img {
+  border-radius: var(--radius-card);
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;

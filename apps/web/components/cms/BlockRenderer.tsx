@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { RichText, type LexicalNode } from "./RichText";
 
 type Block = {
   blockType: string;
@@ -51,16 +52,6 @@ type HeroData = {
   secondaryCtaText?: string;
   secondaryCtaUrl?: string;
   theme?: "dark" | "light";
-};
-
-type LexicalNode = {
-  type: string;
-  children?: LexicalNode[];
-  text?: string;
-  format?: number;
-  tag?: string;
-  listType?: string;
-  url?: string;
 };
 
 type RichTextData = {
@@ -137,63 +128,6 @@ function HeroBlock({ block }: { block: HeroData }) {
   );
 }
 
-function SerializedLexical({ nodes }: { nodes: LexicalNode[] }) {
-  return (
-    <>
-      {nodes.map((node, i) => {
-        if (node.type === "text") {
-          let text: React.ReactNode = node.text ?? "";
-          if (node.format && node.format & 1) text = <strong key={i}>{text}</strong>;
-          else if (node.format && node.format & 2) text = <em key={i}>{text}</em>;
-          else if (node.format && node.format & 8) text = <u key={i}>{text}</u>;
-          else text = <span key={i}>{text}</span>;
-          return text;
-        }
-        if (node.type === "paragraph") {
-          return (
-            <p key={i}>
-              <SerializedLexical nodes={node.children ?? []} />
-            </p>
-          );
-        }
-        if (node.type === "heading") {
-          const Tag = (node.tag ?? "h2") as "h1" | "h2" | "h3" | "h4";
-          return (
-            <Tag key={i}>
-              <SerializedLexical nodes={node.children ?? []} />
-            </Tag>
-          );
-        }
-        if (node.type === "list") {
-          const Tag = node.listType === "number" ? "ol" : "ul";
-          return (
-            <Tag key={i}>
-              <SerializedLexical nodes={node.children ?? []} />
-            </Tag>
-          );
-        }
-        if (node.type === "listitem") {
-          return (
-            <li key={i}>
-              <SerializedLexical nodes={node.children ?? []} />
-            </li>
-          );
-        }
-        if (node.type === "link") {
-          return (
-            <a key={i} href={node.url ?? "#"}>
-              <SerializedLexical nodes={node.children ?? []} />
-            </a>
-          );
-        }
-        return node.children?.length ? (
-          <SerializedLexical key={i} nodes={node.children} />
-        ) : null;
-      })}
-    </>
-  );
-}
-
 function RichTextBlockComponent({ block }: { block: RichTextData }) {
   const widthClass =
     block.maxWidth === "wide"
@@ -207,7 +141,7 @@ function RichTextBlockComponent({ block }: { block: RichTextData }) {
   return (
     <section className="py-16 px-6">
       <div className={`${widthClass} mx-auto prose prose-lg prose-slate`}>
-        <SerializedLexical nodes={block.content.root.children} />
+        <RichText content={block.content} />
       </div>
     </section>
   );

@@ -32,9 +32,10 @@ type BlogPost = {
   title: string;
   slug: string;
   excerpt?: string;
-  author?: string;
+  author?: { name?: string; role?: string; image?: { url?: string } | null };
   publishedAt?: string;
   updatedAt?: string;
+  featuredImage?: { url?: string } | null;
   seo?: { aiSummary?: string; description?: string };
 };
 
@@ -48,11 +49,28 @@ export function buildArticleJsonLd(post: BlogPost): Record<string, any> {
     url: `${BASE_URL}/insights/${post.slug}`,
     ...(post.publishedAt ? { datePublished: post.publishedAt } : {}),
     ...(post.updatedAt ? { dateModified: post.updatedAt } : {}),
-    ...(post.author ? { author: { "@type": "Person", name: post.author } } : {}),
+    ...(post.featuredImage?.url ? { image: post.featuredImage.url } : {}),
+    ...(post.author?.name
+      ? { author: { "@type": "Person", name: post.author.name, ...(post.author.role ? { jobTitle: post.author.role } : {}) } }
+      : {}),
     publisher: {
       "@type": "Organization",
       name: "The Bradbury Group",
       url: BASE_URL,
     },
+  };
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function buildBreadcrumbJsonLd(items: { name: string; url: string }[]): Record<string, any> {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((item, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: item.name,
+      item: item.url,
+    })),
   };
 }

@@ -27,6 +27,7 @@ export async function GET() {
     `- [Our AI Return](${BASE_URL}/our-ai-return)`,
     `- [AI Readiness Assessment](${BASE_URL}/assessment): free scored assessment of an organization's AI maturity`,
     `- [Resources](${BASE_URL}/resources): gated guides, templates, checklists`,
+    `- [Insights](${BASE_URL}/insights): articles, research, and perspectives on leadership and organizational performance`,
     `- [Contact / Book a Discovery Call](${BASE_URL}/contact)`,
     "",
   ];
@@ -41,7 +42,7 @@ export async function GET() {
   }
 
   if (posts.length > 0) {
-    lines.push("## Insights (blog)", "");
+    lines.push("## Insights (articles)", "");
     for (const post of posts as Array<{
       slug: string;
       title: string;

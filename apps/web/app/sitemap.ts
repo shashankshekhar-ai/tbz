@@ -30,9 +30,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }));
 
   const postRoutes: MetadataRoute.Sitemap = posts.map(
-    (p: { slug: string; publishedAt?: string }) => ({
+    (p: { slug: string; updatedAt?: string; publishedAt?: string }) => ({
       url: `${BASE_URL}/insights/${p.slug}`,
-      lastModified: p.publishedAt ? new Date(p.publishedAt) : new Date(),
+      lastModified: p.updatedAt ? new Date(p.updatedAt) : p.publishedAt ? new Date(p.publishedAt) : new Date(),
       priority: 0.6,
     })
   );
