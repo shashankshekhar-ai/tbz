@@ -14,6 +14,8 @@ import httpx
 import psycopg2
 
 from core.config import settings
+from core.repo_state import git_state
+from db.deploy_state import set_last_publish
 
 
 class ExecutionError(Exception):
@@ -42,6 +44,21 @@ def _run_subprocess(args: list[str], *, cwd: str, timeout: int = 300) -> dict[st
 
 
 def run_git(payload: dict[str, Any]) -> dict[str, Any]:
+    op = payload.get("op", "commit")
+
+    if op == "discard":
+        # Restores tracked files to their last-committed state. Deliberately
+        # does NOT touch untracked new files (e.g. from a code_edit "write")
+        # — `git checkout --` can't recover those if wrong, so leaving them
+        # alone is the safer default; delete them by hand if truly unwanted.
+        files = payload.get("files")
+        if files is not None and (not isinstance(files, list) or not files):
+            raise ExecutionError("git discard 'files' must be a non-empty list, or omit it to discard everything")
+        # .env is gitignored (never tracked), so a bare "." here can't touch it.
+        args = ["git", "checkout", "--"] + (files if files else ["."])
+        result = _run_subprocess(args, cwd=settings.repo_path)
+        return {"steps": [result], "ok": result["ok"]}
+
     message = payload.get("message")
     push = bool(payload.get("push", False))
     if not message or not isinstance(message, str):
@@ -56,24 +73,46 @@ def run_git(payload: dict[str, Any]) -> dict[str, Any]:
 
 
 _ALLOWED_COMPOSE_SERVICES = {"cms", "web", "api"}
+_PROD_COMPOSE_SERVICES = ["cms-prod", "web-prod", "api-prod"]
+_PROD_COMPOSE_ARGS = ["-f", "docker-compose.yml", "-f", "docker-compose.prod.yml"]
+_ALLOWED_STAGING_SERVICES = {"cms-prod", "web-prod", "api-prod"}
+_ALLOWED_OPS = {"rebuild", "start", "stop", "restart"}
 
 
 def run_docker(payload: dict[str, Any]) -> dict[str, Any]:
     services = payload.get("services")
+    env = payload.get("env", "dev")
+    op = payload.get("op", "rebuild")
     if not services or not isinstance(services, list):
         raise ExecutionError("docker action requires a non-empty 'services' list")
-    invalid = [s for s in services if s not in _ALLOWED_COMPOSE_SERVICES]
-    if invalid:
-        raise ExecutionError(f"Unknown service(s) {invalid}; allowed: {sorted(_ALLOWED_COMPOSE_SERVICES)}")
+    if env not in {"dev", "staging"}:
+        raise ExecutionError("docker action requires env: 'dev' or 'staging'")
+    if op not in _ALLOWED_OPS:
+        raise ExecutionError(f"docker action requires op in {sorted(_ALLOWED_OPS)}")
 
-    build = _run_subprocess(["docker", "compose", "-p", "rewamped-site", "build", *services], cwd=settings.repo_path, timeout=1800)
+    allowed = _ALLOWED_COMPOSE_SERVICES if env == "dev" else _ALLOWED_STAGING_SERVICES
+    invalid = [s for s in services if s not in allowed]
+    if invalid:
+        raise ExecutionError(f"Unknown service(s) {invalid} for env '{env}'; allowed: {sorted(allowed)}")
+
+    compose_args = [] if env == "dev" else _PROD_COMPOSE_ARGS
+    base = ["docker", "compose", *compose_args, "-p", "rewamped-site"]
+
+    if op == "stop":
+        result = _run_subprocess([*base, "stop", *services], cwd=settings.repo_path, timeout=120)
+        return {"steps": [result], "ok": result["ok"]}
+    if op == "start":
+        result = _run_subprocess([*base, "start", *services], cwd=settings.repo_path, timeout=120)
+        return {"steps": [result], "ok": result["ok"]}
+    if op == "restart":
+        result = _run_subprocess([*base, "restart", *services], cwd=settings.repo_path, timeout=180)
+        return {"steps": [result], "ok": result["ok"]}
+
+    # op == "rebuild" (default, matches original behavior): build then force-recreate.
+    build = _run_subprocess([*base, "build", *services], cwd=settings.repo_path, timeout=1800)
     if not build["ok"]:
         return {"steps": [build], "ok": False}
-    up = _run_subprocess(
-        ["docker", "compose", "-p", "rewamped-site", "up", "-d", "--force-recreate", *services],
-        cwd=settings.repo_path,
-        timeout=300,
-    )
+    up = _run_subprocess([*base, "up", "-d", "--force-recreate", *services], cwd=settings.repo_path, timeout=300)
     return {"steps": [build, up], "ok": build["ok"] and up["ok"]}
 
 
@@ -128,14 +167,15 @@ def call_content_agent(payload: dict[str, Any]) -> dict[str, Any]:
         raise ExecutionError("content action requires kind: page|post|resource|case-study")
     if not isinstance(fields, dict):
         raise ExecutionError("content action requires a 'fields' object")
+    publish = payload.get("publish", True)
 
     if kind == "page":
         url = f"{settings.cms_url}/api/page-agent/apply"
-        body = {"pageId": doc_id, "proposal": fields}
+        body = {"pageId": doc_id, "proposal": fields, "publish": publish}
     else:
         content_kind = {"post": "post", "resource": "resource", "case-study": "case-study"}[kind]
         url = f"{settings.cms_url}/api/content-agent/apply"
-        body = {"kind": content_kind, "docId": doc_id, "proposal": fields}
+        body = {"kind": content_kind, "docId": doc_id, "proposal": fields, "publish": publish}
 
     resp = httpx.post(url, json=body, headers=_cms_headers(), timeout=30)
     if resp.status_code >= 400:
@@ -144,8 +184,10 @@ def call_content_agent(payload: dict[str, Any]) -> dict[str, Any]:
 
 
 def call_nav_endpoint(payload: dict[str, Any]) -> dict[str, Any]:
-    if not payload.get("label") or not payload.get("href") or not payload.get("location"):
-        raise ExecutionError("nav_link action requires label, href, and location")
+    if not payload.get("label") or not payload.get("location"):
+        raise ExecutionError("nav_link action requires label and location")
+    if not payload.get("remove") and not payload.get("href"):
+        raise ExecutionError("nav_link action requires href unless remove: true")
     url = f"{settings.cms_url}/api/nav-link/upsert"
     resp = httpx.post(url, json=payload, headers=_cms_headers(), timeout=30)
     if resp.status_code >= 400:
@@ -167,10 +209,6 @@ def run_user_management(payload: dict[str, Any]) -> dict[str, Any]:
 
     user = create_user(email=email, password_hash=hash_password(password), role=role)
     return {"ok": True, "user": {"id": user["id"], "email": user["email"], "role": user["role"]}}
-
-
-_PROD_COMPOSE_SERVICES = ["cms-prod", "web-prod", "api-prod"]
-_PROD_COMPOSE_ARGS = ["-f", "docker-compose.yml", "-f", "docker-compose.prod.yml"]
 
 
 _BACKUP_KEEP = 5
@@ -255,6 +293,12 @@ def run_publish(payload: dict[str, Any]) -> dict[str, Any]:
         timeout=300,
     )
     steps.append(up)
+    if up["ok"]:
+        try:
+            sha, tree_hash = git_state()
+            set_last_publish(sha, tree_hash)
+        except Exception:
+            pass  # best-effort — worst case the next diff check looks stale, not wrong-dangerous
     return {"steps": steps, "ok": up["ok"]}
 
 

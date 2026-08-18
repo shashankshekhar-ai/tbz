@@ -20,6 +20,7 @@ type NavUpsertBody = {
   order?: number;
   enabled?: boolean;
   openInNewTab?: boolean;
+  remove?: boolean;
 };
 
 export const navigationUpsertEndpoint: Endpoint = {
@@ -30,8 +31,30 @@ export const navigationUpsertEndpoint: Endpoint = {
     if (unauthorized) return unauthorized;
 
     const body = (await req.json?.()) as NavUpsertBody | undefined;
-    if (!body?.label || !body?.href || !body?.location) {
-      return Response.json({ error: "label, href, and location are required" }, { status: 400 });
+    if (!body?.label || !body?.location) {
+      return Response.json({ error: "label and location are required" }, { status: 400 });
+    }
+
+    if (body.remove) {
+      try {
+        const existing = await req.payload.find({
+          collection: "navigation",
+          where: { and: [{ label: { equals: body.label } }, { location: { equals: body.location } }] },
+          limit: 1,
+        });
+        if (!existing.docs[0]) {
+          return Response.json({ error: `No nav link found: '${body.label}' in ${body.location}` }, { status: 404 });
+        }
+        await req.payload.delete({ collection: "navigation", id: existing.docs[0].id });
+        return Response.json({ removed: true, label: body.label, location: body.location });
+      } catch (err) {
+        req.payload.logger.error({ err }, "navigation_remove_failed");
+        return Response.json({ error: "Failed to remove navigation entry" }, { status: 500 });
+      }
+    }
+
+    if (!body.href) {
+      return Response.json({ error: "href is required unless remove: true" }, { status: 400 });
     }
 
     const data = {

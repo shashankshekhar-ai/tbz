@@ -81,7 +81,7 @@ export const contentAgentApplyEndpoint: Endpoint = {
     if (unauthorized) return unauthorized;
 
     const body = (await req.json?.()) as
-      | { kind?: string; docId?: string; proposal?: Record<string, unknown> }
+      | { kind?: string; docId?: string; proposal?: Record<string, unknown>; publish?: boolean }
       | undefined;
 
     if (!isContentKind(body?.kind)) {
@@ -92,6 +92,12 @@ export const contentAgentApplyEndpoint: Endpoint = {
     if (!proposal) {
       return Response.json({ error: "proposal is required" }, { status: 400 });
     }
+    // Default true (existing behavior). false = save a draft version instead
+    // of touching the live doc — only meaningful for collections with
+    // versions.drafts enabled (posts, case-studies); resources has no drafts
+    // concept, so this is a no-op there regardless of the flag.
+    const publish = body?.publish ?? true;
+    const supportsDrafts = kind === "post" || kind === "case-study";
 
     const cfg = getKindConfig(kind);
     const data = cfg.toPayloadData(proposal);
@@ -102,12 +108,14 @@ export const contentAgentApplyEndpoint: Endpoint = {
             collection: cfg.collectionSlug as "posts" | "resources" | "case-studies",
             id: body.docId,
             data,
+            ...(supportsDrafts ? { draft: !publish } : {}),
           })
         : await req.payload.create({
             collection: cfg.collectionSlug as "posts" | "resources" | "case-studies",
             data: { ...data, status: "draft" },
+            ...(supportsDrafts ? { draft: !publish } : {}),
           });
-      return Response.json({ id: doc.id, slug: doc.slug });
+      return Response.json({ id: doc.id, slug: doc.slug, draft: supportsDrafts && !publish });
     } catch (err) {
       req.payload.logger.error({ err }, "content_agent_apply_failed");
       return Response.json({ error: "Failed to save entry" }, { status: 500 });

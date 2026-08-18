@@ -20,6 +20,7 @@ from pathlib import Path
 from typing import Any
 
 import psycopg2
+import psycopg2.extras
 
 from core.config import settings
 
@@ -103,3 +104,17 @@ def log_event(
             f.write(line + "\n")
     except OSError:
         logger.exception("failed to append to audit log file (DB row still written)")
+
+
+def list_recent(limit: int = 50) -> list[dict[str, Any]]:
+    conn = psycopg2.connect(settings.api_database_url)
+    try:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute(
+                "SELECT id, event, actor, action_type, action_id, payload, result, ok, created_at "
+                "FROM aiwebmaster_audit ORDER BY id DESC LIMIT %s",
+                (limit,),
+            )
+            return [dict(r) for r in cur.fetchall()]
+    finally:
+        conn.close()

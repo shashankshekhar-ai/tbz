@@ -74,23 +74,30 @@ export const pageAgentApplyEndpoint: Endpoint = {
     const unauthorized = await requireAdmin(req);
     if (unauthorized) return unauthorized;
 
-    const body = (await req.json?.()) as { pageId?: string; proposal?: AgentPageState } | undefined;
+    const body = (await req.json?.()) as
+      | { pageId?: string; proposal?: AgentPageState; publish?: boolean }
+      | undefined;
     const proposal = body?.proposal;
     if (!proposal) {
       return Response.json({ error: "proposal is required" }, { status: 400 });
     }
+    // Default true — keeps existing behavior for callers that don't pass it.
+    // false saves a new draft version without touching the live/published doc
+    // (collection has versions.drafts enabled — see Pages.ts).
+    const publish = body?.publish ?? true;
 
     const layout = agentBlocksToPayloadLayout(proposal.blocks);
     const data = { title: proposal.title, slug: proposal.slug, layout };
 
     try {
       const doc = body?.pageId
-        ? await req.payload.update({ collection: "pages", id: body.pageId, data })
+        ? await req.payload.update({ collection: "pages", id: body.pageId, data, draft: !publish })
         : await req.payload.create({
             collection: "pages",
             data: { ...data, status: "draft" },
+            draft: !publish,
           });
-      return Response.json({ id: doc.id, slug: doc.slug });
+      return Response.json({ id: doc.id, slug: doc.slug, draft: !publish });
     } catch (err) {
       req.payload.logger.error({ err }, "page_agent_apply_failed");
       return Response.json({ error: "Failed to save page" }, { status: 500 });

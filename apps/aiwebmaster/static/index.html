@@ -17,7 +17,7 @@
 <div id="page-content" class="flex-1 flex flex-col min-w-0 overflow-hidden h-screen">
   <header class="px-6 py-4 border-b border-brand-border bg-brand-navy/60 backdrop-blur flex items-center justify-between animate-fade-in">
     <div>
-      <h1 class="text-sm font-semibold">Chat</h1>
+      <h1 id="chat-title" class="text-sm font-semibold">New chat</h1>
       <p class="text-xs text-brand-muted mt-0.5">Ask me to edit content, redeploy services, run SQL, or manage the site — every action is shown before it runs.</p>
     </div>
     <div class="flex items-center gap-2 shrink-0">
@@ -25,11 +25,15 @@
         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse-dot"></span>Preview (dev)
       </a>
       <a id="live-link" href="#" target="_blank" class="hidden sm:flex items-center gap-1.5 text-xs text-brand-muted hover:text-brand-ink transition-colors px-2.5 py-1.5 rounded-lg border border-brand-border hover:border-brand-gold/40">
-        <span class="w-1.5 h-1.5 rounded-full bg-brand-gold animate-pulse-dot"></span>Live (prod)
+        <span class="w-1.5 h-1.5 rounded-full bg-brand-gold animate-pulse-dot"></span>Live (staging)
       </a>
+      <button id="rollback-btn" style="display:none;"
+        class="items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-brand-panel2 text-brand-ink border border-brand-border transition-all hover:brightness-110 active:scale-[.97] disabled:opacity-40 disabled:cursor-default">
+        Rollback staging
+      </button>
       <button id="publish-btn" style="display:none;"
-        class="items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-brand-terracotta text-white transition-all hover:brightness-110 active:scale-[.97]">
-        Publish to production
+        class="items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-brand-terracotta text-white transition-all hover:brightness-110 active:scale-[.97] disabled:opacity-40 disabled:cursor-default">
+        Publish to staging
       </button>
     </div>
   </header>
@@ -54,8 +58,24 @@
 const log = document.getElementById('log');
 const input = document.getElementById('input');
 const send = document.getElementById('send');
+const chatTitle = document.getElementById('chat-title');
 let history = [];
 let me = null;
+let currentSessionId = null;
+
+async function loadSessionFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const sid = params.get('session');
+  if (!sid) return;
+  const res = await fetch(`/api/chat/sessions/${sid}`);
+  if (!res.ok) return;
+  const { session, messages } = await res.json();
+  currentSessionId = session.id;
+  chatTitle.textContent = session.title;
+  history = messages.map(m => ({ role: m.role, content: m.content }));
+  log.innerHTML = '';
+  messages.forEach(m => addMsg(m.role, m.content));
+}
 
 const KIND_TO_CONTENT_KIND = { pages: 'page', posts: 'post', resources: 'resource', 'case-studies': 'case-study', navigation: 'nav_link' };
 let editContext = null;
@@ -67,8 +87,18 @@ async function loadEditContext() {
   if (!kind || !id) return;
 
   if (kind === 'navigation') {
-    editContext = { kind, contentKind: 'nav_link', docId: null };
-    addMsg('assistant', `Ready to add a new navigation link. Tell me the label, URL, and whether it's header or footer.`);
+    if (id === 'new') {
+      editContext = { kind, contentKind: 'nav_link', docId: null };
+      addMsg('assistant', `Ready to add a new navigation link. Tell me the label, URL, and whether it's header or footer.`);
+      return;
+    }
+    try {
+      const nav = await (await fetch(`/api/content/navigation/${id}`)).json();
+      editContext = { kind, contentKind: 'nav_link', docId: null, navIdentity: { label: nav.label, location: nav.location } };
+      addMsg('assistant', `Editing nav link "${nav.label}" (${nav.location}, order ${nav.order ?? 0}) → ${nav.href}. Tell me what to change — or say "remove this" to delete it.`);
+    } catch (e) {
+      addMsg('assistant', `Couldn't load nav link #${id}: ${e}`);
+    }
     return;
   }
   const contentKind = KIND_TO_CONTENT_KIND[kind];
@@ -83,7 +113,11 @@ async function loadEditContext() {
     const doc = await (await fetch(`/api/content/${kind}/${id}`)).json();
     const { id: _id, createdAt, updatedAt, ...fields } = doc;
     editContext = { kind, contentKind, docId: String(id) };
-    addMsg('assistant', `Editing "${doc.title || doc.label || id}" (${contentKind} #${id}). Current fields:\n${JSON.stringify(fields, null, 2)}\n\nTell me what to change.`);
+    const DRAFT_SUPPORTED = { pages: true, posts: true, 'case-studies': true };
+    const historyNote = DRAFT_SUPPORTED[kind]
+      ? ` I'll save changes as a draft by default (won't touch the live version) unless you say to publish — full version history is in the CMS admin: http://${window.location.hostname}:3003/admin/collections/${kind}/${id}.`
+      : '';
+    addMsg('assistant', `Editing "${doc.title || doc.label || id}" (${contentKind} #${id}). Current fields:\n${JSON.stringify(fields, null, 2)}\n\nTell me what to change.${historyNote}`);
   } catch (e) {
     addMsg('assistant', `Couldn't load ${kind} #${id}: ${e}`);
   }
@@ -102,11 +136,30 @@ async function init() {
   if (canRun(me, 'publish')) {
     const btn = document.getElementById('publish-btn');
     btn.style.display = 'flex';
+    btn.title = 'Checking for changes…';
+    btn.disabled = true;
+
+    let diff = null;
+    try {
+      const res = await fetch('/api/deploy/diff');
+      if (res.ok) diff = await res.json();
+    } catch (e) { /* fall through — leave button enabled, don't block on an unknown */ }
+
+    if (diff && !diff.has_changes) {
+      btn.disabled = true;
+      btn.title = 'Dev and staging already match — nothing to publish.';
+    } else {
+      btn.disabled = false;
+      btn.title = diff
+        ? [diff.code_changed && 'code changed', diff.content_changed && 'content changed'].filter(Boolean).join(', ')
+        : '';
+    }
+
     btn.onclick = async () => {
-      if (!confirm('Publish dev content + current code to production? This overwrites the production database (a backup is taken first) and redeploys cms-prod/web-prod/api-prod.')) return;
+      if (!(await dialogConfirm('Publish dev content + current code to staging? This overwrites the staging database (a backup is taken first) and redeploys the staging containers.', { confirmText: 'Publish' }))) return;
       btn.disabled = true;
       btn.textContent = 'Publishing… (can take a few minutes)';
-      addMsg('user', 'Publish dev to production');
+      addMsg('user', 'Publish dev to staging');
       try {
         const res = await fetch('/api/actions/run', {
           method: 'POST',
@@ -114,7 +167,7 @@ async function init() {
           body: JSON.stringify({ id: 'publish-' + Date.now(), type: 'publish', payload: { target: 'prod' } }),
         });
         const data = await res.json();
-        addMsg('assistant', res.ok ? 'Published to production.' : 'Publish failed — see details below.');
+        addMsg('assistant', res.ok ? 'Published to staging.' : 'Publish failed — see details below.');
         const pre = document.createElement('pre');
         pre.className = 'text-[11px] bg-brand-navy2 border border-brand-border rounded-lg p-3 max-w-[70%] ml-11 overflow-auto max-h-64 animate-fade-in';
         pre.textContent = JSON.stringify(data, null, 2);
@@ -122,13 +175,53 @@ async function init() {
       } catch (e) {
         addMsg('assistant', 'Publish failed: ' + e);
       }
-      btn.disabled = false;
-      btn.textContent = 'Publish to production';
+      btn.textContent = 'Publish to staging';
+      btn.disabled = true;
+      btn.title = 'Checking for changes…';
+      try {
+        const res2 = await fetch('/api/deploy/diff');
+        if (res2.ok) {
+          const d2 = await res2.json();
+          btn.disabled = !d2.has_changes;
+          btn.title = d2.has_changes ? '' : 'Dev and staging already match — nothing to publish.';
+        }
+      } catch (e) { btn.disabled = false; btn.title = ''; }
     };
+
+    const rbBtn = document.getElementById('rollback-btn');
+    if (canRun(me, 'rollback')) {
+      rbBtn.style.display = 'flex';
+      rbBtn.disabled = !diff || !diff.has_backup;
+      rbBtn.title = diff && !diff.has_backup ? 'No publish backup to roll back to yet.' : '';
+      rbBtn.onclick = async () => {
+        if (!(await dialogConfirm('Roll staging back to the most recent pre-publish backup? This overwrites the current staging database.', { confirmText: 'Rollback', danger: true }))) return;
+        rbBtn.disabled = true;
+        rbBtn.textContent = 'Rolling back…';
+        addMsg('user', 'Rollback staging');
+        try {
+          const res = await fetch('/api/actions/run', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: 'rollback-' + Date.now(), type: 'rollback', payload: {} }),
+          });
+          const data = await res.json();
+          addMsg('assistant', res.ok ? 'Rolled staging back.' : 'Rollback failed — see details below.');
+          const pre = document.createElement('pre');
+          pre.className = 'text-[11px] bg-brand-navy2 border border-brand-border rounded-lg p-3 max-w-[70%] ml-11 overflow-auto max-h-64 animate-fade-in';
+          pre.textContent = JSON.stringify(data, null, 2);
+          log.appendChild(pre);
+        } catch (e) {
+          addMsg('assistant', 'Rollback failed: ' + e);
+        }
+        rbBtn.disabled = false;
+        rbBtn.textContent = 'Rollback staging';
+      };
+    }
   }
 
   input.disabled = false;
   send.disabled = false;
+  await loadSessionFromUrl();
   await loadEditContext();
   input.focus();
 }
@@ -151,6 +244,65 @@ function addMsg(role, text) {
   log.appendChild(row);
   log.scrollTop = log.scrollHeight;
   return row;
+}
+
+const FILE_PREFIX_TO_SERVICE = { 'apps/web/': 'web', 'apps/cms/': 'cms', 'apps/api/': 'api' };
+
+function previewLink(label) {
+  const a = document.createElement('a');
+  a.href = `http://${window.location.hostname}:3002`;
+  a.target = '_blank';
+  a.textContent = label || '↗ Preview (dev)';
+  a.className = 'inline-flex items-center gap-1 text-xs font-medium text-brand-teal hover:text-brand-gold transition-colors mt-1';
+  return a;
+}
+
+function followUpEl(action) {
+  const wrap = document.createElement('div');
+  wrap.className = 'mt-1';
+
+  if (action.type === 'content' || action.type === 'nav_link') {
+    // CMS-served — already live, no rebuild needed.
+    wrap.appendChild(previewLink('↗ Preview (dev)'));
+    return wrap;
+  }
+
+  if (action.type === 'docker') {
+    wrap.appendChild(previewLink('↗ Preview (dev)'));
+    return wrap;
+  }
+
+  if (action.type === 'code_edit') {
+    const file = action.payload.file || '';
+    const prefix = Object.keys(FILE_PREFIX_TO_SERVICE).find(p => file.startsWith(p));
+    const service = prefix ? FILE_PREFIX_TO_SERVICE[prefix] : null;
+    if (!service || !canRun(me, 'docker')) return wrap;
+
+    const btn = document.createElement('button');
+    btn.textContent = `Rebuild ${service} & Preview`;
+    btn.className = 'px-3 py-1.5 rounded-lg bg-brand-teal/15 text-brand-teal text-xs font-semibold transition-all hover:bg-brand-teal/25 active:scale-[.97]';
+    btn.onclick = async () => {
+      if (!(await dialogConfirm(`Rebuild and redeploy the '${service}' dev container to pick up this change?`, { confirmText: 'Rebuild' }))) return;
+      btn.disabled = true;
+      btn.textContent = 'Rebuilding… (can take a minute)';
+      try {
+        const res = await fetch('/api/actions/run', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: 'rebuild-' + Date.now(), type: 'docker', payload: { env: 'dev', op: 'rebuild', services: [service] } }),
+        });
+        const ok = res.ok;
+        btn.replaceWith(previewLink(ok ? '✓ Rebuilt — ↗ Preview (dev)' : 'Rebuild failed — check Deploy page'));
+      } catch (e) {
+        btn.textContent = 'Rebuild failed';
+        btn.disabled = false;
+      }
+    };
+    wrap.appendChild(btn);
+    return wrap;
+  }
+
+  return wrap;
 }
 
 function addActions(actions) {
@@ -198,6 +350,7 @@ function addActions(actions) {
           btn.className = res.ok
             ? 'px-3.5 py-1.5 rounded-lg bg-emerald-500/20 text-emerald-400 text-xs font-semibold'
             : 'px-3.5 py-1.5 rounded-lg bg-brand-terracotta/20 text-brand-terracotta text-xs font-semibold';
+          if (res.ok) footer.appendChild(followUpEl(a));
         } catch (e) {
           out.textContent = String(e);
           btn.textContent = 'Failed';
@@ -247,15 +400,18 @@ async function submit() {
     return;
   }
 
-  let sendText = text;
+  let pendingEditContext = null;
   if (editContext) {
-    const target = editContext.docId
-      ? `kind=${editContext.contentKind}, docId=${editContext.docId}`
-      : `kind=${editContext.contentKind}, docId=null (this is a NEW document)`;
-    sendText = `[Editing context: ${target}. When you propose a content/nav_link action for this, use exactly this kind/docId.]\n\n${text}`;
+    if (editContext.navIdentity) {
+      pendingEditContext = `kind=nav_link, existing entry label="${editContext.navIdentity.label}" location="${editContext.navIdentity.location}" (match on exactly this label+location when proposing an update or a remove:true action for it)`;
+    } else if (editContext.docId) {
+      pendingEditContext = `kind=${editContext.contentKind}, docId=${editContext.docId}`;
+    } else {
+      pendingEditContext = `kind=${editContext.contentKind}, docId=null (this is a NEW document)`;
+    }
     editContext = null;
   }
-  history.push({ role: 'user', content: sendText });
+  history.push({ role: 'user', content: text });
 
   send.disabled = true;
   addTyping();
@@ -263,12 +419,17 @@ async function submit() {
     const res = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ messages: history }),
+      body: JSON.stringify({ messages: history, session_id: currentSessionId, edit_context: pendingEditContext }),
     });
     removeTyping();
     if (res.status === 401) { window.location.href = '/login'; return; }
     const data = await res.json();
     if (!res.ok) { addMsg('assistant', 'Error: ' + (data.detail || res.status)); return; }
+    if (data.session_id && data.session_id !== currentSessionId) {
+      currentSessionId = data.session_id;
+      window.history.replaceState({}, '', '/?session=' + currentSessionId);
+      mountChatMenu('/');
+    }
     addMsg('assistant', data.reply);
     history.push({ role: 'assistant', content: data.reply });
     if (data.actions && data.actions.length) addActions(data.actions);

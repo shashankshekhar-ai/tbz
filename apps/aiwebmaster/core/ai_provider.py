@@ -17,7 +17,7 @@ from core.config import settings
 
 DEFAULT_MODELS = {
     "anthropic": "claude-sonnet-4-5",
-    "gemini": "gemini-2.5-flash",
+    "gemini": "gemini-flash-latest",
     "openai": "gpt-4o",
 }
 

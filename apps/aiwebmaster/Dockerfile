@@ -13,7 +13,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && curl -fsSL -o /usr/libexec/docker/cli-plugins/docker-compose \
        https://github.com/docker/compose/releases/download/v2.29.7/docker-compose-linux-x86_64 \
     && chmod +x /usr/libexec/docker/cli-plugins/docker-compose \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    # /repo is a bind mount owned by the host user; this container runs as
+    # root, so git (>=2.35) refuses to operate on it as "dubious ownership"
+    # unless explicitly trusted.
+    && git config --system --add safe.directory /repo
 
 WORKDIR /app
 

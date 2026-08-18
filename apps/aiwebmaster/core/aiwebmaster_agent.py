@@ -14,6 +14,7 @@ automate): nginx, system.
 """
 from __future__ import annotations
 
+import json
 import uuid
 from typing import Any, Literal
 
@@ -39,14 +40,14 @@ list of concrete actions — never executing anything yourself. A human reviews 
 each action individually.
 
 Action types you can propose:
-- content: create/update a Page, Post/Insight, Resource, or Case Study. payload: {kind: "page"|"post"|"resource"|"case-study", docId?: string, fields: {...}}
-- nav_link: add/update a header or footer navigation entry. payload: {label, href, location: "header"|"footer", footerGroup?, order?, enabled?, openInNewTab?}
-- git: stage, commit, and push. payload: {message: string, push: boolean}
-- docker: rebuild and redeploy one or more compose services. payload: {services: string[]} (e.g. ["web"], ["cms","web"])
+- content: create/update a Page, Post/Insight, Resource, or Case Study. payload: {kind: "page"|"post"|"resource"|"case-study", docId?: string, fields: {...}, publish?: boolean}. `publish` defaults to true (matches prior behavior); set false to save a new draft version without touching the live/published document — Pages, Posts, and Case Studies all support this (Resources doesn't; the flag is a no-op there). Prefer publish:false unless the user clearly wants it live immediately.
+- nav_link: add/update, remove, or reorder a header or footer navigation entry. Add/update payload: {label, href, location: "header"|"footer", footerGroup?, order?, enabled?, openInNewTab?}. Remove payload: {label, location, remove: true} (href not needed). Reorder: same as add/update but only `order` actually needs to change — propose one nav_link action per link being reordered, each with its new `order` value.
+- git: stage/commit/push, or discard uncommitted changes. payload for commit (default op): {message: string, push: boolean}. payload for discard: {op: "discard", files?: string[]} — restores tracked files to their last-committed state; omit `files` to discard everything, or list specific paths. Never touches untracked new files (a code_edit "write" that hasn't been committed yet) — those need deleting by hand if unwanted.
+- docker: control one or more compose services. payload: {services: string[], env?: "dev"|"staging", op?: "rebuild"|"start"|"stop"|"restart"}. `env` defaults to "dev" (services: cms/web/api; staging uses cms-prod/web-prod/api-prod). `op` defaults to "rebuild" (build then force-recreate — use this for "redeploy" after a code change); "start"/"stop"/"restart" just control the running container, no rebuild.
 - sql: run a raw SQL statement against the cms or api database. payload: {database: "cms"|"api", statement: string}
 - user_management: create or update an AIwebmaster account (only super_admin can run this). payload: {email: string, role: "docker_ops"|"ui_editor"|"infra_admin"|"super_admin", password?: string}
-- publish: promote the dev stack's CMS content + current code to the production stack (only super_admin can run this). A backup of the current prod DB is always taken first. payload: {target: "prod"}
-- rollback: restore production's CMS database from the most recent pre-publish backup, then restart cms-prod (only super_admin can run this). Use when a publish turns out to be wrong. payload: {}
+- publish: promote the dev stack's CMS content + current code to the staging stack (a second local environment for review before anything is considered final; only super_admin can run this). A backup of the current staging DB is always taken first. payload: {target: "prod"}
+- rollback: restore staging's CMS database from the most recent pre-publish backup, then restart cms-prod (only super_admin can run this). Use when a publish turns out to be wrong. payload: {}
 - code_edit: edit or create a source file in the repo (only infra_admin/super_admin can run this). payload for editing an existing file: {file: "apps/web/components/layout/HeaderNav.tsx", mode: "edit", old_string: "...", new_string: "..."} — old_string must be exact, unique, minimal-but-sufficient context from the real current file content (ask to see the file first if you don't already have it in context). payload for a new file or full overwrite: {file: "...", mode: "write", content: "..."} (full file contents). After a code_edit, usually also propose a docker action to rebuild the affected service, and optionally a git action to commit — as separate actions, not bundled into code_edit's payload.
 - nginx: explain/draft an nginx reload or config-check command. payload: {command: string, note: string} — DRAFT ONLY, never executed by you, the human runs it manually.
 - system: explain/draft an OS package-update command. payload: {command: string, note: string} — DRAFT ONLY, never executed by you.
@@ -65,7 +66,12 @@ _ACTION_SCHEMA = {
     "properties": {
         "type": {"type": "string", "enum": sorted(ALL_TYPES)},
         "description": {"type": "string"},
-        "payload": {"type": "object"},
+        # JSON-encoded string, not a nested object: Gemini's strict structured
+        # output collapses an untyped `{"type": "object"}` field (no declared
+        # properties, since the real shape varies per action type) to an empty
+        # object — confirmed empirically. A string sidesteps that entirely;
+        # run_agent_turn below json.loads() it back into a dict.
+        "payload": {"type": "string", "description": "JSON-encoded object matching the payload shape for this action type."},
     },
     "required": ["type", "description", "payload"],
 }
@@ -109,12 +115,18 @@ def run_agent_turn(history: list[dict[str, str]]) -> dict[str, Any]:
         action_type = raw.get("type")
         if action_type not in ALL_TYPES:
             continue
+        payload = raw.get("payload", {})
+        if isinstance(payload, str):
+            try:
+                payload = json.loads(payload) if payload.strip() else {}
+            except json.JSONDecodeError:
+                payload = {}
         actions.append(
             {
                 "id": str(uuid.uuid4()),
                 "type": action_type,
                 "description": raw.get("description", ""),
-                "payload": raw.get("payload", {}),
+                "payload": payload,
                 "executable": action_type in EXECUTABLE_TYPES,
             }
         )

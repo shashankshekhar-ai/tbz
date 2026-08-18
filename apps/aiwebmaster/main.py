@@ -8,7 +8,9 @@ from auth.bootstrap import bootstrap_admin
 from auth.router import router as auth_router
 from core.ai_settings import init_ai_settings_table
 from db.audit import init_audit_table
-from routers import actions, browse, chat, files, settings, system, users
+from db.chat_sessions import init_chat_tables
+from db.deploy_state import init_deploy_state_table
+from routers import actions, browse, chat, deploy, files, git, settings, system, users
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
 logger = logging.getLogger(__name__)
@@ -30,6 +32,14 @@ def on_startup() -> None:
         init_ai_settings_table()
     except Exception:
         logger.exception("failed to init aiwebmaster_ai_settings table")
+    try:
+        init_chat_tables()
+    except Exception:
+        logger.exception("failed to init chat session tables")
+    try:
+        init_deploy_state_table()
+    except Exception:
+        logger.exception("failed to init aiwebmaster_deploy_state table")
 
 
 @app.get("/health")
@@ -67,6 +77,16 @@ def settings_page() -> FileResponse:
     return FileResponse("static/settings.html")
 
 
+@app.get("/git")
+def git_page() -> FileResponse:
+    return FileResponse("static/git.html")
+
+
+@app.get("/deploy")
+def deploy_page() -> FileResponse:
+    return FileResponse("static/deploy.html")
+
+
 app.include_router(auth_router, prefix="/api")
 app.include_router(chat.router, prefix="/api")
 app.include_router(actions.router, prefix="/api")
@@ -75,5 +95,7 @@ app.include_router(users.router, prefix="/api")
 app.include_router(system.router, prefix="/api")
 app.include_router(settings.router, prefix="/api")
 app.include_router(files.router, prefix="/api")
+app.include_router(git.router, prefix="/api")
+app.include_router(deploy.router, prefix="/api")
 
 app.mount("/assets", StaticFiles(directory="static/assets"), name="assets")
