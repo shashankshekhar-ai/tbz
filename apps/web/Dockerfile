@@ -14,8 +14,10 @@ COPY --from=deps /app/apps/web/node_modules ./apps/web/node_modules
 COPY apps/web ./apps/web
 COPY pnpm-workspace.yaml package.json ./
 ENV NEXT_TELEMETRY_DISABLED=1
-ENV NEXT_PUBLIC_CMS_URL=http://cms:3003
-ENV NEXT_PUBLIC_API_URL=http://api:8000
+ARG NEXT_PUBLIC_CMS_URL=https://cms.thebradburygroup.com
+ARG NEXT_PUBLIC_API_URL=https://api.thebradburygroup.com
+ENV NEXT_PUBLIC_CMS_URL=${NEXT_PUBLIC_CMS_URL}
+ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
 RUN pnpm -F tbg-web build
 
 FROM node:22-alpine AS runner

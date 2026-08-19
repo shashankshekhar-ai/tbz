@@ -68,9 +68,8 @@ services:
     restart: unless-stopped
     ports:
       - "3002:3002"
-    environment:
-      NEXT_PUBLIC_CMS_URL: http://cms:3003
-      NEXT_PUBLIC_API_URL: http://api:8000
+    # NEXT_PUBLIC_* vars are inlined at build time (see apps/web/Dockerfile ARGs),
+    # not read at container runtime — setting them here would be a silent no-op.
     depends_on:
       - cms
       - api
@@ -85,7 +84,7 @@ services:
       dockerfile: Dockerfile
     restart: unless-stopped
     ports:
-      - "8110:8010"
+      - "8001:8010"
     environment:
       SESSION_SECRET: ${SESSION_SECRET:-}
       AIWEBMASTER_ADMIN_EMAIL: ${AIWEBMASTER_ADMIN_EMAIL:-}
