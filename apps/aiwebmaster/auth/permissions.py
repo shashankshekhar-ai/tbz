@@ -5,8 +5,8 @@ from typing import Any
 ROLE_PERMISSIONS: dict[str, set[str]] = {
     "docker_ops": {"docker", "git"},
     "ui_editor": {"content", "nav_link"},
-    "infra_admin": {"docker", "git", "sql", "code_edit"},
-    "super_admin": {"docker", "git", "sql", "content", "nav_link", "user_management", "publish", "rollback", "code_edit"},
+    "infra_admin": {"docker", "git", "sql", "code_edit", "codegen_agent"},
+    "super_admin": {"docker", "git", "sql", "content", "nav_link", "user_management", "publish", "rollback", "code_edit", "codegen_agent"},
 }
 
 

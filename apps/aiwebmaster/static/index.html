@@ -257,7 +257,7 @@ function previewLink(label) {
   return a;
 }
 
-function followUpEl(action) {
+function followUpEl(action, result) {
   const wrap = document.createElement('div');
   wrap.className = 'mt-1';
 
@@ -299,6 +299,52 @@ function followUpEl(action) {
       }
     };
     wrap.appendChild(btn);
+    return wrap;
+  }
+
+  if (action.type === 'codegen_agent') {
+    const diff = (result && result.diff) || '';
+    if (diff.trim()) {
+      const label = document.createElement('div');
+      label.className = 'text-[10px] font-bold uppercase tracking-wider text-brand-muted mt-2 mb-1';
+      label.textContent = `Diff (${(result.tool || 'agent')})`;
+      const pre = document.createElement('pre');
+      pre.className = 'text-[11px] bg-brand-navy2 border border-brand-border rounded-lg p-3 overflow-auto max-h-80 whitespace-pre-wrap';
+      pre.textContent = diff;
+      wrap.appendChild(label);
+      wrap.appendChild(pre);
+    }
+
+    if (canRun(me, 'docker')) {
+      const stat = (result && result.diff_stat) || '';
+      const services = [...new Set(
+        Object.entries(FILE_PREFIX_TO_SERVICE)
+          .filter(([prefix]) => stat.includes(prefix))
+          .map(([, service]) => service)
+      )];
+      services.forEach(service => {
+        const btn = document.createElement('button');
+        btn.textContent = `Rebuild ${service} & Preview`;
+        btn.className = 'px-3 py-1.5 rounded-lg bg-brand-teal/15 text-brand-teal text-xs font-semibold transition-all hover:bg-brand-teal/25 active:scale-[.97] mr-2 mt-2';
+        btn.onclick = async () => {
+          if (!(await dialogConfirm(`Rebuild and redeploy the '${service}' dev container to pick up this change?`, { confirmText: 'Rebuild' }))) return;
+          btn.disabled = true;
+          btn.textContent = 'Rebuilding… (can take a minute)';
+          try {
+            const res = await fetch('/api/actions/run', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ id: 'rebuild-' + Date.now(), type: 'docker', payload: { env: 'dev', op: 'rebuild', services: [service] } }),
+            });
+            btn.replaceWith(previewLink(res.ok ? '✓ Rebuilt — ↗ Preview (dev)' : 'Rebuild failed — check Deploy page'));
+          } catch (e) {
+            btn.textContent = 'Rebuild failed';
+            btn.disabled = false;
+          }
+        };
+        wrap.appendChild(btn);
+      });
+    }
     return wrap;
   }
 
@@ -350,7 +396,7 @@ function addActions(actions) {
           btn.className = res.ok
             ? 'px-3.5 py-1.5 rounded-lg bg-emerald-500/20 text-emerald-400 text-xs font-semibold'
             : 'px-3.5 py-1.5 rounded-lg bg-brand-terracotta/20 text-brand-terracotta text-xs font-semibold';
-          if (res.ok) footer.appendChild(followUpEl(a));
+          if (res.ok) footer.appendChild(followUpEl(a, data));
         } catch (e) {
           out.textContent = String(e);
           btn.textContent = 'Failed';

@@ -5,6 +5,7 @@ const NAV_ITEMS = [
   { path: '/browse', label: 'Browse & edit', icon: 'M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v7a2 2 0 01-2 2H5a2 2 0 01-2-2V7z' },
   { path: '/git', label: 'Git', icon: 'M6 3v12m0 0a3 3 0 103 3m-3-3a3 3 0 00-3 3m3-3a3 3 0 013-3m3-9a3 3 0 11-6 0 3 3 0 016 0zm6 0a3 3 0 11-6 0 3 3 0 016 0zm-3 3v6a3 3 0 01-3 3' },
   { path: '/deploy', label: 'Deploy', icon: 'M5 13l4 4L19 7' },
+  { path: '/agent', label: 'Agent Terminal', icon: 'M8 9l3 3-3 3m5 0h4M5 4h14a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V5a1 1 0 011-1z' },
   { path: '/users', label: 'Users', icon: 'M12 4.5a4 4 0 100 8 4 4 0 000-8zM4 20a8 8 0 0116 0' },
   { path: '/system', label: 'System', icon: 'M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 7h10v10H7V7z' },
   { path: '/settings', label: 'Settings', icon: 'M10.325 4.317a1 1 0 011.35-.936l.379.15a1 1 0 001.298-.53l.198-.38a1 1 0 011.766.93l-.15.38a1 1 0 00.53 1.298l.38.198a1 1 0 01-.93 1.766l-.38-.15a1 1 0 00-1.298.53l-.198.38a1 1 0 01-1.766-.93l.15-.38a1 1 0 00-.53-1.298l-.38-.198a1 1 0 01-.319-.15zM12 15a3 3 0 100-6 3 3 0 000 6z' },
@@ -272,8 +273,8 @@ async function mountChatMenu(activePath) {
 const ROLE_PERMISSIONS = {
   docker_ops: ['docker', 'git'],
   ui_editor: ['content', 'nav_link'],
-  infra_admin: ['docker', 'git', 'sql', 'code_edit'],
-  super_admin: ['docker', 'git', 'sql', 'content', 'nav_link', 'user_management', 'publish', 'rollback', 'code_edit'],
+  infra_admin: ['docker', 'git', 'sql', 'code_edit', 'codegen_agent'],
+  super_admin: ['docker', 'git', 'sql', 'content', 'nav_link', 'user_management', 'publish', 'rollback', 'code_edit', 'codegen_agent'],
 };
 function canRun(me, actionType) {
   return me && (ROLE_PERMISSIONS[me.role] || []).includes(actionType);

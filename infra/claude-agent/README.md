@@ -11,13 +11,18 @@ Uses your existing Claude subscription's included usage instead of separate
 per-token API billing. Leave `ANTHROPIC_API_KEY` unset in `.env` for this.
 
 ```sh
-docker compose run --rm --entrypoint claude claude-agent
+docker compose run --rm claude-agent auth login
 ```
 
-No browser exists inside the container, so `claude` prints a URL + code —
-open the URL on any device, enter the code, done. The session is saved to
-the `claude_agent_home` volume and persists across future runs (each
-`docker compose run` is a fresh container, but that volume isn't).
+No browser exists inside the container, so `claude` prints a URL — open it
+on any device, sign in, done. The session is saved to the `claude_agent_home`
+volume and persists across future runs (each `docker compose run` is a fresh
+container, but that volume isn't). Don't override `--entrypoint` for this —
+`run.sh` passes `auth`/`--help` straight through to the real CLI itself (see
+its comments); overriding the entrypoint skips `run.sh`'s
+`~/.claude.json` symlink setup and the login gets silently lost the moment
+the container exits (hit this for real during initial setup — `claude auth
+status` kept reporting `loggedIn: false` even after a completed login).
 
 ## Everyday use
 

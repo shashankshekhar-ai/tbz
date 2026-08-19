@@ -117,7 +117,12 @@ def run_docker(payload: dict[str, Any]) -> dict[str, Any]:
 
 
 _DB_URLS = {"cms": "cms_database_url", "api": "api_database_url"}
-_DESTRUCTIVE_KEYWORDS = ("DROP ", "TRUNCATE ", "DELETE FROM")
+# DROP/TRUNCATE are schema-destroying and irreversible even with a WHERE-style
+# qualifier (neither statement even accepts one) — blocked outright, no exception.
+_ALWAYS_BLOCKED_KEYWORDS = ("DROP ", "TRUNCATE ")
+# DELETE removes rows, not the schema — still destructive but reversible via a
+# restore, so it's only blocked when unscoped (no WHERE clause).
+_UNSCOPED_BLOCKED_KEYWORDS = ("DELETE FROM",)
 
 
 def run_sql(payload: dict[str, Any]) -> dict[str, Any]:
@@ -129,10 +134,14 @@ def run_sql(payload: dict[str, Any]) -> dict[str, Any]:
         raise ExecutionError("sql action requires a non-empty 'statement'")
 
     upper = statement.strip().upper()
-    if any(upper.startswith(k) or f" {k}" in f" {upper}" for k in _DESTRUCTIVE_KEYWORDS) and " WHERE " not in upper:
+    if any(upper.startswith(k) or f" {k}" in f" {upper}" for k in _ALWAYS_BLOCKED_KEYWORDS):
         raise ExecutionError(
-            "Refusing to run an unscoped destructive statement (DROP/TRUNCATE/DELETE without WHERE). "
-            "Add a WHERE clause or run it manually."
+            "Refusing to run DROP/TRUNCATE — schema-destroying statements are never allowed via "
+            "the sql action, run them manually if truly intended."
+        )
+    if any(upper.startswith(k) or f" {k}" in f" {upper}" for k in _UNSCOPED_BLOCKED_KEYWORDS) and " WHERE " not in upper:
+        raise ExecutionError(
+            "Refusing to run an unscoped DELETE (no WHERE clause). Add a WHERE clause or run it manually."
         )
 
     dsn = getattr(settings, _DB_URLS[database])
@@ -385,6 +394,49 @@ def run_code_edit(payload: dict[str, Any]) -> dict[str, Any]:
     return {"ok": True, "file": file, "mode": "edit"}
 
 
+_CODEGEN_SANDBOXES = {"claude": "claude-agent", "codex": "codex-agent"}
+
+
+def run_codegen_agent(payload: dict[str, Any]) -> dict[str, Any]:
+    """Invokes a real coding-agent CLI (Claude Code or Codex) inside its
+    isolated sandbox container (infra/claude-agent, infra/codex-agent) —
+    full file-edit/bash tool access, unlike code_edit's mechanical
+    old_string/new_string replace. The sandbox bind-mounts the same dev
+    source directories this container's own /repo mount sees, so after it
+    exits we diff the working tree here to surface what changed."""
+    from core.codegen_router import route_codegen
+
+    prompt = payload.get("prompt")
+    if not prompt or not isinstance(prompt, str):
+        raise ExecutionError("codegen_agent requires a non-empty 'prompt'")
+
+    hint_tool = payload.get("tool")
+    tool = route_codegen(prompt, hint_tool if hint_tool in _CODEGEN_SANDBOXES else None)
+    service = _CODEGEN_SANDBOXES[tool]
+
+    run = _run_subprocess(
+        [
+            "docker", "compose", "-f", f"{settings.repo_path}/docker-compose.yml",
+            "--project-directory", settings.host_repo_path,
+            "-p", "rewamped-site", "run", "--rm", service, prompt,
+        ],
+        cwd=settings.repo_path,
+        timeout=1800,
+    )
+
+    diff_stat = _run_subprocess(["git", "diff", "--stat"], cwd=settings.repo_path, timeout=30)
+    diff = _run_subprocess(["git", "diff"], cwd=settings.repo_path, timeout=30)
+
+    return {
+        "ok": run["ok"],
+        "tool": tool,
+        "sandbox_output": run["stdout"],
+        "sandbox_stderr": run["stderr"],
+        "diff_stat": diff_stat["stdout"],
+        "diff": diff["stdout"][-8000:],
+    }
+
+
 EXECUTORS = {
     "git": run_git,
     "docker": run_docker,
@@ -395,4 +447,5 @@ EXECUTORS = {
     "publish": run_publish,
     "rollback": run_rollback,
     "code_edit": run_code_edit,
+    "codegen_agent": run_codegen_agent,
 }

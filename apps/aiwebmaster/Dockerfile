@@ -17,7 +17,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     # /repo is a bind mount owned by the host user; this container runs as
     # root, so git (>=2.35) refuses to operate on it as "dubious ownership"
     # unless explicitly trusted.
-    && git config --system --add safe.directory /repo
+    && git config --system --add safe.directory /repo \
+    # git commit refuses to run at all with no identity configured — the
+    # `git` action (core/executors.py::run_git) failed outright with
+    # "Author identity unknown" until this was added, confirmed by testing.
+    # Every commit through this app already goes through the propose/
+    # approve/RBAC/audit pipeline — this identity is just the git-level
+    # committer field, not a substitute for that audit trail.
+    && git config --system user.name "AIwebmaster" \
+    && git config --system user.email "aiwebmaster@thebradburygroup.com"
 
 WORKDIR /app
 

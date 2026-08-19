@@ -6,7 +6,13 @@ services:
       POSTGRES_USER: tbg
       POSTGRES_PASSWORD: tbg_dev
     ports:
-      - "5433:5432"
+      # Bound to localhost only — every in-container service already reaches
+      # postgres over the internal compose network by name (postgres:5432);
+      # this mapping exists purely for host-side psql/GUI debugging and must
+      # never be reachable from outside this machine (e.g. on an AWS
+      # security group with an open 5433, "0.0.0.0:5433" would be internet-
+      # reachable with the weak default password above).
+      - "127.0.0.1:5433:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
       - ./infra/scripts/init-dbs.sh:/docker-entrypoint-initdb.d/init-dbs.sh
@@ -90,6 +96,13 @@ services:
       GEMINI_API_KEY: ${GEMINI_API_KEY:-}
       CMS_URL: http://cms:3003
       REPO_PATH: /repo
+      # Real host path of this checkout — required as `docker compose
+      # run --rm --project-directory ...` for claude-agent/codex-agent
+      # (core/executors.py, core/agent_stream.py), since their bind-mount
+      # volumes are resolved by the HOST daemon, which knows nothing about
+      # this container's own /repo view. Must match wherever this repo
+      # actually lives on the host; override in .env if that ever changes.
+      HOST_REPO_PATH: ${HOST_REPO_PATH:-/home/shashank/project/tbg/rewamped-site}
       API_DATABASE_URL: postgresql://tbg:tbg_dev@postgres:5432/tbg_api
       CMS_DATABASE_URL: postgresql://tbg:tbg_dev@postgres:5432/tbg_cms
       AUTH0_DOMAIN: ${AUTH0_DOMAIN:-}
@@ -135,8 +148,36 @@ services:
       - ./apps/cms:/workspace/apps/cms
       - ./apps/api:/workspace/apps/api
       - ./apps/aiwebmaster:/workspace/apps/aiwebmaster
-      - claude_agent_home:/root/.claude
+      - claude_agent_home:/home/node/.claude
       - claude_agent_transcripts:/transcripts
+    networks:
+      - sandbox
+    stdin_open: true
+    tty: true
+
+  # Isolated OpenAI Codex CLI sandbox — same isolation model as
+  # claude-agent above (own `sandbox` network, no docker socket, no root
+  # .env, no prod DB creds, only dev app source directories bind-mounted
+  # read-write). AIwebmaster's `codegen_agent` action picks between this
+  # and claude-agent per-request (core/codegen_router.py); manual use:
+  #   docker compose run --rm codex-agent "add a loading spinner to the contact form"
+  codex-agent:
+    build:
+      context: ./infra/codex-agent
+      dockerfile: Dockerfile
+    environment:
+      # Leave unset to use browser/device-code login instead (`codex`
+      # stores the session in codex_agent_home, persisted across runs).
+      # Only set this if you'd rather pay per-token via the API instead of
+      # using an existing ChatGPT subscription's included usage.
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+    volumes:
+      - ./apps/web:/workspace/apps/web
+      - ./apps/cms:/workspace/apps/cms
+      - ./apps/api:/workspace/apps/api
+      - ./apps/aiwebmaster:/workspace/apps/aiwebmaster
+      - codex_agent_home:/root/.codex
+      - codex_agent_transcripts:/transcripts
     networks:
       - sandbox
     stdin_open: true
@@ -151,3 +192,5 @@ volumes:
   aiwebmaster_data:
   claude_agent_home:
   claude_agent_transcripts:
+  codex_agent_home:
+  codex_agent_transcripts:

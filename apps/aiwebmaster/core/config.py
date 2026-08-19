@@ -36,6 +36,20 @@ class Settings(BaseSettings):
     # every git/docker executor runs with this as cwd.
     repo_path: str = "/repo"
 
+    # The SAME repo, but as the real HOST filesystem path (not /repo, which
+    # only means something inside this container's own mount namespace).
+    # Needed specifically for `docker compose run` calls that use bind-mount
+    # volumes (claude-agent/codex-agent) — those bind-mount sources get
+    # resolved and applied by the HOST docker daemon (reached via the
+    # mounted docker.sock), not by this container, so a relative or /repo-
+    # relative path silently creates a new EMPTY directory on the host
+    # instead of mounting the real one. Confirmed by testing: without
+    # `--project-directory <this value>`, claude-agent saw genuinely empty
+    # apps/* directories despite /repo (this container's own view) having
+    # real content. Plain `docker compose build`/`up` (no bind-mount
+    # volumes involved) don't need this — the CLI reads build context itself.
+    host_repo_path: str = "/repo"
+
     # CMS base URL this service calls for content/nav actions.
     cms_url: str = "http://cms:3003"
     cms_service_token: str = ""

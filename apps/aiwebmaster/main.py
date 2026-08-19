@@ -7,10 +7,11 @@ from fastapi.staticfiles import StaticFiles
 from auth.bootstrap import bootstrap_admin
 from auth.router import router as auth_router
 from core.ai_settings import init_ai_settings_table
+from db.agent_sessions import init_agent_tables
 from db.audit import init_audit_table
 from db.chat_sessions import init_chat_tables
 from db.deploy_state import init_deploy_state_table
-from routers import actions, browse, chat, deploy, files, git, settings, system, users
+from routers import actions, agent, browse, chat, deploy, files, git, settings, system, users
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
 logger = logging.getLogger(__name__)
@@ -40,6 +41,10 @@ def on_startup() -> None:
         init_deploy_state_table()
     except Exception:
         logger.exception("failed to init aiwebmaster_deploy_state table")
+    try:
+        init_agent_tables()
+    except Exception:
+        logger.exception("failed to init agent terminal session tables")
 
 
 @app.get("/health")
@@ -87,6 +92,11 @@ def deploy_page() -> FileResponse:
     return FileResponse("static/deploy.html")
 
 
+@app.get("/agent")
+def agent_page() -> FileResponse:
+    return FileResponse("static/agent.html")
+
+
 app.include_router(auth_router, prefix="/api")
 app.include_router(chat.router, prefix="/api")
 app.include_router(actions.router, prefix="/api")
@@ -97,5 +107,7 @@ app.include_router(settings.router, prefix="/api")
 app.include_router(files.router, prefix="/api")
 app.include_router(git.router, prefix="/api")
 app.include_router(deploy.router, prefix="/api")
+app.include_router(agent.router, prefix="/api")
+app.include_router(agent.ws_router, prefix="/api")
 
 app.mount("/assets", StaticFiles(directory="static/assets"), name="assets")

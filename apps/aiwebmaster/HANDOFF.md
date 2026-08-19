@@ -14,15 +14,98 @@ append-only audit trail. Nothing executes without an explicit click, ever.
 Action types: `content` (Pages/Posts/Resources/Case Studies, draft-by-default),
 `nav_link` (add/update/remove/reorder header+footer nav), `git` (commit/push,
 or discard uncommitted changes), `docker` (start/stop/restart/rebuild, dev or
-staging), `sql`, `code_edit` (arbitrary repo file edit/create), `publish`
-(dev→staging DB snapshot + redeploy, auto-backup first), `rollback` (restore
-latest staging backup), `user_management`. `nginx`/`system` are draft-only —
-explained, never executed, on purpose (shared host, too risky).
+staging), `sql`, `code_edit` (mechanical old_string/new_string file edit),
+`codegen_agent` (hands a task to a real coding agent — Claude Code or Codex
+CLI, running in an isolated sandbox with its own file-edit+bash access —
+instead of a hand-guessed diff; see below), `publish` (dev→staging DB
+snapshot + redeploy, auto-backup first), `rollback` (restore latest staging
+backup), `user_management`. `nginx`/`system` are draft-only — explained,
+never executed, on purpose (shared host, too risky).
+
+### `codegen_agent` — real coding agents, not hand-guessed diffs
+
+`code_edit` asks the chat LLM (often gemini-flash-latest — fast/cheap, not a
+model you'd trust with a whole-file rewrite) to hand-write an exact
+`old_string`/`new_string` match with no file-reading tool of its own. For
+anything beyond a trivial single-line change, `codegen_agent` is the better
+path: it shells out to one of two isolated sandbox containers —
+`infra/claude-agent` (Claude Code CLI) or `infra/codex-agent` (OpenAI Codex
+CLI), both bind-mounting the same dev `apps/web|cms|api|aiwebmaster` source
+directories aiwebmaster itself sees — with full file-edit + bash tool
+access, no docker socket, no `.env`, no `.git`, no route to prod. Which
+sandbox handles a given request is picked by `core/codegen_router.py`, a
+small dedicated LLM call separate from the main chat conversation (not the
+chat model's own judgement) — the executor (`core/executors.py::run_codegen_agent`)
+runs `docker compose -p rewamped-site run --rm <claude-agent|codex-agent> "<prompt>"`
+synchronously (can take several minutes — no async/job infra in this app,
+matches every other long-running action here), then `git diff`s the working
+tree afterward and returns that as the review artifact. No auto-commit — the
+existing `git` action and Git page are still the commit/discard path.
+
+Both sandboxes use browser/device-code login against an existing Claude/
+ChatGPT subscription (`docker compose run --rm --entrypoint claude
+claude-agent` / `... --entrypoint codex codex-agent login --device-auth`),
+not per-token API keys — session persists in `claude_agent_home`/
+`codex_agent_home` volumes. **Not yet done as of this session: neither
+sandbox has actually been logged into** — real prompts fail on "Not logged
+in" / 401 until someone runs the login flow once.
+
+**Battle-tested this session** (real end-to-end runs, not just import-checks):
+the full pipeline — router picks a tool, `docker compose run --rm
+<claude-agent|codex-agent> "<prompt>"` streams line-by-line, `git diff`
+capture, DB persistence — was exercised for real against both sandboxes
+via `/api/agent/ws/{id}` (see Agent Terminal below) and confirmed working
+mechanically end to end; only the actual login step is outstanding. Two
+real bugs found and fixed by this testing (not caught by import/syntax
+checks alone): (1) `claude-agent`'s `run.sh` never set a permission mode,
+so any real tool-use call would've hung forever with no TTY to answer the
+approval prompt — fixed with `--permission-mode bypassPermissions` (which
+in turn required switching the container off root, since Claude Code
+refuses that flag as root — `claude-agent` now runs as `node:22-slim`'s
+built-in uid 1000 `node` user, which also happens to match this host's
+own uid so bind-mounted `apps/*` stay writable); (2) `--output-format
+stream-json` in `--print` mode requires `--verbose` or the CLI exits
+immediately with an argument error, undocumented in `--help`.
 
 ## Pages (sidebar)
 
 Chat (`/`) · Browse & edit (`/browse`) · Git (`/git`) · Deploy (`/deploy`) ·
-Users (`/users`) · System (`/system`) · Settings (`/settings`, AI provider).
+Agent Terminal (`/agent`) · Users (`/users`) · System (`/system`) ·
+Settings (`/settings`, AI provider).
+
+### Agent Terminal (`/agent`) — interactive streaming sandbox UI
+
+Separate from `codegen_agent` (the chat-proposed, one-shot, blocking action
+above): this page drives `claude-agent`/`codex-agent` directly, live,
+multi-turn — the way this Claude Code session itself works, in a browser.
+infra_admin/super_admin only (same `codegen_agent` RBAC slug — no new
+permission type). New DB tables `aiwebmaster_agent_sessions`/
+`aiwebmaster_agent_events` (`db/agent_sessions.py`) persist session history
+so a reload replays it. `core/agent_stream.py` is this app's first
+`asyncio.create_subprocess_exec` use — streams sandbox stdout line-by-line
+over a new `/api/agent/ws/{id}` WebSocket (`routers/agent.py`) as it
+arrives, rather than buffering until exit. Auth over the socket reuses the
+same signed cookie as every other page (`auth/deps.py::require_session_ws`,
+a WebSocket-safe variant of `require_session` — the two can't share one
+FastAPI dependency, confirmed by testing: an `APIRouter(dependencies=...)`
+requiring a `Request` crashes with a 500 when applied to a `@websocket`
+route, so the WS route lives on its own `ws_router` with no router-level
+dependency).
+
+Multi-turn continuity: each session persists the sandbox CLI's own
+conversation id (`cli_session_id` — Claude Code calls it `session_id`,
+Codex calls it `thread_id`, different field names, handled per-tool in
+`core/agent_stream.py::_SESSION_ID_FIELDS`) and passes it back via
+`$RESUME_ID` on the next turn (`claude -p ... --resume <id>` /
+`codex exec resume <id> ...`). Only persisted after a turn actually exits 0
+— capturing it from a turn that error-exits and resuming a broken
+conversation next time fails outright ("No conversation found"), confirmed
+by testing during this session.
+
+Stop button sends `{"stop": true}` over the socket, server-side
+`proc.terminate()`s the tracked `docker compose run` process — **not yet
+verified that `--rm` still cleans up the underlying container after
+SIGTERM** (flagged as a follow-up check, not blocking).
 
 ## Access right now
 
