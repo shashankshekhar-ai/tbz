@@ -95,6 +95,12 @@ services:
       GEMINI_API_KEY: ${GEMINI_API_KEY:-}
       CMS_URL: http://cms:3003
       REPO_PATH: /repo
+      # Real docker compose project name for this stack — every docker/
+      # publish/rollback/codegen_agent/Agent Terminal executor passes this
+      # as `-p`. Must match whatever `-p` this stack was actually brought
+      # up with (`docker compose ps` / `docker ps` container name prefix);
+      # a mismatch silently targets an empty project instead of erroring.
+      COMPOSE_PROJECT: ${COMPOSE_PROJECT:-rewamped-site}
       # Real host path of this checkout — required as `docker compose
       # run --rm --project-directory ...` for claude-agent/codex-agent
       # (core/executors.py, core/agent_stream.py), since their bind-mount
