@@ -28,7 +28,7 @@ services:
       dockerfile: apps/cms/Dockerfile
     restart: unless-stopped
     ports:
-      - "3003:3003"
+      - "127.0.0.1:3003:3003"
     environment:
       DATABASE_URI: postgresql://tbg:tbg_dev@postgres:5432/tbg_cms
       PAYLOAD_SECRET: ${PAYLOAD_SECRET:-changeme_in_production}
@@ -47,7 +47,7 @@ services:
       dockerfile: Dockerfile
     restart: unless-stopped
     ports:
-      - "8000:8000"
+      - "127.0.0.1:8000:8000"
     environment:
       DATABASE_URL: postgresql://tbg:tbg_dev@postgres:5432/tbg_api
       AI_PROVIDER: ${AI_PROVIDER:-gemini}
@@ -67,7 +67,7 @@ services:
       dockerfile: apps/web/Dockerfile
     restart: unless-stopped
     ports:
-      - "3002:3002"
+      - "127.0.0.1:3002:3002"
     # NEXT_PUBLIC_* vars are inlined at build time (see apps/web/Dockerfile ARGs),
     # not read at container runtime — setting them here would be a silent no-op.
     depends_on:
@@ -84,7 +84,7 @@ services:
       dockerfile: Dockerfile
     restart: unless-stopped
     ports:
-      - "8001:8010"
+      - "127.0.0.1:8001:8010"
     environment:
       SESSION_SECRET: ${SESSION_SECRET:-}
       AIWEBMASTER_ADMIN_EMAIL: ${AIWEBMASTER_ADMIN_EMAIL:-}
