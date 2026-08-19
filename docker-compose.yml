@@ -81,7 +81,7 @@ services:
   # See docs/planning/14_DECISION_LOG.md (D9) and apps/aiwebmaster/README if present.
   aiwebmaster:
     build:
-      context: ./apps/aiwebmaster
+      context: ../aiwebmaster
       dockerfile: Dockerfile
     restart: unless-stopped
     ports:
@@ -147,7 +147,7 @@ services:
       - ./apps/web:/workspace/apps/web
       - ./apps/cms:/workspace/apps/cms
       - ./apps/api:/workspace/apps/api
-      - ./apps/aiwebmaster:/workspace/apps/aiwebmaster
+      - ../aiwebmaster:/workspace/apps/aiwebmaster
       - claude_agent_home:/home/node/.claude
       - claude_agent_transcripts:/transcripts
     networks:
@@ -175,7 +175,7 @@ services:
       - ./apps/web:/workspace/apps/web
       - ./apps/cms:/workspace/apps/cms
       - ./apps/api:/workspace/apps/api
-      - ./apps/aiwebmaster:/workspace/apps/aiwebmaster
+      - ../aiwebmaster:/workspace/apps/aiwebmaster
       - codex_agent_home:/root/.codex
       - codex_agent_transcripts:/transcripts
     networks:
