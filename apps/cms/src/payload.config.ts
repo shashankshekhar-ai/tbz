@@ -63,13 +63,13 @@ export default buildConfig({
   ],
   cors: [
     "http://localhost:3002",
-    "https://tbz-web.vercel.app",
-    "https://tbg-cms.buildwithshashank.com",
+    "https://app.thebradburygroup.com",
+    "https://cms.thebradburygroup.com",
   ],
   csrf: [
     "http://localhost:3002",
-    "https://tbz-web.vercel.app",
-    "https://tbg-cms.buildwithshashank.com",
+    "https://app.thebradburygroup.com",
+    "https://cms.thebradburygroup.com",
   ],
   collections: [
     Users,

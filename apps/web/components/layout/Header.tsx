@@ -7,7 +7,7 @@ const fallbackNavItems: NavItem[] = [
   { label: "For Organizations", href: "/for-organizations" },
   { label: "Our AI Return", href: "/our-ai-return" },
   { label: "Resources", href: "/resources" },
-  { label: "Insights", href: "/insights" },
+  { label: "For You", href: "/ai-fluency-cohort" },
   { label: "About", href: "/about" },
 ];
 
