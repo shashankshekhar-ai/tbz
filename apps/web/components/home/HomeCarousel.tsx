@@ -17,7 +17,7 @@ export interface CarouselSlide {
 }
 
 const ROUTE_MAP: Record<string, string> = {
-  "for-you": "/ai-fluency-cohort",
+  "for-you": "/for-you",
   "for-leaders": "/the-solomon-engine",
   "for-organizations": "/for-organizations",
   "our-roi": "/our-ai-return",
