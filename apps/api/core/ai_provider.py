@@ -16,7 +16,11 @@ from typing import Any
 from core.config import settings
 
 ANTHROPIC_MODEL = "claude-sonnet-4-5"
-GEMINI_MODEL = "gemini-2.5-flash"
+# Alias, not a pinned version — gemini-2.5-flash (the previously pinned model)
+# was retired for new API keys ("no longer available to new users"). The
+# alias tracks whatever Gemini flash model is currently live, so this doesn't
+# silently break again on the next model retirement.
+GEMINI_MODEL = "gemini-flash-latest"
 
 _GEMINI_TYPE_MAP = {
     "object": "OBJECT",

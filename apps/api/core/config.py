@@ -21,6 +21,11 @@ class Settings(BaseSettings):
     # Unset in dev: events are still recorded in integration_events, just not dispatched.
     n8n_webhook_url: str = ""
 
+    # ElevenLabs Conversational AI (Columbus voice agent) — verifies the
+    # elevenlabs-signature header on inbound POST /columbus/webhook calls.
+    # Unset in dev: signature check is skipped.
+    columbus_webhook_secret: str = ""
+
     # HubSpot / ClickUp — direct API clients (core/hubspot.py, core/clickup.py).
     # Unset in dev: calls are skipped and recorded in integration_events as such.
     hubspot_api_key: str = ""

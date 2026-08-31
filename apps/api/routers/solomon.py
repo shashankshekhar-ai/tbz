@@ -72,7 +72,7 @@ def chat(payload: SolomonRequest):
             tool_name="solomon_reply",
             tool_description="Reply to the applicant as Solomon with optional recommendations.",
             input_schema=RESPONSE_SCHEMA,
-            max_tokens=512,
+            max_tokens=1024,
         )
     except AIProviderError:
         logger.exception("Solomon AI call failed")

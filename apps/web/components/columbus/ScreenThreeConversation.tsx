@@ -15,6 +15,7 @@ import {
   Square,
   Play,
   Wifi,
+  Volume2,
 } from "lucide-react";
 
 function apiBase(): string {
@@ -59,6 +60,7 @@ export function ScreenThreeConversation({
   const [isLoading, setIsLoading] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
   const [activeQuestionIndex, setActiveQuestionIndex] = useState(1);
   const [micDeniedMessage, setMicDeniedMessage] = useState<string | null>(null);
 
@@ -66,10 +68,50 @@ export function ScreenThreeConversation({
   const textInputRef = useRef<HTMLInputElement>(null);
   const recognitionRef = useRef<any>(null);
   const initialSentRef = useRef(false);
+  const resumeListeningAfterSpeechRef = useRef(false);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isLoading]);
+
+  // Mute the mic while Columbus talks so speech synthesis playing through the
+  // speakers doesn't get picked back up by recognition as user input.
+  function speak(text: string) {
+    if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
+
+    window.speechSynthesis.cancel();
+    if (isListening) {
+      resumeListeningAfterSpeechRef.current = true;
+      try {
+        recognitionRef.current?.stop();
+      } catch {}
+    }
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = 1;
+    utterance.onstart = () => setIsSpeaking(true);
+    utterance.onend = () => {
+      setIsSpeaking(false);
+      if (resumeListeningAfterSpeechRef.current && !isPaused) {
+        resumeListeningAfterSpeechRef.current = false;
+        try {
+          recognitionRef.current?.start();
+          setIsListening(true);
+        } catch {}
+      }
+    };
+    utterance.onerror = () => {
+      setIsSpeaking(false);
+      resumeListeningAfterSpeechRef.current = false;
+    };
+    window.speechSynthesis.speak(utterance);
+  }
+
+  useEffect(() => {
+    return () => {
+      if (typeof window !== "undefined" && "speechSynthesis" in window) window.speechSynthesis.cancel();
+    };
+  }, []);
 
   useEffect(() => {
     if (initialSentRef.current) return;
@@ -148,6 +190,10 @@ export function ScreenThreeConversation({
       recognitionRef.current.stop();
       setIsListening(false);
     } else {
+      // Barge-in: talking over Columbus cuts off its speech immediately.
+      window.speechSynthesis?.cancel();
+      setIsSpeaking(false);
+      resumeListeningAfterSpeechRef.current = false;
       try {
         setIsListening(true);
         setIsPaused(false);
@@ -168,6 +214,9 @@ export function ScreenThreeConversation({
     } else {
       setIsPaused(true);
       setIsListening(false);
+      resumeListeningAfterSpeechRef.current = false;
+      window.speechSynthesis?.cancel();
+      setIsSpeaking(false);
       try {
         recognitionRef.current?.stop();
       } catch {}
@@ -177,6 +226,9 @@ export function ScreenThreeConversation({
   function handleStopConversation() {
     setIsListening(false);
     setIsPaused(true);
+    resumeListeningAfterSpeechRef.current = false;
+    window.speechSynthesis?.cancel();
+    setIsSpeaking(false);
     try {
       recognitionRef.current?.stop();
     } catch {}
@@ -204,27 +256,31 @@ export function ScreenThreeConversation({
       if (!res.ok) throw new Error("Columbus request failed");
       const data = await res.json();
 
+      const replyText = data.reply ?? "I'm ready to guide your executive strategy.";
       setMessages((prev) => [
         ...prev,
         {
           id: (Date.now() + 1).toString(),
           sender: "columbus",
-          text: data.reply ?? "I'm ready to guide your executive strategy.",
+          text: replyText,
           timestamp: now(),
           recommendations: data.recommendations ?? [],
         },
       ]);
+      speak(replyText);
       if (activeQuestionIndex < READINESS_QUESTIONS.length) setActiveQuestionIndex((prev) => prev + 1);
     } catch {
+      const fallbackText = "I'm ready to assist with your executive strategy. You can explore our paths or book a discovery call directly.";
       setMessages((prev) => [
         ...prev,
         {
           id: (Date.now() + 1).toString(),
           sender: "columbus",
-          text: "I'm ready to assist with your executive strategy. You can explore our paths or book a discovery call directly.",
+          text: fallbackText,
           timestamp: now(),
         },
       ]);
+      speak(fallbackText);
     } finally {
       setIsLoading(false);
     }
@@ -262,6 +318,12 @@ export function ScreenThreeConversation({
               <Mic size={12} className={isListening ? "text-[#39918d] animate-pulse" : "text-slate-400"} />
               Mic Ready
             </span>
+            {isSpeaking && (
+              <span className="flex items-center gap-1 text-[#f8c51c] font-medium bg-[#f8c51c]/10 px-2 sm:px-2.5 py-0.5 rounded-full border border-[#f8c51c]/30">
+                <Volume2 size={12} className="animate-pulse text-[#f8c51c]" />
+                Speaking
+              </span>
+            )}
           </div>
         </div>
 
@@ -289,29 +351,39 @@ export function ScreenThreeConversation({
         <div className="flex flex-col items-center justify-center my-1 sm:my-2 p-3 sm:p-4 rounded-2xl bg-[#F8F9FA] border border-[#E6EAF0] relative overflow-hidden">
           <div className="relative my-2 sm:my-3 flex items-center justify-center">
             <div
-              className={`absolute w-28 h-28 sm:w-32 sm:h-32 rounded-full border-2 border-[#39918d]/30 ${isListening ? "animate-ping" : ""}`}
+              className={`absolute w-28 h-28 sm:w-32 sm:h-32 rounded-full border-2 border-[#39918d]/30 ${isListening || isSpeaking ? "animate-ping" : ""}`}
               style={{ animationDuration: "3s" }}
             />
             <div
-              className={`absolute w-20 h-20 sm:w-24 sm:h-24 rounded-full border border-[#f8c51c]/40 ${isListening ? "animate-ping" : ""}`}
+              className={`absolute w-20 h-20 sm:w-24 sm:h-24 rounded-full border border-[#f8c51c]/40 ${isListening || isSpeaking ? "animate-ping" : ""}`}
               style={{ animationDuration: "2s" }}
             />
 
             <button
               onClick={toggleMicListening}
               className={`relative z-10 w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 focus:outline-none focus-visible:ring-4 focus-visible:ring-[#39918d]/40 ${
-                isListening
+                isListening || isSpeaking
                   ? "bg-gradient-to-tr from-[#0c2940] via-[#39918d] to-[#3f6d67] text-white ring-4 ring-[#39918d]/30 scale-105"
                   : "bg-white border-2 border-[#E6EAF0] text-[#0c2940] hover:border-[#39918d]"
               }`}
+              aria-label={isSpeaking ? "Columbus is speaking — tap to interrupt" : "Toggle microphone"}
             >
-              <Mic size={28} className={isListening ? "text-[#f8c51c] animate-pulse" : "text-[#39918d]"} />
+              {isSpeaking ? (
+                <Volume2 size={28} className="text-[#f8c51c] animate-pulse" />
+              ) : (
+                <Mic size={28} className={isListening ? "text-[#f8c51c] animate-pulse" : "text-[#39918d]"} />
+              )}
             </button>
           </div>
 
           <div className="text-center space-y-1 mt-1">
             <p className="font-montserrat font-bold text-xs sm:text-sm text-[#0c2940] flex items-center justify-center gap-1.5">
-              {isListening ? (
+              {isSpeaking ? (
+                <>
+                  <span className="w-2 h-2 rounded-full bg-[#f8c51c] animate-ping" />
+                  <span>&ldquo;Columbus is speaking&hellip;&rdquo;</span>
+                </>
+              ) : isListening ? (
                 <>
                   <span className="w-2 h-2 rounded-full bg-[#39918d] animate-ping" />
                   <span>&ldquo;I&rsquo;m Listening...&rdquo;</span>

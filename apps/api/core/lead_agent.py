@@ -70,7 +70,7 @@ def draft_followup(
             tool_name=_DRAFT_TOOL["name"],
             tool_description=_DRAFT_TOOL["description"],
             input_schema=_DRAFT_TOOL["input_schema"],
-            max_tokens=512,
+            max_tokens=1024,
         )
     except AIProviderError as exc:
         raise LeadAgentError(str(exc)) from exc
