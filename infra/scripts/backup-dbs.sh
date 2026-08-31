@@ -33,11 +33,18 @@
 #   git -C db-backups-repo show <sha>:tbg_cms.sql.gz.age > tbg_cms.sql.gz.age
 # See each branch's README.md for the full decrypt+restore flow.
 #
+# Also backs up rewamped-site/.env itself (encrypted, same as the DB dumps)
+# — SESSION_SECRET, CMS_SERVICE_TOKEN, PAYLOAD_SECRET, etc. live ONLY in
+# that file on this host's disk; a restored database is useless without it
+# (nothing can authenticate). Goes to the dev branch — it's one shared
+# config file, not split by environment.
+#
 # Run via systemd timer tbg-db-backup.timer — see
 # /etc/systemd/system/tbg-db-backup.{service,timer}.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 BACKUP_DIR="/home/admin/tbg/db-backups"
 AGE_RECIPIENT_FILE="$SCRIPT_DIR/backup-age-recipient.txt"
 KEEP_DAYS=14
@@ -75,6 +82,16 @@ for db in "${!REPO_DIR_FOR_DB[@]}"; do
     fi
   fi
 done
+
+# Encrypt + stage .env alongside the dev DB dumps — same fixed-filename,
+# git-history-is-the-timeline pattern as the databases above.
+if [ -f "$REPO_ROOT/.env" ] && [ -f "$AGE_RECIPIENT_FILE" ] && [ -e "/home/admin/tbg/db-backups-repo/.git" ]; then
+  if age -r "$(cat "$AGE_RECIPIENT_FILE")" -o "/home/admin/tbg/db-backups-repo/env.age" "$REPO_ROOT/.env"; then
+    echo "encrypted .env -> /home/admin/tbg/db-backups-repo/env.age"
+  else
+    echo "FAILED to encrypt .env" >&2
+  fi
+fi
 
 # Retention: delete local dumps older than KEEP_DAYS, per database. (Local
 # dir isn't git-backed, so it still needs timestamped files + mtime pruning
