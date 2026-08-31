@@ -22,6 +22,15 @@ if [ -z "$DB" ]; then
   exit 1
 fi
 
+# $DB gets embedded in a double-quoted SQL identifier below (DROP/CREATE
+# DATABASE "$DB") — the caller (routers/backups.py) already validates this
+# against a fixed enum before invoking this script, but check it here too
+# so the script stays safe even if something else ever calls it directly.
+case "$DB" in
+  tbg_api|tbg_cms|tbg_api_prod|tbg_cms_prod) ;;
+  *) echo "Refusing unknown database '$DB' — must be one of: tbg_api, tbg_cms, tbg_api_prod, tbg_cms_prod" >&2; exit 1 ;;
+esac
+
 if [ -z "$DUMP" ] || [ "$DUMP" = "-y" ]; then
   DUMP="$(ls -t "$BACKUP_DIR/${DB}_"*.sql.gz 2>/dev/null | head -1)"
   if [ -z "$DUMP" ]; then

@@ -7,18 +7,7 @@ import {
   type AgentChatMessage,
   type ContentKind,
 } from "../lib/contentAgent";
-
-// Accepts either a logged-in Payload admin session, or the shared service
-// token AIwebmaster authenticates with (it has no Payload session).
-async function requireAdmin(req: PayloadRequest): Promise<Response | null> {
-  const serviceToken = process.env.CMS_SERVICE_TOKEN;
-  const header = req.headers.get("x-service-token");
-  if (serviceToken && header === serviceToken) return null;
-  if (!req.user) {
-    return Response.json({ error: "Unauthorized" }, { status: 401 });
-  }
-  return null;
-}
+import { requireAdmin } from "../lib/requireAdmin";
 
 function isContentKind(value: unknown): value is ContentKind {
   return typeof value === "string" && (CONTENT_KINDS as readonly string[]).includes(value);

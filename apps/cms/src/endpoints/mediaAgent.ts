@@ -1,15 +1,52 @@
+import { lookup } from "node:dns/promises";
+import { isIP } from "node:net";
 import type { Endpoint, PayloadRequest } from "payload";
+import { requireAdmin } from "../lib/requireAdmin";
 
-// Accepts either a logged-in Payload admin session, or the shared service
-// token AIwebmaster authenticates with (it has no Payload session).
-async function requireAdmin(req: PayloadRequest): Promise<Response | null> {
-  const serviceToken = process.env.CMS_SERVICE_TOKEN;
-  const header = req.headers.get("x-service-token");
-  if (serviceToken && header === serviceToken) return null;
-  if (!req.user) {
-    return Response.json({ error: "Unauthorized" }, { status: 401 });
+// Blocks SSRF to internal/cloud-metadata targets — this host is on AWS, so
+// 169.254.169.254 (EC2 instance metadata, can serve IAM credentials if a
+// role is ever attached) is exactly as dangerous as reaching internal
+// Docker-network services (postgres, cms itself) directly. Checks the
+// RESOLVED ip, not just the hostname string, so "url" can't just say
+// "cms" or "postgres" (those resolve on the compose network) or an
+// attacker-controlled domain that resolves to 127.0.0.1.
+// Residual risk: DNS rebinding (a hostname that resolves differently
+// between this check and the actual fetch) is not fully closed — accepted
+// here since this endpoint requires authentication (service token or a
+// logged-in session), not exposed anonymously.
+function isBlockedAddress(ip: string): boolean {
+  const family = isIP(ip);
+  if (family === 4) {
+    const [a, b] = ip.split(".").map(Number);
+    if (a === 127) return true; // loopback
+    if (a === 10) return true; // private
+    if (a === 172 && b >= 16 && b <= 31) return true; // private
+    if (a === 192 && b === 168) return true; // private
+    if (a === 169 && b === 254) return true; // link-local incl. cloud metadata
+    if (a === 0) return true;
+    return false;
   }
-  return null;
+  if (family === 6) {
+    const lower = ip.toLowerCase();
+    if (lower === "::1") return true; // loopback
+    if (lower.startsWith("fe80:") || lower.startsWith("fe8") || lower.startsWith("fc") || lower.startsWith("fd")) return true; // link-local / unique-local
+    if (lower.startsWith("::ffff:")) return isBlockedAddress(lower.slice(7)); // IPv4-mapped
+    return false;
+  }
+  return true; // not a recognizable IP — fail closed
+}
+
+async function assertUrlIsPublic(url: URL): Promise<void> {
+  const hostname = url.hostname;
+  if (isIP(hostname)) {
+    if (isBlockedAddress(hostname)) throw new Error("url resolves to a blocked internal/private address");
+    return;
+  }
+  const records = await lookup(hostname, { all: true });
+  if (records.length === 0) throw new Error("url hostname did not resolve");
+  for (const rec of records) {
+    if (isBlockedAddress(rec.address)) throw new Error("url resolves to a blocked internal/private address");
+  }
 }
 
 type MediaUploadBody = {
@@ -19,7 +56,11 @@ type MediaUploadBody = {
 };
 
 const MAX_BYTES = 8 * 1024 * 1024; // 8 MB — plenty for a testimonial photo / blog hero, guards against an accidental huge-file URL
-const ALLOWED_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "image/gif", "image/svg+xml"]);
+// SVG deliberately excluded: it can embed <script>, and nothing here
+// sanitizes it before storing/serving it back — stored-XSS risk for
+// anyone who ever opens the media URL directly or it's embedded
+// somewhere that doesn't sandbox it. Raster-only closes that off.
+const ALLOWED_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
 
 // There is no chat file-attach UI (yet) — AIwebmaster proposes this action
 // with a URL the user pasted/referenced, and this endpoint fetches it
@@ -47,10 +88,21 @@ export const mediaAgentUploadEndpoint: Endpoint = {
     if (sourceUrl.protocol !== "https:" && sourceUrl.protocol !== "http:") {
       return Response.json({ error: "url must be http(s)" }, { status: 400 });
     }
+    try {
+      await assertUrlIsPublic(sourceUrl);
+    } catch (err) {
+      return Response.json({ error: String(err instanceof Error ? err.message : err) }, { status: 400 });
+    }
 
     let res: Response;
     try {
-      res = await fetch(sourceUrl.toString(), { signal: AbortSignal.timeout(15000) });
+      // redirect: "manual" — a public URL that 302s to an internal address
+      // would otherwise sail straight past the check above; auto-following
+      // redirects is exactly how SSRF filters get bypassed in practice.
+      res = await fetch(sourceUrl.toString(), { signal: AbortSignal.timeout(15000), redirect: "manual" });
+      if (res.status >= 300 && res.status < 400) {
+        return Response.json({ error: "url redirected — redirects are not followed for security reasons, use the final direct URL" }, { status: 400 });
+      }
     } catch (err) {
       return Response.json({ error: `Failed to fetch url: ${String(err)}` }, { status: 502 });
     }
