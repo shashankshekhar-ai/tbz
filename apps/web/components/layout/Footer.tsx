@@ -1,7 +1,38 @@
 import Link from "next/link";
 import Image from "next/image";
+import { getFooterNavigation, type FooterNavGroup } from "@/lib/cms";
 
-export function Footer() {
+// Matches the original two hardcoded columns exactly — used only when the
+// CMS has no footer navigation rows yet (nav_link actions with
+// location:"footer" write to the `navigation` collection, which
+// getFooterNavigation() already fully implements groups+sorting for; this
+// component just never called it, so those writes silently had no visible
+// effect — confirmed live, not hypothetical).
+const fallbackGroups: FooterNavGroup[] = [
+  {
+    heading: "Navigation",
+    items: [
+      { label: "About", href: "/about" },
+      { label: "For You", href: "/for-you" },
+      { label: "For Leaders", href: "/the-solomon-engine" },
+      { label: "For Organizations", href: "/for-organizations" },
+    ],
+  },
+  {
+    heading: "Resources",
+    items: [
+      { label: "Our ROI", href: "/our-ai-return" },
+      { label: "Resources", href: "/resources" },
+      { label: "Insights", href: "/insights" },
+      { label: "Case Studies", href: "/resources#case-studies" },
+    ],
+  },
+];
+
+export async function Footer() {
+  const cmsGroups = await getFooterNavigation();
+  const groups = cmsGroups.length > 0 ? cmsGroups : fallbackGroups;
+
   return (
     <footer className="bg-[#0c2940] text-white border-t border-[#39918d]/20 pt-16 pb-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -18,45 +49,20 @@ export function Footer() {
             </p>
           </div>
 
-          <div className="lg:col-span-2 space-y-3">
-            <h4 className="text-[11px] font-h3 font-bold uppercase tracking-widest text-slate-400">
-              Navigation
-            </h4>
-            <ul className="space-y-2 text-xs font-body text-slate-300">
-              <li>
-                <Link href="/about" className="hover:text-[#f8c51c] transition-colors">About</Link>
-              </li>
-              <li>
-                <Link href="/for-you" className="hover:text-[#f8c51c] transition-colors">For You</Link>
-              </li>
-              <li>
-                <Link href="/the-solomon-engine" className="hover:text-[#f8c51c] transition-colors">For Leaders</Link>
-              </li>
-              <li>
-                <Link href="/for-organizations" className="hover:text-[#f8c51c] transition-colors">For Organizations</Link>
-              </li>
-            </ul>
-          </div>
-
-          <div className="lg:col-span-2 space-y-3">
-            <h4 className="text-[11px] font-h3 font-bold uppercase tracking-widest text-slate-400">
-              Resources
-            </h4>
-            <ul className="space-y-2 text-xs font-body text-slate-300">
-              <li>
-                <Link href="/our-ai-return" className="hover:text-[#f8c51c] transition-colors">Our ROI</Link>
-              </li>
-              <li>
-                <Link href="/resources" className="hover:text-[#f8c51c] transition-colors">Resources</Link>
-              </li>
-              <li>
-                <Link href="/insights" className="hover:text-[#f8c51c] transition-colors">Insights</Link>
-              </li>
-              <li>
-                <Link href="/resources#case-studies" className="hover:text-[#f8c51c] transition-colors">Case Studies</Link>
-              </li>
-            </ul>
-          </div>
+          {groups.slice(0, 2).map((group) => (
+            <div key={group.heading} className="lg:col-span-2 space-y-3">
+              <h4 className="text-[11px] font-h3 font-bold uppercase tracking-widest text-slate-400">
+                {group.heading}
+              </h4>
+              <ul className="space-y-2 text-xs font-body text-slate-300">
+                {group.items.map((item) => (
+                  <li key={item.href}>
+                    <Link href={item.href} target={item.openInNewTab ? "_blank" : undefined} className="hover:text-[#f8c51c] transition-colors">{item.label}</Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
 
           <div className="lg:col-span-3 space-y-4">
             <h4 className="text-[11px] font-h3 font-bold uppercase tracking-widest text-slate-400">

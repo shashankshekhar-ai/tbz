@@ -87,14 +87,21 @@ export const pageAgentApplyEndpoint: Endpoint = {
     const publish = body?.publish ?? true;
 
     const layout = agentBlocksToPayloadLayout(proposal.blocks);
-    const data = { title: proposal.title, slug: proposal.slug, layout };
+    // `draft` (passed separately below) only controls Payload's
+    // versions-drafts history — it does NOT touch this `status` select
+    // field, which is what the frontend's getPageBySlug/getAllPages
+    // actually filter on (where[status][equals]=published). Without
+    // setting it explicitly here, publish:true still leaves status stuck
+    // on "draft" forever and the page 404s on the live site no matter how
+    // many times it's "published" — confirmed live, not a hypothetical.
+    const data = { title: proposal.title, slug: proposal.slug, layout, status: publish ? "published" : "draft" };
 
     try {
       const doc = body?.pageId
         ? await req.payload.update({ collection: "pages", id: body.pageId, data, draft: !publish })
         : await req.payload.create({
             collection: "pages",
-            data: { ...data, status: "draft" },
+            data,
             draft: !publish,
           });
       return Response.json({ id: doc.id, slug: doc.slug, draft: !publish });
