@@ -1,7 +1,7 @@
 import { AIProviderError, runAgentTurn, type AgentChatMessage } from "./aiProvider";
 import { lexicalToPlainText, plainTextToLexical } from "./pageAgent";
 
-export const CONTENT_KINDS = ["post", "resource", "case-study"] as const;
+export const CONTENT_KINDS = ["post", "resource", "case-study", "faq", "testimonial"] as const;
 export type ContentKind = (typeof CONTENT_KINDS)[number];
 
 export type { AgentChatMessage };
@@ -159,6 +159,77 @@ const KIND_CONFIG: Record<ContentKind, KindConfig> = {
       solution: plainTextToLexical(String(state.solution ?? "")),
       results: plainTextToLexical(String(state.results ?? "")),
       metrics: state.metrics ?? [],
+    }),
+  },
+  faq: {
+    collectionSlug: "faqs",
+    label: "FAQ",
+    fieldsDescription:
+      "- question (string, required)\n- answer (string — plain text paragraphs, one per line, required)\n- category (\"general\" | \"training\" | \"consulting\" | \"assessment\" | \"solomon-engine\" | \"ethics\")\n- order (number — controls display order, lower first)\n\nNo slug and no draft/publish state — an FAQ is live as soon as it's saved.",
+    toolSchema: {
+      type: "object",
+      properties: {
+        question: { type: "string" },
+        answer: { type: "string" },
+        category: {
+          type: "string",
+          enum: ["general", "training", "consulting", "assessment", "solomon-engine", "ethics"],
+        },
+        order: { type: "number" },
+      },
+      required: ["question", "answer"],
+    },
+    fromPayloadDoc: (doc) => ({
+      question: doc.question,
+      answer: lexicalToPlainText(doc.answer),
+      category: doc.category,
+      order: doc.order,
+    }),
+    toPayloadData: (state) => ({
+      question: state.question,
+      answer: plainTextToLexical(String(state.answer ?? "")),
+      category: state.category,
+      order: state.order ?? 0,
+    }),
+  },
+  testimonial: {
+    collectionSlug: "testimonials",
+    label: "Testimonial",
+    fieldsDescription:
+      "- quote (string, required)\n- name (string, required — the person being quoted)\n- title (string, their job title)\n- company (string)\n- photo (string — a media doc id, from a prior `media` action's result; not a URL or filename)\n- featured (boolean — show on homepage)\n- context (\"training\" | \"consulting\" | \"speaking\" | \"solomon-engine\")\n- order (number — controls display order, lower first)\n\nNo slug and no draft/publish state. To set `photo`, the caller must first run a `media` action to upload the image and use the id it returns.",
+    toolSchema: {
+      type: "object",
+      properties: {
+        quote: { type: "string" },
+        name: { type: "string" },
+        title: { type: "string" },
+        company: { type: "string" },
+        photo: { type: "string" },
+        featured: { type: "boolean" },
+        context: { type: "string", enum: ["training", "consulting", "speaking", "solomon-engine"] },
+        order: { type: "number" },
+      },
+      required: ["quote", "name"],
+    },
+    fromPayloadDoc: (doc) => ({
+      quote: doc.quote,
+      name: doc.name,
+      title: doc.title,
+      company: doc.company,
+      photo: typeof doc.photo === "object" ? doc.photo?.id : doc.photo,
+      featured: doc.featured,
+      context: doc.context,
+      order: doc.order,
+    }),
+    toPayloadData: (state) => ({
+      quote: state.quote,
+      name: state.name,
+      title: state.title,
+      company: state.company,
+      photo: state.photo || undefined,
+      featured: state.featured ?? false,
+      context: state.context,
+      order: state.order ?? 0,
     }),
   },
 };

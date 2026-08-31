@@ -118,6 +118,11 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - .:/repo
       - aiwebmaster_data:/app/data
+      # Same host path both inside and outside the container so
+      # infra/scripts/backup-dbs.sh (which shells out to `docker exec
+      # tbz-postgres-1 pg_dump`, not an in-process DB driver) works
+      # unchanged whether invoked by the host systemd timer or from in here.
+      - /home/admin/tbg/db-backups:/home/admin/tbg/db-backups
       # Mount a dedicated deploy-only SSH key here if git push should work:
       # - ${AIWEBMASTER_DEPLOY_SSH_KEY_PATH:-/dev/null}:/root/.ssh/id_deploy:ro
     depends_on:

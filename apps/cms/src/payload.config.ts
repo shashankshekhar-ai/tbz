@@ -17,6 +17,7 @@ import { SiteSettings } from "./globals/SiteSettings";
 import { pageAgentChatEndpoint, pageAgentApplyEndpoint } from "./endpoints/pageAgent";
 import { contentAgentChatEndpoint, contentAgentApplyEndpoint } from "./endpoints/contentAgent";
 import { navigationUpsertEndpoint } from "./endpoints/navigation";
+import { mediaAgentUploadEndpoint } from "./endpoints/mediaAgent";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -60,6 +61,7 @@ export default buildConfig({
     contentAgentChatEndpoint,
     contentAgentApplyEndpoint,
     navigationUpsertEndpoint,
+    mediaAgentUploadEndpoint,
   ],
   cors: [
     "http://localhost:3002",

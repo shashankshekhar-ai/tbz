@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 
 type ChatMessage = { role: "user" | "assistant"; content: string };
-type ContentKind = "post" | "resource" | "case-study";
+type ContentKind = "post" | "resource" | "case-study" | "faq" | "testimonial";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Proposal = Record<string, any>;
 type DocOption = { id: string; title: string; slug: string };
@@ -12,18 +12,35 @@ const KIND_LABEL: Record<ContentKind, string> = {
   post: "Blog post",
   resource: "Resource",
   "case-study": "Case study",
+  faq: "FAQ",
+  testimonial: "Testimonial",
 };
 
 const KIND_COLLECTION: Record<ContentKind, string> = {
   post: "posts",
   resource: "resources",
   "case-study": "case-studies",
+  faq: "faqs",
+  testimonial: "testimonials",
+};
+
+// The CMS field that best identifies a doc in the "entry to edit" dropdown
+// and the proposal-preview heading — post/resource/case-study use `title`,
+// but faq/testimonial have no title field at all.
+const KIND_TITLE_FIELD: Record<ContentKind, string> = {
+  post: "title",
+  resource: "title",
+  "case-study": "title",
+  faq: "question",
+  testimonial: "name",
 };
 
 const KIND_EXAMPLE: Record<ContentKind, string> = {
   post: 'Try: "Write a post on why AI fluency beats AI tool adoption, 600 words, upbeat tone."',
   resource: 'Try: "Draft a checklist resource for board-level AI risk questions."',
   "case-study": 'Try: "Draft a case study for a manufacturing client that cut onboarding time 40% using the Solomon Engine."',
+  faq: 'Try: "Add an FAQ explaining how the Solomon Engine assessment works, category solomon-engine."',
+  testimonial: 'Try: "Add a testimonial from a training client praising the AI fluency workshop."',
 };
 
 function summarizeValue(value: unknown): string {
@@ -52,8 +69,10 @@ export function ContentAgentView() {
     fetch(`/api/${KIND_COLLECTION[kind]}?limit=200&depth=0`, { credentials: "include" })
       .then((r) => r.json())
       .then((data) => {
-        const rawDocs = (data?.docs ?? []) as Array<{ id: string; title: string; slug: string }>;
-        setDocs(rawDocs.map((d) => ({ id: d.id, title: d.title, slug: d.slug })));
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const rawDocs = (data?.docs ?? []) as Array<Record<string, any>>;
+        const titleField = KIND_TITLE_FIELD[kind];
+        setDocs(rawDocs.map((d) => ({ id: d.id, title: String(d[titleField] ?? ""), slug: d.slug ?? "" })));
       })
       .catch(() => setDocs([]));
   }, [kind]);
@@ -120,7 +139,7 @@ export function ContentAgentView() {
     <div style={{ padding: "2rem", maxWidth: 900, margin: "0 auto" }}>
       <h1 style={{ marginBottom: "0.25rem" }}>Content Agent</h1>
       <p style={{ color: "#6b7280", marginBottom: "1.5rem", fontSize: "0.875rem" }}>
-        Describe a blog post, resource, or case study in plain English. The agent proposes the full
+        Describe a blog post, resource, case study, FAQ, or testimonial in plain English. The agent proposes the full
         entry — nothing saves until you click Apply. Requires ANTHROPIC_API_KEY to be configured.
       </p>
 
@@ -159,7 +178,8 @@ export function ContentAgentView() {
             <option value="">+ New {KIND_LABEL[kind].toLowerCase()}</option>
             {docs.map((d) => (
               <option key={d.id} value={d.id}>
-                {d.title} ({d.slug})
+                {d.title}
+                {d.slug ? ` (${d.slug})` : ""}
               </option>
             ))}
           </select>
@@ -214,12 +234,13 @@ export function ContentAgentView() {
       {proposal && (
         <div style={{ border: "1px solid #c9a84c", borderRadius: 8, padding: "1rem" }}>
           <p style={{ fontWeight: 600, marginBottom: "0.5rem" }}>
-            Proposed {KIND_LABEL[kind].toLowerCase()}: {String(proposal.title ?? "")} ({String(proposal.slug ?? "")}
-            {isNewDoc ? ", new" : ""})
+            Proposed {KIND_LABEL[kind].toLowerCase()}: {String(proposal[KIND_TITLE_FIELD[kind]] ?? "")}
+            {proposal.slug ? ` (${String(proposal.slug)})` : ""}
+            {isNewDoc ? ", new" : ""}
           </p>
           <ul style={{ paddingLeft: "1.2rem", marginBottom: "1rem", fontSize: "0.875rem" }}>
             {Object.entries(proposal)
-              .filter(([key]) => key !== "title" && key !== "slug")
+              .filter(([key]) => key !== KIND_TITLE_FIELD[kind] && key !== "slug")
               .map(([key, value]) => (
                 <li key={key}>
                   <strong>{key}:</strong> {summarizeValue(value)}

@@ -36,7 +36,10 @@ export const contentAgentChatEndpoint: Endpoint = {
       | undefined;
 
     if (!isContentKind(body?.kind)) {
-      return Response.json({ error: "kind must be one of post, resource, case-study" }, { status: 400 });
+      return Response.json(
+        { error: "kind must be one of post, resource, case-study, faq, testimonial" },
+        { status: 400 },
+      );
     }
     const kind = body.kind;
     const messages = body?.messages ?? [];
@@ -50,7 +53,7 @@ export const contentAgentChatEndpoint: Endpoint = {
     if (body?.docId) {
       try {
         const doc = await req.payload.findByID({
-          collection: cfg.collectionSlug as "posts" | "resources" | "case-studies",
+          collection: cfg.collectionSlug as "posts" | "resources" | "case-studies" | "faqs" | "testimonials",
           id: body.docId,
           depth: 0,
         });
@@ -85,7 +88,10 @@ export const contentAgentApplyEndpoint: Endpoint = {
       | undefined;
 
     if (!isContentKind(body?.kind)) {
-      return Response.json({ error: "kind must be one of post, resource, case-study" }, { status: 400 });
+      return Response.json(
+        { error: "kind must be one of post, resource, case-study, faq, testimonial" },
+        { status: 400 },
+      );
     }
     const kind = body.kind;
     const proposal = body?.proposal;
@@ -98,21 +104,26 @@ export const contentAgentApplyEndpoint: Endpoint = {
     // concept, so this is a no-op there regardless of the flag.
     const publish = body?.publish ?? true;
     const supportsDrafts = kind === "post" || kind === "case-study";
+    // faq/testimonial have no `status` field at all (unlike post/resource/
+    // case-study) — setting it on create would just be silently ignored by
+    // Payload, but keep the intent explicit rather than relying on that.
+    const hasStatusField = kind !== "faq" && kind !== "testimonial";
 
     const cfg = getKindConfig(kind);
     const data = cfg.toPayloadData(proposal);
+    type ContentCollection = "posts" | "resources" | "case-studies" | "faqs" | "testimonials";
 
     try {
       const doc = body?.docId
         ? await req.payload.update({
-            collection: cfg.collectionSlug as "posts" | "resources" | "case-studies",
+            collection: cfg.collectionSlug as ContentCollection,
             id: body.docId,
             data,
             ...(supportsDrafts ? { draft: !publish } : {}),
           })
         : await req.payload.create({
-            collection: cfg.collectionSlug as "posts" | "resources" | "case-studies",
-            data: { ...data, status: "draft" },
+            collection: cfg.collectionSlug as ContentCollection,
+            data: hasStatusField ? { ...data, status: "draft" } : data,
             ...(supportsDrafts ? { draft: !publish } : {}),
           });
       return Response.json({ id: doc.id, slug: doc.slug, draft: supportsDrafts && !publish });
