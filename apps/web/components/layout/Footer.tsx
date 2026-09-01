@@ -86,7 +86,12 @@ export async function Footer() {
         </div>
 
         <div className="pt-0 pb-4 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-4">
-          <p>© {new Date().getFullYear()} The Bradbury Group. All rights reserved.</p>
+          <p className="flex flex-col sm:flex-row items-center gap-1 sm:gap-3 text-center sm:text-left">
+            <span>© {new Date().getFullYear()} The Bradbury Group. All rights reserved.</span>
+            <span className="text-slate-500 sm:before:content-['|'] sm:before:mr-3 sm:before:text-slate-600">
+              Disclaimer: Content is for informational purposes only.
+            </span>
+          </p>
           <p className="font-caption italic text-slate-300">Human-Centered AI Transformation</p>
         </div>
       </div>
