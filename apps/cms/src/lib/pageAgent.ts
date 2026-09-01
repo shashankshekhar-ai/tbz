@@ -200,3 +200,98 @@ export function agentBlocksToPayloadLayout(blocks: AgentBlock[]): Record<string,
     return { blockType: b.blockType, ...b.data };
   });
 }
+
+// A page-edit proposal used to require the caller (an LLM) to echo the
+// COMPLETE blocks array back on every edit, "carrying forward" anything
+// unchanged — for a page with a few blocks/cards that's real output volume
+// on every single-card tweak, and it's a fixed cost that grows with page
+// size, not edit size: a large page can legitimately exceed a model's
+// output token limit on a one-line change, which is exactly what happened
+// live (truncated mid-JSON, invalid JSON, 500). Block ops let the caller
+// send only the delta — one card, one block — server-side merges it against
+// the page's CURRENT state (fetched fresh right before saving, not
+// whatever was in the caller's context), so output size is bounded by the
+// size of the CHANGE, never by the size of the page.
+export type BlockOp =
+  | { op: "append_block"; block: AgentBlock }
+  | { op: "update_block"; index: number; block: AgentBlock }
+  | { op: "remove_block"; index: number }
+  // card ops only ever target a cardGrid block — the one block type that in
+  // practice accumulates a repeating list (a page can have one hero, but a
+  // features section commonly grows to 4-8 cards over time).
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  | { op: "append_card"; blockIndex: number; card: Record<string, any> }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  | { op: "update_card"; blockIndex: number; cardIndex: number; card: Record<string, any> }
+  | { op: "remove_card"; blockIndex: number; cardIndex: number };
+
+export class BlockOpError extends Error {}
+
+export function applyBlockOps(current: AgentBlock[], ops: BlockOp[]): AgentBlock[] {
+  const blocks = current.map((b) => ({ blockType: b.blockType, data: { ...b.data } }));
+
+  const cardsOf = (blockIndex: number, op: string) => {
+    if (blockIndex < 0 || blockIndex >= blocks.length) {
+      throw new BlockOpError(`${op}: blockIndex ${blockIndex} out of range (page has ${blocks.length} blocks)`);
+    }
+    const target = blocks[blockIndex];
+    if (target.blockType !== "cardGrid") {
+      throw new BlockOpError(`${op}: blockIndex ${blockIndex} is a '${target.blockType}' block, not cardGrid`);
+    }
+    const cards = Array.isArray(target.data.cards) ? [...target.data.cards] : [];
+    return { target, cards };
+  };
+
+  for (const op of ops) {
+    switch (op.op) {
+      case "append_block": {
+        if (!op.block?.blockType) throw new BlockOpError("append_block requires a block with blockType");
+        blocks.push({ blockType: op.block.blockType, data: { ...op.block.data } });
+        break;
+      }
+      case "update_block": {
+        if (op.index < 0 || op.index >= blocks.length) {
+          throw new BlockOpError(`update_block: index ${op.index} out of range (page has ${blocks.length} blocks)`);
+        }
+        if (!op.block?.blockType) throw new BlockOpError("update_block requires a block with blockType");
+        blocks[op.index] = { blockType: op.block.blockType, data: { ...op.block.data } };
+        break;
+      }
+      case "remove_block": {
+        if (op.index < 0 || op.index >= blocks.length) {
+          throw new BlockOpError(`remove_block: index ${op.index} out of range (page has ${blocks.length} blocks)`);
+        }
+        blocks.splice(op.index, 1);
+        break;
+      }
+      case "append_card": {
+        const { target, cards } = cardsOf(op.blockIndex, "append_card");
+        if (!op.card?.title) throw new BlockOpError("append_card requires a card with a title");
+        cards.push(op.card);
+        target.data = { ...target.data, cards };
+        break;
+      }
+      case "update_card": {
+        const { target, cards } = cardsOf(op.blockIndex, "update_card");
+        if (op.cardIndex < 0 || op.cardIndex >= cards.length) {
+          throw new BlockOpError(`update_card: cardIndex ${op.cardIndex} out of range (block has ${cards.length} cards)`);
+        }
+        cards[op.cardIndex] = op.card;
+        target.data = { ...target.data, cards };
+        break;
+      }
+      case "remove_card": {
+        const { target, cards } = cardsOf(op.blockIndex, "remove_card");
+        if (op.cardIndex < 0 || op.cardIndex >= cards.length) {
+          throw new BlockOpError(`remove_card: cardIndex ${op.cardIndex} out of range (block has ${cards.length} cards)`);
+        }
+        cards.splice(op.cardIndex, 1);
+        target.data = { ...target.data, cards };
+        break;
+      }
+      default:
+        throw new BlockOpError(`unknown block op '${(op as { op: string }).op}'`);
+    }
+  }
+  return blocks;
+}

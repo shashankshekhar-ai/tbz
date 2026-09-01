@@ -38,6 +38,25 @@ case "$1" in
     ;;
 esac
 
+# One-shot structured-JSON query mode — AIwebmaster's chat agent asking a
+# question, not a coding task. Distinct from the default path below:
+# --permission-mode plan (read-only, no file-edit/bash execution — this call
+# has no business touching the workspace), --output-format json (one clean
+# result object instead of a stream to reassemble), no transcript (nothing
+# to audit — the answer becomes a proposed action that already goes through
+# AIwebmaster's own propose/approve/audit pipeline once parsed out).
+# $QUERY_SYSTEM_PROMPT/$QUERY_MODEL/$QUERY_EFFORT come in as env vars, not
+# argv, so a large system prompt doesn't blow argv limits or leak into
+# `docker compose ps`/process-listing output.
+if [ "$QUERY_MODE" = "1" ]; then
+  exec claude -p "$*" \
+    --output-format json \
+    --permission-mode plan \
+    --model "${QUERY_MODEL:-sonnet}" \
+    --effort "${QUERY_EFFORT:-low}" \
+    --system-prompt "$QUERY_SYSTEM_PROMPT"
+fi
+
 mkdir -p /transcripts
 STAMP=$(date -u +%Y%m%dT%H%M%SZ)
 LOG="/transcripts/${STAMP}.jsonl"
