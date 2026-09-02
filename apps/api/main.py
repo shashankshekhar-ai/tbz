@@ -29,7 +29,7 @@ app.add_middleware(
     # Dev/LAN deployment: web is reached at whatever host IP the client used, so a fixed
     # origin allowlist can't cover it. Public-facing browser calls (assessment, forms,
     # resources) hit this API directly from the client at port 3002/3003 on any host.
-    # Production domain (app.thebradburygroup.com, no port on 443) is covered by
+    # Production domain (dev.thebradburygroup.net, no port on 443) is covered by
     # cors_origins above instead, since this regex only matches host:port origins.
     allow_origin_regex=r"^https?://[^/]+:(3002|3003)$",
     allow_credentials=True,

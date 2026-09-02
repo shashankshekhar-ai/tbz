@@ -42,7 +42,7 @@ class Settings(BaseSettings):
         "http://localhost:3002",
         "http://localhost:3001",
         "https://tbz-web.vercel.app",
-        "https://app.thebradburygroup.com",
+        "https://dev.thebradburygroup.net",
     ]
 
     class Config:

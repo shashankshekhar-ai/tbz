@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://thebradburygroup.com";
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://thebradburygroup.net";
 
 // GEO: explicit allow for known AI answer-engine crawlers, so intent is
 // unambiguous rather than relying on the wildcard rule to cover them.

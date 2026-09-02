@@ -1,6 +1,6 @@
 import { getAllPages, getBlogPosts } from "@/lib/cms";
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://thebradburygroup.com";
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://thebradburygroup.net";
 
 /**
  * llms.txt — an emerging convention (llmstxt.org) giving AI crawlers a plain

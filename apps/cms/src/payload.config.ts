@@ -65,13 +65,13 @@ export default buildConfig({
   ],
   cors: [
     "http://localhost:3002",
-    "https://app.thebradburygroup.com",
-    "https://cms.thebradburygroup.com",
+    "https://dev.thebradburygroup.net",
+    "https://cms.thebradburygroup.net",
   ],
   csrf: [
     "http://localhost:3002",
-    "https://app.thebradburygroup.com",
-    "https://cms.thebradburygroup.com",
+    "https://dev.thebradburygroup.net",
+    "https://cms.thebradburygroup.net",
   ],
   collections: [
     Users,

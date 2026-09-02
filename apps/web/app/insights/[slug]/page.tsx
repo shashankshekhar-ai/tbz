@@ -12,7 +12,7 @@ import { AuthorBio } from "@/components/insights/AuthorBio";
 import { RelatedInsights } from "@/components/insights/RelatedInsights";
 import { CATEGORY_LABELS, CONTENT_TYPE_LABELS, formatPublishedDate } from "@/components/insights/types";
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://thebradburygroup.com";
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://thebradburygroup.net";
 
 type Props = { params: Promise<{ slug: string }> };
 
