@@ -117,6 +117,11 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - .:/repo
+      # Host's SSH dir, read-only — entrypoint.sh copies just id_ed25519 +
+      # known_hosts into a root-owned /root/.ssh (container had no SSH
+      # identity at all before, so every push failed with "Host key
+      # verification failed"; ssh also refuses foreign-uid files directly).
+      - ${HOME}/.ssh:/host-ssh:ro
       - aiwebmaster_data:/app/data
       # Same host path both inside and outside the container so
       # infra/scripts/backup-dbs.sh (which shells out to `docker exec
