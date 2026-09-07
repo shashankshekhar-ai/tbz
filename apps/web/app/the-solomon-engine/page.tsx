@@ -10,6 +10,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { ApplySection } from "@/components/solomon/ApplySection";
+import { ParticleBackground } from "@/components/ui/ParticleBackground";
 
 export const metadata: Metadata = {
   title: "The Solomon Engine",
@@ -55,6 +56,7 @@ export default function SolomonEnginePage() {
     <div>
       {/* Hero */}
       <section className="relative -mt-20 pt-32 pb-20 bg-[#0c2940] text-white overflow-hidden">
+        <ParticleBackground variant="dark" />
         <div className="absolute top-0 right-1/4 w-96 h-96 bg-[#39918d]/20 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute bottom-0 left-1/4 w-80 h-80 bg-[#f8c51c]/10 rounded-full blur-3xl pointer-events-none" />
 

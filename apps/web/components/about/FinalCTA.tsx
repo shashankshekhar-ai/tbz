@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { ArrowUpRight, Layers, ShieldCheck, Sparkles } from "lucide-react";
-import { ParticleBackground } from "./ParticleBackground";
+import { ParticleBackground } from "@/components/ui/ParticleBackground";
 
 export function FinalCTA() {
   return (

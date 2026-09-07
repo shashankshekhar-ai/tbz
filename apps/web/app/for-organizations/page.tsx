@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Building2, GraduationCap, Users2, ArrowRight } from "lucide-react";
+import { ParticleBackground } from "@/components/ui/ParticleBackground";
 
 export const metadata: Metadata = {
   title: "For Organizations",
@@ -41,6 +42,7 @@ export default function ForOrganizationsPage() {
     <div>
       <section className="relative -mt-20 pt-32 pb-20 bg-[#0c2940] text-white overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#123856_0%,#0c2940_45%,#081b2a_100%)] pointer-events-none" />
+        <ParticleBackground variant="dark" />
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <span className="text-xs font-inter font-bold tracking-widest text-[#39918d] uppercase block mb-3">
             For Organizations

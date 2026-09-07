@@ -1,5 +1,5 @@
 import { Shield, Cpu, Users } from "lucide-react";
-import { ParticleBackground } from "./ParticleBackground";
+import { ParticleBackground } from "@/components/ui/ParticleBackground";
 
 export function AboutHero() {
   return (

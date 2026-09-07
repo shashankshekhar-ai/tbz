@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { WORKSHOPS } from "@/components/for-organizations/workshopsData";
 import { WorkshopCatalog } from "@/components/for-organizations/WorkshopCatalog";
+import { ParticleBackground } from "@/components/ui/ParticleBackground";
 
 export const metadata: Metadata = {
   title: "Workshop Catalog",
@@ -14,6 +15,7 @@ export default function WorkshopCatalogPage() {
     <div>
       <section className="relative -mt-20 pt-32 pb-16 bg-[#0c2940] text-white overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#123856_0%,#0c2940_45%,#081b2a_100%)] pointer-events-none" />
+        <ParticleBackground variant="dark" />
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <Link
             href="/for-organizations"

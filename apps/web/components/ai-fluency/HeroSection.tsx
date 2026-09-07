@@ -1,9 +1,11 @@
 import { ChevronRight } from "lucide-react";
+import { ParticleBackground } from "@/components/ui/ParticleBackground";
 
 export function HeroSection() {
   return (
     <section className="relative -mt-20 pt-32 pb-20 md:pb-24 bg-[#0c2940] text-white overflow-hidden">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#123856_0%,#0c2940_45%,#081b2a_100%)] pointer-events-none" />
+      <ParticleBackground variant="dark" />
 
       {/* Ambient glows */}
       <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-full max-w-4xl h-72 bg-[#39918d]/15 blur-3xl pointer-events-none rounded-full" />
