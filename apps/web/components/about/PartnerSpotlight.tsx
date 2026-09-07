@@ -52,17 +52,17 @@ export function PartnerSpotlight({ partners }: { partners: Partner[] }) {
             <div className="space-y-8">
               <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 pb-6">
                 <div>
-                  <span className="font-h2 text-xs font-bold uppercase tracking-widest text-[#0f766e] block mb-1">
+                  <span className="font-caption text-xs font-bold uppercase tracking-widest text-[#39918d] block mb-1">
                     {selectedPartner.category || "Strategic Partner"}
                   </span>
-                  <h3 className="font-h1 font-black text-2xl sm:text-4xl text-[#0c2940] tracking-tight">
+                  <h3 className="font-h2 font-bold text-2xl sm:text-4xl text-[#0c2940] tracking-tight">
                     {selectedPartner.name}
                   </h3>
                 </div>
 
                 {selectedPartner.founder ? (
                   <div className="bg-white px-4 py-2 rounded-xl border border-slate-200 text-right shadow-xs">
-                    <span className="font-h2 text-xs font-bold text-[#b45309] block">{selectedPartner.founder}</span>
+                    <span className="font-h3 text-xs font-medium text-[#c57b4b] block">{selectedPartner.founder}</span>
                     <span className="font-caption text-[11px] text-slate-600 font-medium">Leadership</span>
                   </div>
                 ) : (

@@ -43,18 +43,18 @@ export function PaigeStory() {
           <div className="lg:col-span-7 space-y-6">
             <p className="font-h2 font-medium text-2xl sm:text-3xl text-[#0c2940] leading-snug">
               Paige Bradbury is the Founder and Principal Learning Architect of{" "}
-              <span className="text-[#0f766e] font-bold">The Bradbury Group</span>.
+              <span className="text-[#39918d] font-bold">The Bradbury Group</span>.
             </p>
             <p className="font-body text-slate-700 text-base sm:text-lg leading-relaxed font-normal">
               She spent over <span className="font-semibold text-[#0c2940]">15+ years in international training</span>,
               working across sectors and cultures — building on an earlier career as a{" "}
-              <span className="font-semibold text-[#b45309]">broadcast journalist and CNN Radio correspondent</span>.
+              <span className="font-semibold text-[#c57b4b]">broadcast journalist and CNN Radio correspondent</span>.
             </p>
           </div>
 
-          <div className="lg:col-span-5 bg-teal-50/80 border border-teal-200/90 p-8 rounded-2xl relative overflow-hidden group hover:border-[#0f766e] transition-colors shadow-sm">
+          <div className="lg:col-span-5 bg-[#3f6d67]/10 border border-[#3f6d67]/30 p-8 rounded-2xl relative overflow-hidden group hover:border-[#39918d] transition-colors shadow-sm">
             <div className="absolute top-0 right-0 p-4 opacity-15 group-hover:opacity-25 transition-opacity">
-              <Radio className="w-24 h-24 text-[#0f766e]" />
+              <Radio className="w-24 h-24 text-[#39918d]" />
             </div>
             <span className="font-h1 font-black text-6xl sm:text-7xl text-[#0c2940] block mb-2">15+</span>
             <span className="font-h2 font-bold text-xs uppercase tracking-widest text-[#0f766e] block mb-3">
@@ -78,7 +78,7 @@ export function PaigeStory() {
               <strong className="text-[#0c2940] font-semibold">explicit permission to exercise their own agency</strong>{" "}
               to push back on learning and struggle with something new.
             </p>
-            <p className="font-caption text-sm text-[#b45309] border-l-2 border-[#c57b4b] pl-4 py-1 italic font-medium">
+            <p className="font-caption text-sm text-[#c57b4b] border-l-2 border-[#c57b4b] pl-4 py-1 italic font-medium">
               &ldquo;This wrestling match builds confidence through small, early wins instead of overwhelming them all
               at once.&rdquo;
             </p>
@@ -102,11 +102,11 @@ export function PaigeStory() {
                 <span className="font-h2 text-xs font-bold text-[#0c2940] block">Choose to start</span>
               </div>
               <div className="p-3 bg-white border border-slate-200 rounded-xl text-center shadow-xs">
-                <span className="font-h1 font-bold text-xs text-[#0f766e] block mb-1">02</span>
+                <span className="font-h1 font-bold text-xs text-[#39918d] block mb-1">02</span>
                 <span className="font-h2 text-xs font-bold text-[#0c2940] block">Embrace messy middle</span>
               </div>
               <div className="p-3 bg-white border border-slate-200 rounded-xl text-center shadow-xs">
-                <span className="font-h1 font-bold text-xs text-[#b45309] block mb-1">03</span>
+                <span className="font-h1 font-bold text-xs text-[#c57b4b] block mb-1">03</span>
                 <span className="font-h2 text-xs font-bold text-[#0c2940] block">Focus on skills</span>
               </div>
             </div>

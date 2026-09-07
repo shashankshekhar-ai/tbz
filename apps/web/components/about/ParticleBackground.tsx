@@ -2,7 +2,13 @@
 
 import { useEffect, useRef } from "react";
 
-export function ParticleBackground({ className = "" }: { className?: string }) {
+export function ParticleBackground({
+  className = "",
+  variant = "dark",
+}: {
+  className?: string;
+  variant?: "light" | "dark";
+}) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
@@ -30,21 +36,32 @@ export function ParticleBackground({ className = "" }: { className?: string }) {
       resizeObserver.observe(canvas.parentElement);
     }
 
-    const colors = [
-      "rgba(12, 41, 64, 0.65)",
-      "rgba(57, 145, 141, 0.75)",
-      "rgba(197, 123, 75, 0.75)",
-      "rgba(180, 83, 9, 0.65)",
+    // Luminous colors matching the brand palette: #39918d, #3f6d67, #f8c51c, #c57b4b
+    const darkColors = [
+      "rgba(57, 145, 141, 0.65)", // Teal
+      "rgba(63, 109, 103, 0.65)", // Forest slate
+      "rgba(248, 197, 28, 0.65)", // Gold
+      "rgba(197, 123, 75, 0.65)", // Copper
+      "rgba(255, 255, 255, 0.7)", // Crisp white
     ];
 
-    const particleCount = Math.min(Math.floor((width * height) / 10000), 75);
-    const particles = Array.from({ length: Math.max(particleCount, 35) }, () => ({
+    const lightColors = [
+      "rgba(12, 41, 64, 0.4)", // Navy
+      "rgba(57, 145, 141, 0.5)", // Teal
+      "rgba(197, 123, 75, 0.5)", // Copper
+      "rgba(180, 83, 9, 0.5)", // Amber
+    ];
+
+    const colors = variant === "dark" ? darkColors : lightColors;
+
+    const particleCount = Math.min(Math.floor((width * height) / 14000), 60);
+    const particles = Array.from({ length: Math.max(particleCount, 25) }, () => ({
       x: Math.random() * width,
       y: Math.random() * height,
-      radius: Math.random() * 2.2 + 1,
+      radius: Math.random() * 2 + 0.8,
       color: colors[Math.floor(Math.random() * colors.length)],
-      vx: (Math.random() - 0.5) * 0.45,
-      vy: (Math.random() - 0.5) * 0.45 - 0.15,
+      vx: (Math.random() - 0.5) * 0.35,
+      vy: (Math.random() - 0.5) * 0.35 - 0.05,
       pulse: Math.random() * Math.PI * 2,
       pulseSpeed: 0.015 + Math.random() * 0.02,
     }));
@@ -52,16 +69,20 @@ export function ParticleBackground({ className = "" }: { className?: string }) {
     const render = () => {
       ctx.clearRect(0, 0, width, height);
 
+      // Flowing connective lines between proximal nodes
       for (let i = 0; i < particles.length; i++) {
         for (let j = i + 1; j < particles.length; j++) {
           const dx = particles[i].x - particles[j].x;
           const dy = particles[i].y - particles[j].y;
           const dist = Math.sqrt(dx * dx + dy * dy);
 
-          if (dist < 130) {
+          if (dist < 120) {
             ctx.beginPath();
-            ctx.strokeStyle = `rgba(12, 41, 64, ${0.25 * (1 - dist / 130)})`;
-            ctx.lineWidth = 0.75;
+            ctx.strokeStyle =
+              variant === "dark"
+                ? `rgba(56, 189, 248, ${0.18 * (1 - dist / 120)})`
+                : `rgba(12, 41, 64, ${0.12 * (1 - dist / 120)})`;
+            ctx.lineWidth = variant === "dark" ? 0.7 : 0.6;
             ctx.moveTo(particles[i].x, particles[i].y);
             ctx.lineTo(particles[j].x, particles[j].y);
             ctx.stroke();
@@ -69,12 +90,13 @@ export function ParticleBackground({ className = "" }: { className?: string }) {
         }
       }
 
+      // Floating particles with a soft ambient glow
       particles.forEach((p) => {
         p.x += p.vx;
         p.y += p.vy;
 
         p.pulse += p.pulseSpeed;
-        const currentRadius = p.radius + Math.sin(p.pulse) * 0.7;
+        const currentRadius = p.radius + Math.sin(p.pulse) * 0.5;
 
         if (p.x < -20) p.x = width + 20;
         if (p.x > width + 20) p.x = -20;
@@ -82,9 +104,9 @@ export function ParticleBackground({ className = "" }: { className?: string }) {
         if (p.y > height + 20) p.y = -20;
 
         ctx.beginPath();
-        ctx.arc(p.x, p.y, Math.max(0.5, currentRadius), 0, Math.PI * 2);
+        ctx.arc(p.x, p.y, Math.max(0.6, currentRadius), 0, Math.PI * 2);
         ctx.fillStyle = p.color;
-        ctx.shadowBlur = 6;
+        ctx.shadowBlur = variant === "dark" ? 6 : 3;
         ctx.shadowColor = p.color;
         ctx.fill();
         ctx.shadowBlur = 0;
@@ -99,10 +121,14 @@ export function ParticleBackground({ className = "" }: { className?: string }) {
       cancelAnimationFrame(animationFrameId);
       resizeObserver.disconnect();
     };
-  }, []);
+  }, [variant]);
 
   return (
-    <div className={`absolute inset-0 pointer-events-none opacity-30 overflow-hidden ${className}`}>
+    <div
+      className={`absolute inset-0 pointer-events-none overflow-hidden ${
+        variant === "dark" ? "opacity-25" : "opacity-15"
+      } ${className}`}
+    >
       <canvas ref={canvasRef} className="w-full h-full block" />
     </div>
   );

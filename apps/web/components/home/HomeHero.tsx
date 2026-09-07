@@ -18,13 +18,13 @@ export function HomeHero() {
 
       <div className="relative z-10 max-w-6xl mx-auto w-full">
         <div className="max-w-3xl space-y-6">
-          <h1 className="text-4xl md:text-5xl font-h1 leading-tight tracking-tight">
+          <h1 className="text-[36px] sm:text-[40px] md:text-[44px] lg:text-[48px] xl:text-[50px] font-h1 leading-[1.08] tracking-[-0.02em]">
             Stop Implementing AI Tools.
             <br />
             Start Architecting Human Performance.
           </h1>
 
-          <p className="text-lg md:text-xl text-slate-200 font-h3 leading-relaxed max-w-2xl">
+          <p className="text-base sm:text-lg md:text-xl text-slate-200 font-h3 leading-relaxed max-w-2xl">
             Talk to Columbus in the corner —
             tell us what you&apos;re working through, and our team will follow up personally.
           </p>
