@@ -119,6 +119,20 @@ export const contentAgentApplyEndpoint: Endpoint = {
 
     const cfg = getKindConfig(kind);
     const data = cfg.toPayloadData(proposal);
+    // `publish` (this endpoint's own flag, above) and the collection's own
+    // `status` select field are two separate things that were never wired
+    // together: `publish`/`draft` only affects Payload's internal version
+    // state (which the public site never actually queries), while
+    // apps/web's getPostBySlug/getBlogPosts/etc. filter strictly on
+    // `where[status][equals]=published`. Without this, publish:true saved
+    // a "published" Payload version whose `status` field was still
+    // whatever toPayloadData defaulted it to ("draft"), so it silently
+    // never appeared live — confirmed for real via a live create+404.
+    // Only overridden when the caller didn't explicitly set status
+    // themselves, so a deliberate status in the proposal still wins.
+    if (hasStatusField && proposal.status === undefined) {
+      data.status = publish ? "published" : "draft";
+    }
     type ContentCollection = "posts" | "resources" | "case-studies" | "faqs" | "testimonials";
 
     try {
@@ -131,7 +145,13 @@ export const contentAgentApplyEndpoint: Endpoint = {
           })
         : await req.payload.create({
             collection: cfg.collectionSlug as ContentCollection,
-            data: hasStatusField ? { ...data, status: "draft" } : data,
+            // Was unconditionally `{ ...data, status: "draft" }` here — that
+            // silently re-overwrote the status the block above just
+            // computed from `publish`, on every single create, regardless
+            // of intent. That was the actual full cause of "publish:true
+            // still doesn't show up live": this line, not the block above,
+            // had the last word. data.status is already correct now.
+            data,
             ...(supportsDrafts ? { draft: !publish } : {}),
           });
       return Response.json({ id: doc.id, slug: doc.slug, draft: supportsDrafts && !publish });
