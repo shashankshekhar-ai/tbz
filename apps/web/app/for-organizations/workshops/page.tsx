@@ -17,7 +17,7 @@ export default function WorkshopCatalogPage() {
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <Link
             href="/for-organizations"
-            className="inline-flex items-center gap-2 text-sm font-inter font-semibold text-[#39918d] hover:text-white transition-colors mb-6 group"
+            className="inline-flex items-center gap-2 text-sm font-inter font-semibold text-slate-300 hover:text-white transition-colors mb-6 group"
           >
             <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
             <span>Back to For Organizations</span>
@@ -26,7 +26,7 @@ export default function WorkshopCatalogPage() {
             Community Upskilling
           </span>
           <h1 className="text-4xl sm:text-5xl font-montserrat font-bold text-white mb-4">Workshop Catalog</h1>
-          <p className="text-lg font-roboto text-[#D9E3E6] max-w-2xl">
+          <p className="text-lg font-roboto text-slate-300 max-w-2xl">
             Open-enrollment sessions for broader workforce AI upskilling — search or filter below to find the
             right session for your team.
           </p>

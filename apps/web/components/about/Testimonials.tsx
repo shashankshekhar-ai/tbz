@@ -88,7 +88,7 @@ export function Testimonials({ testimonials }: { testimonials: Testimonial[] }) 
             </blockquote>
 
             {current.isPending && (
-              <div className="inline-flex items-center gap-2 bg-amber-50 border border-amber-200 px-3 py-1 rounded-lg text-xs text-[#c57b4b] font-caption font-semibold">
+              <div className="inline-flex items-center gap-2 bg-[#c57b4b]/10 border border-[#c57b4b]/30 px-3 py-1 rounded-lg text-xs text-[#c57b4b] font-caption font-semibold">
                 <Clock className="w-3.5 h-3.5" />
                 <span>Pending Confirmation &amp; Release</span>
               </div>

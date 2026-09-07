@@ -55,7 +55,6 @@ export default function SolomonEnginePage() {
     <div>
       {/* Hero */}
       <section className="relative -mt-20 pt-32 pb-20 bg-[#0c2940] text-white overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#123856_0%,#0c2940_45%,#081b2a_100%)] pointer-events-none" />
         <div className="absolute top-0 right-1/4 w-96 h-96 bg-[#39918d]/20 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute bottom-0 left-1/4 w-80 h-80 bg-[#f8c51c]/10 rounded-full blur-3xl pointer-events-none" />
 
@@ -69,7 +68,7 @@ export default function SolomonEnginePage() {
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-montserrat font-bold text-white mb-6 leading-tight">
             The Solomon Engine
           </h1>
-          <p className="text-lg font-roboto text-[#D9E3E6] max-w-2xl mx-auto mb-10 leading-relaxed">
+          <p className="text-lg font-roboto text-white/90 max-w-2xl mx-auto mb-10 leading-relaxed">
             A 12-week executive cohort program for senior leaders navigating AI-driven
             transformation — team enablement, cross-functional alignment, and leadership
             architecture design.
@@ -78,7 +77,7 @@ export default function SolomonEnginePage() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <a
               href="#apply"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#f8c51c] hover:bg-[#e0b016] text-[#0c2940] font-montserrat font-bold text-base px-8 py-4 rounded-full shadow-lg shadow-[#f8c51c]/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#f8c51c] hover:bg-[#ebba15] text-[#0c2940] font-montserrat font-bold text-base px-8 py-4 rounded-full shadow-lg shadow-[#f8c51c]/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
             >
               <span>Start Your Application</span>
               <ArrowRight className="w-5 h-5" />
@@ -134,15 +133,14 @@ export default function SolomonEnginePage() {
               <div
                 key={tier.id}
                 id={tier.id}
-                className="rounded-2xl bg-white border border-[#D9E3E6] p-8 sm:p-10 flex flex-col justify-between shadow-lg hover:shadow-xl transition-shadow"
-                style={{ borderColor: `${tier.accentColor}55` }}
+                className="rounded-2xl bg-[#ffffff] border border-[#0c2940]/15 hover:border-[#39918d]/60 p-8 sm:p-10 flex flex-col justify-between shadow-lg hover:shadow-xl transition-all"
               >
                 <div>
                   <div className="flex items-center justify-between mb-6">
                     <span
                       className="p-3 rounded-xl border"
                       style={{
-                        backgroundColor: `${tier.accentColor}1A`,
+                        backgroundColor: `${tier.accentColor}26`,
                         borderColor: `${tier.accentColor}4D`,
                         color: tier.accentColor,
                       }}
@@ -162,24 +160,21 @@ export default function SolomonEnginePage() {
                   </div>
 
                   <h3 className="text-2xl font-montserrat font-bold text-[#0c2940] mb-3">{tier.name}</h3>
-                  <p className="text-sm font-roboto text-[#60707A] mb-8 leading-relaxed">{tier.description}</p>
+                  <p className="text-sm font-roboto text-[#0c2940]/80 mb-8 leading-relaxed">{tier.description}</p>
 
                   <ul className="space-y-4 mb-8">
                     {tier.features.map((f) => (
                       <li key={f} className="flex items-start gap-3">
-                        <span
-                          className="w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5"
-                          style={{ backgroundColor: `${tier.accentColor}26` }}
-                        >
-                          <Check className="w-3.5 h-3.5" style={{ color: tier.accentColor }} />
+                        <span className="w-5 h-5 rounded-full bg-[#39918d]/15 flex items-center justify-center shrink-0 mt-0.5">
+                          <Check className="w-3.5 h-3.5 text-[#39918d]" />
                         </span>
-                        <span className="text-sm font-roboto text-[#0c2940]">{f}</span>
+                        <span className="text-sm font-roboto text-[#0c2940]/90">{f}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
 
-                <div className="pt-6 border-t border-[#D9E3E6]">
+                <div className="pt-6 border-t border-[#0c2940]/10">
                   <span className="block text-2xl font-montserrat font-bold text-[#0c2940] mb-6">
                     {tier.price}
                   </span>
@@ -199,7 +194,7 @@ export default function SolomonEnginePage() {
             );
           })}
         </div>
-        <p className="text-center text-sm font-roboto text-[#60707A] mt-10 italic max-w-2xl mx-auto">
+        <p className="text-center text-sm font-roboto text-[#0c2940]/70 mt-10 italic max-w-2xl mx-auto">
           Pricing shown is indicative — final tier pricing is confirmed during the discovery call.
         </p>
       </section>
@@ -237,7 +232,7 @@ export default function SolomonEnginePage() {
       <section className="py-8 pb-16 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
         <div
           id="reimbursement"
-          className="rounded-3xl bg-[#F7F8F9] border border-[#D9E3E6] p-8 sm:p-12 md:p-16 shadow-lg"
+          className="rounded-3xl bg-[#f8fafb] border border-[#0c2940]/15 p-8 sm:p-12 md:p-16 shadow-lg"
         >
           <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#c57b4b]/15 border border-[#c57b4b]/30 mb-6">
             <FileText className="w-4 h-4 text-[#c57b4b]" />
@@ -248,7 +243,7 @@ export default function SolomonEnginePage() {
           <h2 className="text-3xl sm:text-4xl font-montserrat font-bold text-[#0c2940] mb-6">
             Tax &amp; Employer Reimbursement
           </h2>
-          <p className="text-base sm:text-lg font-roboto text-[#60707A] leading-relaxed">
+          <p className="text-base sm:text-lg font-roboto text-[#0c2940]/85 leading-relaxed">
             Professional development and executive education expenses, including cohort tuition,
             are often eligible for employer tuition-reimbursement programs and may qualify as a
             deductible business expense. We recommend confirming eligibility with your employer's
@@ -259,15 +254,15 @@ export default function SolomonEnginePage() {
       </section>
 
       {/* Apply / Interview + Solomon */}
-      <section id="apply" className="py-20 px-4 sm:px-6 lg:px-8 bg-[#F7F8F9]">
+      <section id="apply" className="py-20 px-4 sm:px-6 lg:px-8 bg-[#ffffff]">
         <div className="max-w-2xl mx-auto text-center mb-10">
-          <span className="text-xs font-inter font-bold tracking-widest text-[#39918d] uppercase block mb-3">
+          <span className="text-xs font-inter font-bold tracking-widest text-[#3f6d67] uppercase bg-[#39918d]/10 border border-[#39918d]/30 px-4 py-1.5 rounded-full inline-block mb-4">
             Apply / Interview
           </span>
           <h2 className="text-2xl sm:text-3xl font-montserrat font-bold text-[#0c2940]">
             Start Your Application
           </h2>
-          <p className="text-sm font-roboto text-[#60707A] mt-2">
+          <p className="text-sm font-roboto text-[#0c2940]/80 mt-2">
             Submit your interest below — once received, Solomon, our AI L&amp;D strategist, becomes
             available to answer questions while our team reviews your application.
           </p>

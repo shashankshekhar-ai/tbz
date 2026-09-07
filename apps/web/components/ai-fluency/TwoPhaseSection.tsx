@@ -14,20 +14,20 @@ export function TwoPhaseSection() {
   const [selectedCapability, setSelectedCapability] = useState<string | null>(null);
 
   return (
-    <section id="cohort-overview" className="py-20 md:py-24 bg-white">
+    <section id="cohort-overview" className="py-20 md:py-24 bg-white border-b border-[#3f6d67]/20">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section header */}
         <div className="text-center max-w-3xl mx-auto mb-12 md:mb-16">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-montserrat font-bold text-[#0c2940] tracking-tight mb-4">
             A Two-Phase Path: From Literacy to Fluency
           </h2>
-          <p className="text-base sm:text-lg font-roboto text-[#60707A] leading-relaxed">
+          <p className="text-base sm:text-lg font-roboto text-[#0c2940]/80 leading-relaxed">
             Move from foundational mental models to personal, autonomous agent execution. Our
             curriculum bridges technical comprehension with applied executive leverage.
           </p>
 
           {/* Phase toggle */}
-          <div className="mt-8 inline-flex flex-wrap justify-center p-1.5 rounded-xl bg-[#F7F8F9] border border-[#D9E3E6] shadow-inner">
+          <div className="mt-8 inline-flex flex-wrap justify-center p-1.5 rounded-xl bg-[#f7f9fa] border border-[#3f6d67]/30 shadow-inner">
             <button
               type="button"
               onClick={() => setActiveTab("all")}
@@ -61,7 +61,7 @@ export function TwoPhaseSection() {
         </div>
 
         {/* Progression stepper */}
-        <div className="mb-12 bg-gradient-to-r from-[#0c2940] via-[#123652] to-[#0c2940] rounded-2xl p-6 sm:p-8 text-white shadow-lg relative overflow-hidden">
+        <div className="mb-12 bg-gradient-to-r from-[#0c2940] via-[#123652] to-[#0c2940] rounded-2xl p-6 sm:p-8 text-white shadow-lg border border-[#3f6d67]/40 relative overflow-hidden">
           <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="space-y-1 text-center md:text-left">
               <span className="text-xs font-inter font-bold uppercase tracking-widest text-[#f8c51c]">
@@ -135,11 +135,12 @@ function PhaseCard({
   onSelectCapability: (title: string | null) => void;
 }) {
   const accent = phase.accentColor;
+  const isFluency = phase.id === "fluency";
 
   return (
     <div
       className="bg-white rounded-2xl border-2 shadow-sm hover:shadow-xl transition-shadow duration-300 p-6 sm:p-8 lg:p-10 flex flex-col justify-between relative overflow-hidden"
-      style={{ borderColor: `${accent}4d` }}
+      style={{ borderColor: `${accent}${isFluency ? "66" : "4d"}` }}
     >
       <div className="absolute top-0 left-0 right-0 h-2" style={{ backgroundColor: accent }} />
 
@@ -163,7 +164,11 @@ function PhaseCard({
 
         <p
           className="text-sm sm:text-base font-roboto text-[#0c2940]/80 leading-relaxed mb-8 p-4 rounded-xl border"
-          style={{ backgroundColor: `${accent}0d`, borderColor: `${accent}33` }}
+          style={
+            isFluency
+              ? { backgroundColor: `${accent}0d`, borderColor: `${accent}33` }
+              : { backgroundColor: "#f7f9fa", borderColor: "#e2e8f0" }
+          }
         >
           {phase.tagline}
         </p>
@@ -184,7 +189,7 @@ function PhaseCard({
                 style={
                   isSelected
                     ? { backgroundColor: `${accent}1a`, borderColor: accent }
-                    : { backgroundColor: "#ffffff", borderColor: "#D9E3E6" }
+                    : { backgroundColor: "#ffffff", borderColor: "#e2e8f0" }
                 }
               >
                 <div className="flex items-center justify-between gap-3">
@@ -210,7 +215,7 @@ function PhaseCard({
         </div>
       </div>
 
-      <div className="pt-5 border-t border-[#EDF2F4] flex items-center justify-between gap-3">
+      <div className="pt-5 border-t border-slate-100 flex items-center justify-between gap-3">
         <span className="font-caption text-xs text-[#0c2940]/70">{footerLabel}</span>
         <span className="font-montserrat font-semibold text-xs shrink-0" style={{ color: accent }}>
           {pathwayLabel}

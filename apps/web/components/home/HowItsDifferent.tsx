@@ -33,7 +33,7 @@ export function HowItsDifferent({ differentiators }: { differentiators: Differen
           return (
             <div
               key={item.id}
-              className="bg-white rounded-2xl p-8 border border-[#D9E3E6] shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
+              className="bg-white rounded-2xl p-8 border border-[#D9E3E8] shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
             >
               <div>
                 <div
@@ -45,7 +45,7 @@ export function HowItsDifferent({ differentiators }: { differentiators: Differen
 
                 <h3 className="text-xl font-h2 text-[#0c2940] mb-3">{item.title}</h3>
 
-                <p className="text-normal font-body text-[#60707A] leading-relaxed mb-8">{item.description}</p>
+                <p className="text-normal font-body text-[#5d6b74] leading-relaxed mb-8">{item.description}</p>
               </div>
             </div>
           );

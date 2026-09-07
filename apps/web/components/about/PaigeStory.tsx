@@ -190,7 +190,7 @@ export function PaigeStory() {
                 ))}
               </div>
 
-              <div className="p-4 bg-[#c57b4b]/10 border border-[#c57b4b]/30/80 rounded-xl text-center">
+              <div className="p-4 bg-[#c57b4b]/10 border border-[#c57b4b]/30 rounded-xl text-center">
                 <p className="font-caption text-xs text-[#c57b4b] italic font-medium">
                   &ldquo;She may or may not be using AI to chart out a pollinator garden and keep her front yard
                   green.&rdquo;

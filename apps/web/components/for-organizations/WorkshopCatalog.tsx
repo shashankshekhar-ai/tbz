@@ -25,9 +25,9 @@ export function WorkshopCatalog({ workshops }: { workshops: Workshop[] }) {
   return (
     <div className="space-y-8">
       {/* Search + category filter controls */}
-      <div className="rounded-xl border border-[#D9E3E6] bg-[#F7F8F9] p-4 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+      <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-lg flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
         <div className="relative w-full md:w-80">
-          <Search className="w-4 h-4 text-[#60707A] absolute left-3.5 top-1/2 -translate-y-1/2" aria-hidden="true" />
+          <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" aria-hidden="true" />
           <label htmlFor="workshop-search" className="sr-only">
             Search workshops
           </label>
@@ -37,7 +37,7 @@ export function WorkshopCatalog({ workshops }: { workshops: Workshop[] }) {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search catalog sessions..."
-            className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-[#D9E3E6] bg-white font-roboto text-sm text-[#0c2940] placeholder:text-[#60707A] focus:outline-none focus:ring-2 focus:ring-[#39918d] transition-colors"
+            className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-slate-200 bg-slate-50 font-roboto text-sm text-[#0c2940] placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#39918d] transition-colors"
           />
         </div>
 
@@ -53,7 +53,7 @@ export function WorkshopCatalog({ workshops }: { workshops: Workshop[] }) {
                 className={`whitespace-nowrap px-4 py-2 rounded-full font-inter text-xs font-semibold transition-colors ${
                   active
                     ? "bg-[#39918d] text-white shadow-sm"
-                    : "bg-white text-[#60707A] border border-[#D9E3E6] hover:border-[#39918d] hover:text-[#0c2940]"
+                    : "bg-slate-100 text-slate-600 hover:bg-slate-200 border border-slate-200"
                 }`}
               >
                 {cat.label}
@@ -67,14 +67,14 @@ export function WorkshopCatalog({ workshops }: { workshops: Workshop[] }) {
       {filtered.length === 0 ? (
         <div className="text-center py-16 space-y-2">
           <h2 className="text-xl font-montserrat font-bold text-[#0c2940]">No workshops found</h2>
-          <p className="text-sm font-roboto text-[#60707A]">Try adjusting your search or selecting another audience.</p>
+          <p className="text-sm font-roboto text-slate-600">Try adjusting your search or selecting another audience.</p>
         </div>
       ) : (
         <div className="space-y-6">
           {filtered.map((workshop) => (
             <div
               key={workshop.id}
-              className="rounded-2xl border border-[#D9E3E6] bg-white p-6 sm:p-8 flex flex-col lg:flex-row lg:items-center justify-between gap-6 transition-all duration-300 hover:border-[#39918d] hover:shadow-lg"
+              className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 flex flex-col lg:flex-row lg:items-center justify-between gap-6 transition-all duration-300 hover:border-[#39918d] hover:shadow-lg"
             >
               <div className="space-y-2 max-w-3xl">
                 <span className="text-xs font-inter font-bold uppercase tracking-widest text-[#39918d] block">
@@ -83,7 +83,7 @@ export function WorkshopCatalog({ workshops }: { workshops: Workshop[] }) {
                 <h3 className="text-xl sm:text-2xl font-montserrat font-bold text-[#0c2940] leading-tight">
                   {workshop.title}
                 </h3>
-                <p className="text-sm sm:text-base font-roboto text-[#60707A] leading-relaxed">
+                <p className="text-sm sm:text-base font-roboto text-slate-600 leading-relaxed">
                   {workshop.description}
                 </p>
               </div>

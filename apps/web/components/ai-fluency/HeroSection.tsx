@@ -20,7 +20,7 @@ export function HeroSection() {
             <div className="w-28 h-12 bg-[#39918d]/15 blur-xl rounded-full" />
           </div>
 
-          <div className="relative inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#39918d]/20 border border-[#39918d]/40 backdrop-blur-sm shadow-sm transition-transform hover:scale-105">
+          <div className="relative inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#3f6d67]/30 border border-[#39918d]/40 backdrop-blur-sm shadow-sm transition-transform hover:scale-105">
             <span className="w-2 h-2 rounded-full bg-[#f8c51c] animate-pulse" />
             <span className="font-inter text-xs font-bold uppercase tracking-widest text-[#f8c51c]">
               For You
@@ -32,14 +32,14 @@ export function HeroSection() {
           AI Fluency Cohort
         </h1>
 
-        <p className="font-caption text-base sm:text-lg text-[#D9E3E6] max-w-2xl mx-auto leading-relaxed mb-8">
+        <p className="font-caption text-base sm:text-lg text-white/85 max-w-2xl mx-auto leading-relaxed mb-8">
           A structured, two-phase program engineered for leaders seeking strategic AI mastery.
         </p>
 
         <div className="flex items-center justify-center">
           <a
             href="#cohort-overview"
-            className="inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-xl bg-[#39918d]/25 hover:bg-[#39918d]/40 text-white border border-[#39918d]/60 font-montserrat font-bold text-base shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5"
+            className="inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-xl bg-[#3f6d67]/40 hover:bg-[#3f6d67]/60 text-white border border-[#39918d]/60 font-montserrat font-bold text-base shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5"
           >
             <span>Explore the 2-Phase Path</span>
             <ChevronRight className="w-5 h-5 text-[#f8c51c]" />

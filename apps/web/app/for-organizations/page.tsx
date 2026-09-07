@@ -48,7 +48,7 @@ export default function ForOrganizationsPage() {
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-montserrat font-bold text-white mb-4 leading-[1.1]">
             Enterprise AI Transformation
           </h1>
-          <p className="text-lg font-roboto text-[#D9E3E6] max-w-2xl mx-auto leading-relaxed">
+          <p className="text-lg font-roboto text-slate-200 max-w-2xl mx-auto leading-relaxed">
             Enterprise-wide AI transformation, custom model integration, and proprietary ROI
             models — for CXOs, enterprise boards, and enterprise PMOs.
           </p>
@@ -62,7 +62,7 @@ export default function ForOrganizationsPage() {
             const content = (
               <div
                 id={pillar.id}
-                className="rounded-2xl bg-white border border-[#D9E3E6] shadow-sm p-8 h-full flex flex-col justify-between transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:border-[#39918d]"
+                className="rounded-2xl bg-white border border-slate-200/90 shadow-sm p-8 h-full flex flex-col justify-between transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:border-[#39918d]"
               >
                 <div>
                   <div
@@ -74,7 +74,7 @@ export default function ForOrganizationsPage() {
                   <h3 className="text-xl font-montserrat font-bold text-[#0c2940] mb-3 leading-tight">
                     {pillar.title}
                   </h3>
-                  <p className="text-sm font-roboto text-[#60707A] leading-relaxed">{pillar.description}</p>
+                  <p className="text-sm font-roboto text-slate-600 leading-relaxed">{pillar.description}</p>
                 </div>
                 {pillar.href && (
                   <div className="pt-6 mt-4 flex items-center gap-2 text-sm font-inter font-semibold text-[#39918d] group">
@@ -105,7 +105,7 @@ export default function ForOrganizationsPage() {
             <h3 className="text-xl font-montserrat font-bold mb-2">
               Looking for individual enablement instead?
             </h3>
-            <p className="text-sm font-roboto text-[#D9E3E6] max-w-md leading-relaxed">
+            <p className="text-sm font-roboto text-slate-300 max-w-md leading-relaxed">
               For single-seat or small-team enrollment rather than an organization-wide rollout,
               see the AI Fluency Cohort — our path built for individuals.
             </p>
@@ -125,7 +125,7 @@ export default function ForOrganizationsPage() {
         <h2 className="text-2xl sm:text-3xl font-montserrat font-bold text-[#0c2940] mb-3">
           Ready to design your organization&apos;s AI learning architecture?
         </h2>
-        <p className="text-sm sm:text-base font-roboto text-[#60707A] max-w-xl mx-auto mb-8 leading-relaxed">
+        <p className="text-sm sm:text-base font-roboto text-slate-600 max-w-xl mx-auto mb-8 leading-relaxed">
           Talk with our team about a transformation program built around your roles, risk profile, and existing
           L&amp;D infrastructure.
         </p>

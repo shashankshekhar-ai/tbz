@@ -57,58 +57,39 @@ export function ThreePaths({ paths }: { paths: PathCard[] }) {
           return (
             <div
               key={path.id}
-              className={`bg-white rounded-2xl p-8 transition-all flex flex-col justify-between relative group ${
-                isPrimary
-                  ? "border border-[#D9E3E6] shadow-sm hover:shadow-lg"
-                  : "border-2 border-[#c57b4b]/60 shadow-md hover:shadow-xl"
+              className={`rounded-2xl p-8 border transition-all flex flex-col justify-between relative group ${
+                isPrimary ? "shadow-sm hover:shadow-lg" : "shadow-md hover:shadow-xl"
               }`}
+              style={{ backgroundColor: path.accentColor, borderColor: path.accentColor }}
             >
               <div>
                 <div className="flex items-center justify-between mb-6">
-                  {isPrimary ? (
-                    <span className="text-[10px] font-h3 font-bold uppercase tracking-wider px-3 py-1 bg-[#39918d]/15 text-[#39918d] rounded-full border border-[#39918d]/30">
-                      PRIMARY
-                    </span>
-                  ) : (
-                    <span
-                      className="text-[10px] font-h3 font-bold uppercase tracking-wider px-3 py-1 rounded-full border"
-                      style={{
-                        backgroundColor: path.accentColor === "#c57b4b" ? "#c57b4b26" : "#F7F8F9",
-                        color: path.accentColor === "#c57b4b" ? "#c57b4b" : "#60707A",
-                        borderColor: path.accentColor === "#c57b4b" ? "#c57b4b4d" : "#D9E3E6",
-                      }}
-                    >
-                      {path.audience}
-                    </span>
-                  )}
+                  <span className="text-[10px] font-h3 font-bold uppercase tracking-wider px-3 py-1 bg-white/10 text-white rounded-full border border-white/30">
+                    {isPrimary ? "PRIMARY" : path.audience}
+                  </span>
 
-                  <div
-                    className="p-2 rounded-full border"
-                    style={{ backgroundColor: isPrimary ? "#F7F8F9" : `${path.accentColor}1a`, borderColor: isPrimary ? "#D9E3E6" : "transparent" }}
-                  >
-                    {renderIcon(path.iconName, isPrimary ? "#0c2940" : path.accentColor)}
+                  <div className="p-2 bg-white/10 text-white rounded-full border border-white/30">
+                    {renderIcon(path.iconName, "#ffffff")}
                   </div>
                 </div>
 
-                <h3 className="text-2xl font-h2 text-[#0c2940] mb-3">{path.title}</h3>
+                <h3 className="text-2xl font-h2 text-white mb-3">{path.title}</h3>
 
-                <p className="text-normal font-body text-[#60707A] leading-relaxed mb-8">{path.description}</p>
+                <p className="text-normal font-body text-white leading-relaxed mb-8">{path.description}</p>
               </div>
 
-              <div className="pt-6 border-t border-[#D9E3E6] flex items-center justify-between">
+              <div className="pt-6 border-t border-white/30 flex items-center justify-between">
                 <Link
                   href={resolveHref(path.ctaTarget)}
-                  className="text-xs font-semibold flex items-center gap-1 transition-colors"
-                  style={{ color: isPrimary ? "#0c2940" : path.accentColor }}
+                  className="text-xs font-semibold text-white hover:text-white/80 flex items-center gap-1 transition-colors"
                 >
-                  <span />
-                  <ArrowRight className="w-3.5 h-3.5" style={{ color: path.accentColor }} />
+                  <ArrowRight className="w-3.5 h-3.5 text-white" />
                 </Link>
                 <button
                   onClick={() => askColumbus(path.columbusTopic)}
-                  className="text-[11px] font-semibold text-[#60707A] hover:text-[#0c2940] px-3 py-1.5 rounded border border-[#D9E3E6] flex items-center gap-1.5 transition-all cursor-pointer"
+                  className="text-[11px] font-semibold text-white px-3 py-1.5 rounded border border-white/40 hover:border-white flex items-center gap-1.5 transition-all cursor-pointer"
                 >
-                  <MessageSquare className="w-3.5 h-3.5" style={{ color: path.accentColor }} />
+                  <MessageSquare className="w-3.5 h-3.5 text-white" />
                   <span>{path.columbusButtonText}</span>
                 </button>
               </div>
