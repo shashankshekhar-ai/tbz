@@ -29,6 +29,13 @@ COPY --from=builder --chown=payload:nodejs /app/apps/cms/.next ./.next
 COPY --from=builder --chown=payload:nodejs /app/apps/cms/package.json ./package.json
 COPY --from=builder --chown=payload:nodejs /app/package.json /app/package.json
 RUN ln -sf /app/node_modules/.pnpm/node_modules/drizzle-kit ./node_modules/drizzle-kit
+# WORKDIR (/app/apps/cms) is created by Docker as root:root — the --chown
+# flags above only cover files/dirs actually COPY'd in, so the payload user
+# can write into .next/node_modules but can't create a brand-new top-level
+# entry here at runtime. Payload's media upload does exactly that (mkdir
+# 'media' the first time something is uploaded), which fails with EACCES
+# without this. Confirmed via a real upload attempt reproducing the error.
+RUN mkdir -p media && chown payload:nodejs media
 USER payload
 EXPOSE 3003
 ENV PORT=3003
