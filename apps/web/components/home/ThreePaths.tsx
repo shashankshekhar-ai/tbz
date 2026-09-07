@@ -59,7 +59,7 @@ export function ThreePaths({ paths }: { paths: PathCard[] }) {
               key={path.id}
               className={`bg-white rounded-2xl p-8 transition-all flex flex-col justify-between relative group ${
                 isPrimary
-                  ? "border border-[#D9E3E8] shadow-sm hover:shadow-lg"
+                  ? "border border-[#D9E3E6] shadow-sm hover:shadow-lg"
                   : "border-2 border-[#c57b4b]/60 shadow-md hover:shadow-xl"
               }`}
             >
@@ -73,9 +73,9 @@ export function ThreePaths({ paths }: { paths: PathCard[] }) {
                     <span
                       className="text-[10px] font-h3 font-bold uppercase tracking-wider px-3 py-1 rounded-full border"
                       style={{
-                        backgroundColor: path.accentColor === "#c57b4b" ? "#c57b4b26" : "#F8FAFB",
-                        color: path.accentColor === "#c57b4b" ? "#c57b4b" : "#5d6b74",
-                        borderColor: path.accentColor === "#c57b4b" ? "#c57b4b4d" : "#D9E3E8",
+                        backgroundColor: path.accentColor === "#c57b4b" ? "#c57b4b26" : "#F7F8F9",
+                        color: path.accentColor === "#c57b4b" ? "#c57b4b" : "#60707A",
+                        borderColor: path.accentColor === "#c57b4b" ? "#c57b4b4d" : "#D9E3E6",
                       }}
                     >
                       {path.audience}
@@ -84,7 +84,7 @@ export function ThreePaths({ paths }: { paths: PathCard[] }) {
 
                   <div
                     className="p-2 rounded-full border"
-                    style={{ backgroundColor: isPrimary ? "#F8FAFB" : `${path.accentColor}1a`, borderColor: isPrimary ? "#D9E3E8" : "transparent" }}
+                    style={{ backgroundColor: isPrimary ? "#F7F8F9" : `${path.accentColor}1a`, borderColor: isPrimary ? "#D9E3E6" : "transparent" }}
                   >
                     {renderIcon(path.iconName, isPrimary ? "#0c2940" : path.accentColor)}
                   </div>
@@ -92,10 +92,10 @@ export function ThreePaths({ paths }: { paths: PathCard[] }) {
 
                 <h3 className="text-2xl font-h2 text-[#0c2940] mb-3">{path.title}</h3>
 
-                <p className="text-normal font-body text-[#5d6b74] leading-relaxed mb-8">{path.description}</p>
+                <p className="text-normal font-body text-[#60707A] leading-relaxed mb-8">{path.description}</p>
               </div>
 
-              <div className="pt-6 border-t border-[#D9E3E8] flex items-center justify-between">
+              <div className="pt-6 border-t border-[#D9E3E6] flex items-center justify-between">
                 <Link
                   href={resolveHref(path.ctaTarget)}
                   className="text-xs font-semibold flex items-center gap-1 transition-colors"
@@ -106,7 +106,7 @@ export function ThreePaths({ paths }: { paths: PathCard[] }) {
                 </Link>
                 <button
                   onClick={() => askColumbus(path.columbusTopic)}
-                  className="text-[11px] font-semibold text-[#5d6b74] hover:text-[#0c2940] px-3 py-1.5 rounded border border-[#D9E3E8] flex items-center gap-1.5 transition-all cursor-pointer"
+                  className="text-[11px] font-semibold text-[#60707A] hover:text-[#0c2940] px-3 py-1.5 rounded border border-[#D9E3E6] flex items-center gap-1.5 transition-all cursor-pointer"
                 >
                   <MessageSquare className="w-3.5 h-3.5" style={{ color: path.accentColor }} />
                   <span>{path.columbusButtonText}</span>

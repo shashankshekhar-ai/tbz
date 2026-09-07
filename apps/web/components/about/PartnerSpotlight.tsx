@@ -66,7 +66,7 @@ export function PartnerSpotlight({ partners }: { partners: Partner[] }) {
                     <span className="font-caption text-[11px] text-slate-600 font-medium">Leadership</span>
                   </div>
                 ) : (
-                  <span className="font-caption text-xs text-[#c57b4b] bg-amber-50 px-3 py-1 rounded-lg border border-amber-200 font-bold">
+                  <span className="font-caption text-xs text-[#c57b4b] bg-[#c57b4b]/10 px-3 py-1 rounded-lg border border-[#c57b4b]/30 font-bold">
                     Partner Profile Active
                   </span>
                 )}
@@ -88,8 +88,8 @@ export function PartnerSpotlight({ partners }: { partners: Partner[] }) {
                   </p>
 
                   {selectedPartner.pullQuote && (
-                    <div className="p-6 bg-amber-50/80 border-l-4 border-[#c57b4b] rounded-r-xl shadow-xs">
-                      <span className="font-h2 font-bold text-base sm:text-lg text-[#78350f] block">
+                    <div className="p-6 bg-[#c57b4b]/10 border-l-4 border-[#c57b4b] rounded-r-xl shadow-xs">
+                      <span className="font-h2 font-bold text-base sm:text-lg text-[#c57b4b] block">
                         &ldquo;{selectedPartner.pullQuote}&rdquo;
                       </span>
                     </div>
@@ -97,7 +97,7 @@ export function PartnerSpotlight({ partners }: { partners: Partner[] }) {
 
                   {selectedPartner.outcome && (
                     <div className="p-5 bg-white border border-teal-200 rounded-xl space-y-2 shadow-xs">
-                      <div className="flex items-center gap-2 text-[#0f766e]">
+                      <div className="flex items-center gap-2 text-[#39918d]">
                         <CheckCircle className="w-4 h-4" />
                         <span className="font-h2 text-xs uppercase font-bold tracking-wider">
                           Measurable Outcome &amp; Client Impact
@@ -139,7 +139,7 @@ export function PartnerSpotlight({ partners }: { partners: Partner[] }) {
 
               <Link
                 href="/contact"
-                className="flex items-center gap-2 text-xs font-h2 font-bold text-[#0f766e] hover:text-[#0c2940] transition-colors"
+                className="flex items-center gap-2 text-xs font-h2 font-bold text-[#39918d] hover:text-[#0c2940] transition-colors"
               >
                 <span>Inquire About Strategic Partnerships</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -152,7 +152,7 @@ export function PartnerSpotlight({ partners }: { partners: Partner[] }) {
               <span className="font-h2 text-xs font-bold uppercase tracking-wider text-[#0c2940]">
                 Partner Index
               </span>
-              <span className="font-caption text-xs text-[#0f766e] font-bold">{partners.length} Collaborations</span>
+              <span className="font-caption text-xs text-[#39918d] font-bold">{partners.length} Collaborations</span>
             </div>
 
             <div className="space-y-2 max-h-[460px] overflow-y-auto pr-1">
@@ -179,7 +179,7 @@ export function PartnerSpotlight({ partners }: { partners: Partner[] }) {
                       )}
                       {partner.isPending && (
                         <span
-                          className={`font-caption text-[10px] block ${isSelected ? "text-amber-300" : "text-[#c57b4b]"}`}
+                          className={`font-caption text-[10px] block ${isSelected ? "text-[#f8c51c]" : "text-[#c57b4b]"}`}
                         >
                           Profile coming soon
                         </span>

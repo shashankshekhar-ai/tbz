@@ -34,41 +34,68 @@ export async function Footer() {
   const groups = cmsGroups.length > 0 ? cmsGroups : fallbackGroups;
 
   return (
-    <footer className="bg-[#0c2940] text-white border-t border-[#39918d]/20 pt-16 pb-8">
+    <footer className="bg-[#0c2940] text-slate-300 pt-16 pb-8 border-t border-[#3f6d67]/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 pb-12 border-b border-slate-800">
-          <div className="lg:col-span-5 space-y-4">
-            <div className="flex items-center gap-3">
-              <Image src="/brand/White-Monochrome-Text.png" alt="The Bradbury Group" width={160} height={40} className="h-[calc(var(--spacing)*15)] w-auto" />
-            </div>
-            <p className="text-[10px] font-h3 font-semibold text-[#f8c51c] uppercase tracking-wider">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8 pb-10 border-b border-[#3f6d67]/30">
+          {/* Brand & mission */}
+          <div className="lg:col-span-4 pr-4 space-y-4">
+            <Image
+              src="/brand/White-Monochrome-Text.png"
+              alt="The Bradbury Group"
+              width={200}
+              height={125}
+              className="h-16 w-auto"
+            />
+            <p className="font-inter font-bold text-xs tracking-wider text-[#f8c51c] uppercase">
               Engineering the AI-First Organization
             </p>
-            <p className="text-xs font-body text-slate-300 leading-relaxed max-w-md">
+            <p className="font-roboto text-sm text-slate-300 leading-relaxed max-w-sm">
               Helping organizations adopt AI responsibly through leadership, learning architecture, governance, and transformation.
             </p>
           </div>
 
-          {groups.slice(0, 2).map((group) => (
-            <div key={group.heading} className="lg:col-span-2 space-y-3">
-              <h4 className="text-[11px] font-h3 font-bold uppercase tracking-widest text-slate-400">
-                {group.heading}
+          {/* Resources column (first CMS group) */}
+          {groups[1] && (
+            <div className="lg:col-span-2 lg:pl-4 space-y-3">
+              <h4 className="font-inter text-xs font-bold uppercase tracking-widest text-[#39918d]">
+                {groups[1].heading}
               </h4>
-              <ul className="space-y-2 text-xs font-body text-slate-300">
-                {group.items.map((item) => (
+              <ul className="space-y-2.5 text-sm font-roboto text-slate-300">
+                {groups[1].items.map((item) => (
                   <li key={item.href}>
-                    <Link href={item.href} target={item.openInNewTab ? "_blank" : undefined} className="hover:text-[#f8c51c] transition-colors">{item.label}</Link>
+                    <Link href={item.href} target={item.openInNewTab ? "_blank" : undefined} className="hover:text-[#f8c51c] transition-colors">
+                      {item.label}
+                    </Link>
                   </li>
                 ))}
               </ul>
             </div>
-          ))}
+          )}
 
+          {/* Programs column (second CMS group) */}
+          {groups[0] && (
+            <div className="lg:col-span-3 lg:pl-4 space-y-3">
+              <h4 className="font-inter text-xs font-bold uppercase tracking-widest text-[#39918d]">
+                {groups[0].heading}
+              </h4>
+              <ul className="space-y-2.5 text-sm font-roboto text-slate-300">
+                {groups[0].items.map((item) => (
+                  <li key={item.href}>
+                    <Link href={item.href} target={item.openInNewTab ? "_blank" : undefined} className="hover:text-[#f8c51c] transition-colors">
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* Connect */}
           <div className="lg:col-span-3 space-y-4">
-            <h4 className="text-[11px] font-h3 font-bold uppercase tracking-widest text-slate-400">
+            <h4 className="font-inter text-xs font-bold uppercase tracking-widest text-[#39918d]">
               Connect
             </h4>
-            <p className="text-xs font-body text-slate-300 leading-relaxed">
+            <p className="font-roboto text-sm text-slate-300 leading-relaxed">
               Ready to accelerate your organizational AI capability? Contact our C-suite consulting team.
             </p>
             <Link
@@ -80,19 +107,19 @@ export async function Footer() {
           </div>
         </div>
 
-        <div className="pt-0 pb-0 flex items-center justify-center gap-8">
+        <div className="pt-8 pb-8 flex items-center justify-center gap-8 border-b border-[#3f6d67]/30">
           <Image src="/brand/2.png" alt="Partner 2" width={180} height={180} className="h-10 md:h-20 w-auto opacity-90" />
           <Image src="/brand/3.png" alt="Partner 3" width={180} height={180} className="h-10 md:h-20 w-auto opacity-90" />
         </div>
 
-        <div className="pt-0 pb-4 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-4">
+        <div className="pt-6 flex flex-col sm:flex-row items-center justify-between text-sm text-slate-400 gap-4">
           <p className="flex flex-col sm:flex-row items-center gap-1 sm:gap-3 text-center sm:text-left">
             <span>© {new Date().getFullYear()} The Bradbury Group. All rights reserved.</span>
             <span className="text-slate-500 sm:before:content-['|'] sm:before:mr-3 sm:before:text-slate-600">
               Disclaimer: Content is for informational purposes only.
             </span>
           </p>
-          <p className="font-caption italic text-slate-300">Human-Centered AI Transformation</p>
+          <p className="font-roboto italic text-slate-300">Human-Centered AI Transformation</p>
         </div>
       </div>
     </footer>

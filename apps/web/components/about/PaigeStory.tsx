@@ -57,7 +57,7 @@ export function PaigeStory() {
               <Radio className="w-24 h-24 text-[#39918d]" />
             </div>
             <span className="font-h1 font-black text-6xl sm:text-7xl text-[#0c2940] block mb-2">15+</span>
-            <span className="font-h2 font-bold text-xs uppercase tracking-widest text-[#0f766e] block mb-3">
+            <span className="font-h2 font-bold text-xs uppercase tracking-widest text-[#39918d] block mb-3">
               Years in International Training
             </span>
             <p className="font-body text-xs text-slate-700 leading-relaxed font-normal">
@@ -86,7 +86,7 @@ export function PaigeStory() {
 
           <div className="lg:col-span-6 bg-slate-50 border border-slate-200 p-8 rounded-2xl flex flex-col justify-between space-y-6 shadow-sm">
             <div>
-              <span className="font-caption text-xs text-[#0f766e] uppercase tracking-widest block mb-2 font-bold">
+              <span className="font-caption text-xs text-[#39918d] uppercase tracking-widest block mb-2 font-bold">
                 Core Methodology
               </span>
               <h3 className="font-h2 font-bold text-2xl text-[#0c2940] mb-4">A Layered Way of Learning AI</h3>
@@ -144,7 +144,7 @@ export function PaigeStory() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="p-6 bg-white border border-slate-200 rounded-xl space-y-3 shadow-xs">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-teal-50 border border-teal-200 flex items-center justify-center text-[#0f766e]">
+                  <div className="w-8 h-8 rounded-lg bg-[#39918d]/10 border border-[#39918d]/30 flex items-center justify-center text-[#39918d]">
                     <Award className="w-4 h-4" />
                   </div>
                   <h4 className="font-h2 font-bold text-[#0c2940] text-lg">Georgia AI Alliance</h4>
@@ -157,7 +157,7 @@ export function PaigeStory() {
 
               <div className="p-6 bg-white border border-slate-200 rounded-xl space-y-3 shadow-xs">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-amber-50 border border-amber-200 flex items-center justify-center text-[#b45309]">
+                  <div className="w-8 h-8 rounded-lg bg-[#c57b4b]/10 border border-[#c57b4b]/30 flex items-center justify-center text-[#c57b4b]">
                     <CheckCircle2 className="w-4 h-4" />
                   </div>
                   <h4 className="font-h2 font-bold text-[#0c2940] text-lg">Ethical Science-Backed Standards</h4>
@@ -190,8 +190,8 @@ export function PaigeStory() {
                 ))}
               </div>
 
-              <div className="p-4 bg-amber-50 border border-amber-200/80 rounded-xl text-center">
-                <p className="font-caption text-xs text-[#78350f] italic font-medium">
+              <div className="p-4 bg-[#c57b4b]/10 border border-[#c57b4b]/30/80 rounded-xl text-center">
+                <p className="font-caption text-xs text-[#c57b4b] italic font-medium">
                   &ldquo;She may or may not be using AI to chart out a pollinator garden and keep her front yard
                   green.&rdquo;
                 </p>
