@@ -2,12 +2,12 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { ArrowRight, ChevronDown, Menu, X } from "lucide-react";
 import type { NavItem } from "@/lib/cms";
 import { NAV_DROPDOWNS } from "./navDropdownData";
 import { NavMegaMenu } from "./NavMegaMenu";
+import { BrandLogo } from "@/components/ui/BrandLogo";
 
 function isActiveHref(pathname: string, href: string) {
   if (href === "/") return pathname === "/";
@@ -37,15 +37,8 @@ export function HeaderNav({ navItems }: { navItems: NavItem[] }) {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
           <div className="flex items-center justify-between gap-4">
-            <Link href="/" className="flex items-center group shrink-0">
-              <Image
-                src="/brand/White-Monochrome-Text.png"
-                alt="The Bradbury Group"
-                width={200}
-                height={125}
-                priority
-                className="h-14 w-auto transition-transform duration-300 group-hover:scale-105"
-              />
+            <Link href="/" className="flex items-center shrink-0 transition-transform duration-300 hover:scale-105">
+              <BrandLogo />
             </Link>
 
             <nav className="hidden xl:flex items-center gap-6 text-sm font-inter font-medium whitespace-nowrap">

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { getFooterNavigation, type FooterNavGroup } from "@/lib/cms";
+import { BrandLogo } from "@/components/ui/BrandLogo";
 
 // Matches the original two hardcoded columns exactly — used only when the
 // CMS has no footer navigation rows yet (nav_link actions with
@@ -41,13 +42,7 @@ export async function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8 pb-10">
           {/* Column 1: Brand & mission */}
           <div className="lg:col-span-4 pr-4 space-y-4">
-            <Image
-              src="/brand/White-Monochrome-Text.png"
-              alt="The Bradbury Group"
-              width={200}
-              height={125}
-              className="h-16 w-auto"
-            />
+            <BrandLogo size="lg" />
             <p className="font-inter font-bold text-xs tracking-wider text-[#f8c51c] uppercase">
               Engineering the AI-First Organization
             </p>
