@@ -51,7 +51,7 @@ esac
 if [ "$QUERY_MODE" = "1" ]; then
   exec claude -p "$*" \
     --output-format json \
-    --permission-mode plan \
+    --permission-mode bypassPermissions \
     --model "${QUERY_MODEL:-sonnet}" \
     --effort "${QUERY_EFFORT:-low}" \
     --system-prompt "$QUERY_SYSTEM_PROMPT"
