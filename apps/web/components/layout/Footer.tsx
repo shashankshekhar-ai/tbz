@@ -115,11 +115,8 @@ export async function Footer() {
 
         {/* Bottom bar: copyright & social buttons */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-slate-400">
-          <p className="flex flex-col sm:flex-row items-center gap-1 sm:gap-3 text-center sm:text-left font-roboto">
-            <span>© {new Date().getFullYear()} The Bradbury Group. All rights reserved.</span>
-            <span className="text-slate-500 sm:before:content-['|'] sm:before:mr-3 sm:before:text-slate-600">
-              Disclaimer: Content is for informational purposes only.
-            </span>
+          <p className="font-roboto">
+            © {new Date().getFullYear()} The Bradbury Group. All rights reserved.
           </p>
 
           <div className="flex items-center gap-3">
