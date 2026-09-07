@@ -82,8 +82,23 @@ export const pageAgentApplyEndpoint: Endpoint = {
           // one-line change — confirmed live (truncated JSON, 500).
           blockOps?: BlockOp[];
           publish?: boolean;
+          delete?: boolean;
         }
       | undefined;
+
+    if (body?.delete) {
+      if (!body.pageId) {
+        return Response.json({ error: "delete requires pageId" }, { status: 400 });
+      }
+      try {
+        await req.payload.delete({ collection: "pages", id: body.pageId });
+        return Response.json({ ok: true, deleted: true, id: body.pageId });
+      } catch (err) {
+        req.payload.logger.error({ err }, "page_agent_delete_failed");
+        return Response.json({ error: "Failed to delete page" }, { status: 500 });
+      }
+    }
+
     const proposal = body?.proposal;
     const blockOps = body?.blockOps;
     if (!proposal?.blocks && !(blockOps && blockOps.length)) {

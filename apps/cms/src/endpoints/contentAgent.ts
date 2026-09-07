@@ -73,7 +73,7 @@ export const contentAgentApplyEndpoint: Endpoint = {
     if (unauthorized) return unauthorized;
 
     const body = (await req.json?.()) as
-      | { kind?: string; docId?: string; proposal?: Record<string, unknown>; publish?: boolean }
+      | { kind?: string; docId?: string; proposal?: Record<string, unknown>; publish?: boolean; delete?: boolean }
       | undefined;
 
     if (!isContentKind(body?.kind)) {
@@ -83,6 +83,25 @@ export const contentAgentApplyEndpoint: Endpoint = {
       );
     }
     const kind = body.kind;
+
+    if (body?.delete) {
+      if (!body.docId) {
+        return Response.json({ error: "delete requires docId" }, { status: 400 });
+      }
+      const cfgForDelete = getKindConfig(kind);
+      type ContentCollectionForDelete = "posts" | "resources" | "case-studies" | "faqs" | "testimonials";
+      try {
+        await req.payload.delete({
+          collection: cfgForDelete.collectionSlug as ContentCollectionForDelete,
+          id: body.docId,
+        });
+        return Response.json({ ok: true, deleted: true, id: body.docId });
+      } catch (err) {
+        req.payload.logger.error({ err }, "content_agent_delete_failed");
+        return Response.json({ error: "Failed to delete entry" }, { status: 500 });
+      }
+    }
+
     const proposal = body?.proposal;
     if (!proposal) {
       return Response.json({ error: "proposal is required" }, { status: 400 });

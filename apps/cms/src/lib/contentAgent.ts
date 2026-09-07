@@ -33,7 +33,7 @@ const KIND_CONFIG: Record<ContentKind, KindConfig> = {
     collectionSlug: "posts",
     label: "Blog post",
     fieldsDescription:
-      "- title (string, required)\n- slug (string, lowercase-hyphenated, required)\n- status (\"draft\" | \"published\")\n- author (string)\n- excerpt (string, short teaser)\n- content (string — plain text/simple paragraphs, one per line — the article body)\n- tags (array of short strings)",
+      "- title (string, required)\n- slug (string, lowercase-hyphenated, required)\n- status (\"draft\" | \"published\")\n- author (string)\n- excerpt (string, short teaser, 120+ characters — Payload rejects anything shorter)\n- content (string — plain text/simple paragraphs, one per line — the article body)\n- category (one of: \"leadership\", \"organizational-strategy\", \"workplace-culture\", \"talent-and-teams\", \"research-and-trends\" — defaults to \"leadership\" if not given, but pick the one that actually fits the post)\n- publishedAt (ISO date string — defaults to right now if not given)\n- tags (array of short strings)",
     toolSchema: {
       type: "object",
       properties: {
@@ -43,6 +43,11 @@ const KIND_CONFIG: Record<ContentKind, KindConfig> = {
         author: { type: "string" },
         excerpt: { type: "string" },
         content: { type: "string" },
+        category: {
+          type: "string",
+          enum: ["leadership", "organizational-strategy", "workplace-culture", "talent-and-teams", "research-and-trends"],
+        },
+        publishedAt: { type: "string" },
         tags: { type: "array", items: { type: "string" } },
       },
       required: ["title", "slug", "content"],
@@ -54,8 +59,16 @@ const KIND_CONFIG: Record<ContentKind, KindConfig> = {
       author: doc.author,
       excerpt: doc.excerpt,
       content: lexicalToPlainText(doc.content),
+      category: doc.category,
+      publishedAt: doc.publishedAt,
       tags: (doc.tags ?? []).map((t: { tag: string }) => t.tag),
     }),
+    // category/publishedAt are required by the Posts collection itself
+    // (see collections/Posts.ts) but were never being set here — every
+    // brand-new post created through this agent failed outright with a
+    // 400 from Payload's own validation ("Published At"/"Category" field
+    // required), confirmed live. Same default-if-missing convention as
+    // `status` right below already used for exactly this reason.
     toPayloadData: (state) => ({
       title: state.title,
       slug: state.slug,
@@ -63,6 +76,8 @@ const KIND_CONFIG: Record<ContentKind, KindConfig> = {
       author: state.author,
       excerpt: state.excerpt,
       content: plainTextToLexical(String(state.content ?? "")),
+      category: state.category ?? "leadership",
+      publishedAt: state.publishedAt ?? new Date().toISOString(),
       tags: (state.tags ?? []).map((tag: string) => ({ tag })),
     }),
   },
