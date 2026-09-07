@@ -97,7 +97,8 @@ export function HeaderNav({ navItems }: { navItems: NavItem[] }) {
             <div className="hidden sm:flex items-center">
               <Link
                 href="/contact"
-                className="bg-[#f8c51c] hover:bg-[#f9d04b] text-[#0c2940] font-inter font-semibold text-xs sm:text-sm px-6 py-3 rounded-full shadow-[0_10px_24px_rgba(248,197,28,0.24)] hover:shadow-[0_12px_28px_rgba(248,197,28,0.35)] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 flex items-center space-x-2 group"
+                className="group bg-[#f8c51c] hover:bg-[#f9d04b] text-[#0c2940] font-inter font-semibold text-xs sm:text-sm px-6 py-3 rounded-full shadow-[0_10px_24px_rgba(248,197,28,0.24)] hover:shadow-[0_12px_28px_rgba(248,197,28,0.35)] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 flex items-center justify-center gap-2 whitespace-nowrap shrink-0"
+                style={{ minWidth: 220 }}
               >
                 <span>Book a Discovery Call</span>
                 <ArrowRight className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1 stroke-[2.5]" />
