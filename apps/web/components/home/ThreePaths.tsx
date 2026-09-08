@@ -46,8 +46,8 @@ function renderIcon(iconName: string, accentColor: string) {
 
 export function ThreePaths({ paths }: { paths: PathCard[] }) {
   return (
-    <section id="tailored-engagement" className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto bg-white">
-      <div className="mb-12">
+    <section id="tailored-engagement" className="-mt-20 pt-0 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto bg-white">
+      <div className="mb-8">
         <h2 className="text-2xl sm:text-3xl font-h2 text-[#0c2940]">Already Know What You Need? Explore Directly.</h2>
       </div>
 

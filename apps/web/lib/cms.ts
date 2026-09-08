@@ -110,3 +110,30 @@ export async function getFooterNavigation(): Promise<FooterNavGroup[]> {
   }
   return Array.from(groups.entries()).map(([heading, groupItems]) => ({ heading, items: groupItems }));
 }
+
+export type CmsTestimonial = {
+  id: string;
+  name: string;
+  title: string;
+  organization: string;
+  quote: string;
+  isPending: false;
+};
+
+// The `testimonials` collection has existed since the CMS was built but no
+// page ever fetched it — every testimonial on the site was a hardcoded
+// array (see /about's page.tsx). Same shape as getNavigation(): real CMS
+// docs first, hardcoded fallback only when the CMS has none yet.
+export async function getTestimonials(context?: string): Promise<CmsTestimonial[]> {
+  const where = context ? `&where[context][equals]=${context}` : "";
+  const data = await cmsFetch(`/api/testimonials?sort=order&limit=100&depth=1${where}`);
+  const docs = data?.docs ?? [];
+  return docs.map((doc: Record<string, unknown>) => ({
+    id: String(doc.id),
+    name: (doc.name as string) ?? "",
+    title: (doc.title as string) ?? "",
+    organization: (doc.company as string) ?? "",
+    quote: (doc.quote as string) ?? "",
+    isPending: false as const,
+  }));
+}

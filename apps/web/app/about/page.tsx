@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { AboutHero } from "@/components/about/AboutHero";
 import { PaigeStory } from "@/components/about/PaigeStory";
-import { AdvisoryBoard } from "@/components/about/AdvisoryBoard";
 import { PartnerSpotlight, type Partner } from "@/components/about/PartnerSpotlight";
 import { Testimonials, type Testimonial } from "@/components/about/Testimonials";
-import { FinalCTA } from "@/components/about/FinalCTA";
+import { TeamIntro } from "@/components/about/TeamIntro";
+import { getTestimonials } from "@/lib/cms";
 
 export const metadata: Metadata = {
   title: "About",
@@ -97,7 +97,7 @@ const partners: Partner[] = [
   },
 ];
 
-const testimonials: Testimonial[] = [
+const fallbackTestimonials: Testimonial[] = [
   {
     id: "chris-rachel-mccluskey",
     name: "Chris & Rachel McCluskey",
@@ -132,15 +132,17 @@ const testimonials: Testimonial[] = [
   },
 ];
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const cmsTestimonials = await getTestimonials();
+  const testimonials = cmsTestimonials.length > 0 ? cmsTestimonials : fallbackTestimonials;
+
   return (
     <div>
       <AboutHero />
       <PaigeStory />
-      <AdvisoryBoard />
       <PartnerSpotlight partners={partners} />
       <Testimonials testimonials={testimonials} />
-      <FinalCTA />
+      <TeamIntro />
     </div>
   );
 }

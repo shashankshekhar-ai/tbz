@@ -30,7 +30,7 @@ export function PartnerSpotlight({ partners }: { partners: Partner[] }) {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-baseline mb-16 border-b border-slate-200 pb-8">
           <div className="lg:col-span-3 flex items-baseline gap-4">
             <span className="font-h1 font-black text-6xl sm:text-8xl lg:text-9xl text-slate-200 tracking-tighter select-none">
-              03
+              02
             </span>
             <div className="h-12 w-[1px] bg-slate-200 hidden lg:block" />
           </div>

@@ -14,8 +14,8 @@ export interface NavDropdown {
 
 // Keyed by the top-level nav item's href. Items not listed here render as a
 // plain link. Every href/anchor below points at a real section id already
-// rendered on that page — see AboutHero/PaigeStory/AdvisoryBoard/
-// PartnerSpotlight/Testimonials, the-solomon-engine/page.tsx, and
+// rendered on that page — see AboutHero/PaigeStory/PartnerSpotlight/
+// Testimonials/TeamIntro, the-solomon-engine/page.tsx, and
 // ai-fluency-cohort's TwoPhaseSection for the ids.
 export const NAV_DROPDOWNS: Record<string, NavDropdown> = {
   "/ai-fluency-cohort": {
@@ -118,25 +118,25 @@ export const NAV_DROPDOWNS: Record<string, NavDropdown> = {
         href: "/about#story",
       },
       {
-        id: "advisory",
-        number: "02",
-        label: "Advisory Board",
-        subtitle: "Senior operators guiding our frameworks",
-        href: "/about#advisory",
-      },
-      {
         id: "partners",
-        number: "03",
+        number: "02",
         label: "Partner Spotlight",
         subtitle: "Current collaborations and shared curricula",
         href: "/about#partners",
       },
       {
         id: "testimonials",
-        number: "04",
+        number: "03",
         label: "Testimonials",
         subtitle: "Stories and impact from our community",
         href: "/about#testimonials",
+      },
+      {
+        id: "team",
+        number: "04",
+        label: "The Team",
+        subtitle: "Meet the people behind the frameworks",
+        href: "/about#team",
       },
     ],
   },

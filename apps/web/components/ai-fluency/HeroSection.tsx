@@ -1,18 +1,22 @@
 import { ChevronRight } from "lucide-react";
 import { ParticleBackground } from "@/components/ui/ParticleBackground";
+import { HeadParticles } from "@/components/ai-fluency/HeadParticles";
 
 export function HeroSection() {
   return (
-    <section className="relative -mt-20 pt-32 pb-20 md:pb-24 bg-[#0c2940] text-white overflow-hidden">
+    <section className="relative -mt-20 pt-14 pb-20 md:pt-20 md:pb-24 bg-[#0c2940] text-white overflow-hidden border-b border-[#3f6d67]/30">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#123856_0%,#0c2940_45%,#081b2a_100%)] pointer-events-none" />
       <ParticleBackground variant="dark" />
 
       {/* Ambient glows */}
       <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-full max-w-4xl h-72 bg-[#39918d]/15 blur-3xl pointer-events-none rounded-full" />
       <div className="absolute top-1/2 -right-24 w-96 h-96 bg-[#c57b4b]/10 blur-3xl pointer-events-none rounded-full" />
-      <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-[#39918d]/10 blur-3xl pointer-events-none rounded-full" />
+      <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-[#3f6d67]/15 blur-3xl pointer-events-none rounded-full" />
 
-      <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      {/* Small particle sparkle layer, biased toward the badge/head area */}
+      <HeadParticles className="z-0 opacity-80" />
+
+      <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         {/* "FOR YOU" badge with sparkle halo */}
         <div className="relative inline-block mb-6">
           <div className="absolute -inset-4 pointer-events-none -z-10 flex items-center justify-center">
@@ -30,7 +34,7 @@ export function HeroSection() {
           </div>
         </div>
 
-        <h1 className="text-4xl sm:text-5xl font-montserrat font-bold text-white mb-4 leading-[1.1]">
+        <h1 className="font-inter text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-white leading-[1.1] mb-6 max-w-3xl mx-auto">
           AI Fluency Cohort
         </h1>
 
