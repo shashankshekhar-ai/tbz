@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { motion } from "motion/react";
 import { ArrowRight, ChevronDown, Menu, X } from "lucide-react";
 import type { NavItem } from "@/lib/cms";
 import { NAV_DROPDOWNS } from "./navDropdownData";
@@ -22,7 +23,7 @@ export function HeaderNav({ navItems }: { navItems: NavItem[] }) {
   const pathname = usePathname();
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 40);
+    const handleScroll = () => setScrolled(window.scrollY > 30);
     handleScroll();
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
@@ -31,84 +32,102 @@ export function HeaderNav({ navItems }: { navItems: NavItem[] }) {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-[#071b2e]/95 text-white backdrop-blur-xl h-20 flex items-center ${
-          scrolled ? "shadow-[0_8px_30px_rgba(7,27,46,0.25)]" : ""
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 h-[96px] sm:h-[102px] lg:h-[108px] flex items-center ${
+          scrolled
+            ? "bg-[#0c2940]/95 backdrop-blur-md border-b border-[#3f6d67]/30 shadow-lg shadow-black/25"
+            : "bg-[#0c2940] border-b border-transparent"
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-          <div className="flex items-center justify-between gap-4">
-            <Link href="/" className="flex items-center shrink-0 transition-transform duration-300 hover:scale-105">
-              <BrandLogo />
-            </Link>
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4 lg:gap-8 h-full">
+          <Link href="/" className="flex items-center shrink-0 transition-transform duration-300 hover:scale-105">
+            <BrandLogo />
+          </Link>
 
-            <nav className="hidden xl:flex items-center gap-6 text-sm font-inter font-medium whitespace-nowrap">
-              {navItems.map((item) => {
-                const active = isActiveHref(pathname, item.href);
-                const dropdown = NAV_DROPDOWNS[item.href];
-                const isOpen = openDropdown === item.href;
+          <nav
+            aria-label="Primary Navigation"
+            className="hidden xl:flex items-center justify-center gap-1.5 xl:gap-2.5 2xl:gap-3.5 flex-1 px-2"
+          >
+            {navItems.map((item) => {
+              const active = isActiveHref(pathname, item.href);
+              const dropdown = NAV_DROPDOWNS[item.href];
+              const isOpen = openDropdown === item.href;
 
-                if (!dropdown) {
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      target={item.openInNewTab ? "_blank" : undefined}
-                      rel={item.openInNewTab ? "noopener noreferrer" : undefined}
-                      className={`transition-all duration-200 relative py-1 ${
-                        active ? "text-[#f8c51c] font-semibold" : "text-[#edf2f4] hover:text-[#39918d]"
-                      }`}
-                    >
-                      {item.label}
-                    </Link>
-                  );
-                }
-
+              if (!dropdown) {
                 return (
-                  <div
+                  <Link
                     key={item.href}
-                    className="relative"
-                    onMouseEnter={() => setOpenDropdown(item.href)}
-                    onMouseLeave={() => setOpenDropdown(null)}
+                    href={item.href}
+                    target={item.openInNewTab ? "_blank" : undefined}
+                    rel={item.openInNewTab ? "noopener noreferrer" : undefined}
+                    className={`font-h2 text-sm xl:text-[15px] 2xl:text-base font-bold tracking-tight py-2 px-2 xl:px-2.5 transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap focus:outline-none relative ${
+                      active ? "text-white" : "text-slate-300 hover:text-white"
+                    }`}
                   >
-                    <Link
-                      href={item.href}
-                      aria-expanded={isOpen}
-                      className={`transition-all duration-200 relative py-1 flex items-center gap-1 ${
-                        active || isOpen ? "text-[#f8c51c] font-semibold" : "text-[#edf2f4] hover:text-[#39918d]"
-                      }`}
-                    >
-                      {item.label}
-                      <ChevronDown
-                        className={`w-3.5 h-3.5 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+                    <span>{item.label}</span>
+                    {active && (
+                      <motion.div
+                        layoutId="navActiveLine"
+                        className="absolute -bottom-1.5 left-2 right-2 h-[3px] rounded-full bg-[#f8c51c]"
+                        transition={{ type: "spring", stiffness: 380, damping: 30 }}
                       />
-                    </Link>
-                    <NavMegaMenu
-                      label={item.label}
-                      dropdown={dropdown}
-                      isOpen={isOpen}
-                      onClose={() => setOpenDropdown(null)}
-                      align={item.href === "/about" ? "right" : "left"}
-                    />
-                  </div>
+                    )}
+                  </Link>
                 );
-              })}
-            </nav>
+              }
 
-            <div className="hidden sm:flex items-center">
-              <Link
-                href="/contact"
-                className="group bg-[#f8c51c] hover:bg-[#f9d04b] text-[#0c2940] font-inter font-semibold text-xs sm:text-sm px-6 py-3 rounded-full shadow-[0_10px_24px_rgba(248,197,28,0.24)] hover:shadow-[0_12px_28px_rgba(248,197,28,0.35)] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 flex items-center justify-center gap-2 whitespace-nowrap shrink-0"
-                style={{ minWidth: 220 }}
-              >
-                <span>Book a Discovery Call</span>
-                <ArrowRight className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1 stroke-[2.5]" />
-              </Link>
-            </div>
+              return (
+                <div
+                  key={item.href}
+                  className="relative flex items-center h-full"
+                  onMouseEnter={() => setOpenDropdown(item.href)}
+                  onMouseLeave={() => setOpenDropdown(null)}
+                >
+                  <Link
+                    href={item.href}
+                    aria-expanded={isOpen}
+                    className={`font-h2 text-sm xl:text-[15px] 2xl:text-base font-bold tracking-tight py-2 px-2 xl:px-2.5 transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap focus:outline-none relative ${
+                      isOpen || active ? "text-white" : "text-slate-300 hover:text-white"
+                    }`}
+                  >
+                    <span>{item.label}</span>
+                    <ChevronDown
+                      className={`w-3.5 h-3.5 xl:w-4 xl:h-4 text-slate-400 transition-transform duration-200 ${
+                        isOpen ? "rotate-180 text-white" : ""
+                      }`}
+                    />
+                    {active && (
+                      <motion.div
+                        layoutId="navActiveLine"
+                        className="absolute -bottom-1.5 left-2 right-2 h-[3px] rounded-full bg-[#f8c51c]"
+                        transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                      />
+                    )}
+                  </Link>
+                  <NavMegaMenu
+                    label={item.label}
+                    dropdown={dropdown}
+                    isOpen={isOpen}
+                    onClose={() => setOpenDropdown(null)}
+                    align={item.href === "/about" ? "right" : "left"}
+                  />
+                </div>
+              );
+            })}
+          </nav>
+
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+            <Link
+              href="/contact"
+              className="group hidden sm:flex bg-[#f8c51c] hover:bg-[#e0b018] text-[#0c2940] font-h2 text-sm sm:text-base font-extrabold h-11 sm:h-12 px-4 sm:px-5 xl:px-6 rounded-lg transition-all duration-200 items-center gap-2.5 shadow-sm hover:shadow-md active:scale-95 shrink-0 whitespace-nowrap"
+            >
+              <span>Book a Discovery Call</span>
+              <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.5] group-hover:translate-x-1 transition-transform" />
+            </Link>
 
             <div className="xl:hidden flex items-center space-x-2">
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="p-2 rounded-lg text-white"
+                className="flex items-center justify-center bg-white/10 hover:bg-white/20 border border-white/20 text-white h-11 w-11 sm:h-12 sm:w-12 rounded-lg transition-colors focus:outline-none shrink-0"
                 aria-label="Toggle menu"
               >
                 {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -119,7 +138,7 @@ export function HeaderNav({ navItems }: { navItems: NavItem[] }) {
       </header>
 
       {mobileMenuOpen && (
-        <div className="fixed inset-0 z-40 bg-[#071b2e] pt-28 px-6 pb-8 flex flex-col justify-between xl:hidden transition-all animate-fadeIn overflow-y-auto">
+        <div className="fixed inset-0 z-40 bg-[#0c2940] pt-28 px-6 pb-8 flex flex-col justify-between xl:hidden transition-all animate-fadeIn overflow-y-auto">
           <div className="space-y-1">
             <div className="pb-4 mb-2 border-b border-[#3f6d67]/30">
               <span className="text-xs uppercase font-inter font-semibold tracking-wider text-[#39918d]">
