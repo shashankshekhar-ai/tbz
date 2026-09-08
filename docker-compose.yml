@@ -29,6 +29,14 @@ services:
     restart: unless-stopped
     ports:
       - "127.0.0.1:3003:3003"
+    # Uploaded media (Payload's local disk storage, apps/cms/media) had no
+    # volume — every container recreate (including a routine rebuild from
+    # AIwebmaster's own Deploy page) silently deleted every uploaded file
+    # while leaving its DB row behind, an orphaned doc pointing at nothing.
+    # Found via a real repro: 20 imported files + 1 real upload all vanished
+    # across a container recreate done in this same session.
+    volumes:
+      - cms_media:/app/apps/cms/media
     environment:
       DATABASE_URI: postgresql://tbg:tbg_dev@postgres:5432/tbg_cms
       PAYLOAD_SECRET: ${PAYLOAD_SECRET:-changeme_in_production}
@@ -204,6 +212,7 @@ networks:
 volumes:
   pgdata:
   api_reports:
+  cms_media:
   aiwebmaster_data:
   claude_agent_home:
   claude_agent_transcripts:

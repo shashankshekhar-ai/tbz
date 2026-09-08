@@ -149,3 +149,154 @@ export const mediaAgentUploadEndpoint: Endpoint = {
     }
   },
 };
+
+// Raw-bytes counterpart to the URL-fetch endpoint above — AIwebmaster's
+// Media tab has an actual "Upload from your computer" button now (previously
+// the only path was paste-a-URL in chat), which means real bytes coming
+// straight from the browser via AIwebmaster's own multipart proxy. No SSRF
+// surface here (nothing fetches a URL), so this is simpler than the sibling
+// endpoint: just the same size/type validation, then straight to Payload.
+export const mediaAgentUploadFileEndpoint: Endpoint = {
+  path: "/media-agent/upload-file",
+  method: "post",
+  handler: async (req: PayloadRequest) => {
+    const unauthorized = await requireAdmin(req);
+    if (unauthorized) return unauthorized;
+
+    let form: FormData | undefined;
+    try {
+      form = await req.formData?.();
+    } catch {
+      form = undefined;
+    }
+    if (!form) {
+      return Response.json({ error: "expected multipart/form-data" }, { status: 400 });
+    }
+
+    const file = form.get("file");
+    const alt = form.get("alt");
+    const caption = form.get("caption");
+    if (!(file instanceof File) || typeof alt !== "string" || !alt) {
+      return Response.json({ error: "file and alt are required" }, { status: 400 });
+    }
+
+    const contentType = file.type;
+    if (!ALLOWED_TYPES.has(contentType)) {
+      return Response.json(
+        { error: `Unsupported content-type '${contentType}' — must be one of: ${[...ALLOWED_TYPES].join(", ")}` },
+        { status: 415 },
+      );
+    }
+    if (file.size > MAX_BYTES) {
+      return Response.json({ error: `File too large (${file.size} bytes, max ${MAX_BYTES})` }, { status: 413 });
+    }
+
+    const buffer = Buffer.from(await file.arrayBuffer());
+
+    try {
+      const doc = await req.payload.create({
+        collection: "media",
+        data: { alt, caption: typeof caption === "string" ? caption : undefined },
+        file: {
+          data: buffer,
+          mimetype: contentType,
+          name: file.name || "upload",
+          size: buffer.byteLength,
+        },
+      });
+      return Response.json({ id: doc.id, url: doc.url, alt: doc.alt, filename: doc.filename });
+    } catch (err) {
+      req.payload.logger.error({ err }, "media_agent_upload_file_failed");
+      return Response.json({ error: "Failed to save media" }, { status: 500 });
+    }
+  },
+};
+
+// Replace a media doc's file bytes IN PLACE (same doc id, same `media_id`
+// value) — Payload's `update` with a `file` param overwrites the stored
+// file. The point: anything already referencing this doc's id (a page's
+// hero image, a testimonial photo) picks up the new image with no other
+// edit needed, instead of uploading a new doc and having to re-point every
+// reference at the new id.
+export const mediaAgentReplaceFileEndpoint: Endpoint = {
+  path: "/media-agent/replace-file",
+  method: "post",
+  handler: async (req: PayloadRequest) => {
+    const unauthorized = await requireAdmin(req);
+    if (unauthorized) return unauthorized;
+
+    let form: FormData | undefined;
+    try {
+      form = await req.formData?.();
+    } catch {
+      form = undefined;
+    }
+    if (!form) {
+      return Response.json({ error: "expected multipart/form-data" }, { status: 400 });
+    }
+
+    const id = form.get("id");
+    const file = form.get("file");
+    const alt = form.get("alt");
+    if (typeof id !== "string" || !id || !(file instanceof File)) {
+      return Response.json({ error: "id and file are required" }, { status: 400 });
+    }
+
+    const contentType = file.type;
+    if (!ALLOWED_TYPES.has(contentType)) {
+      return Response.json(
+        { error: `Unsupported content-type '${contentType}' — must be one of: ${[...ALLOWED_TYPES].join(", ")}` },
+        { status: 415 },
+      );
+    }
+    if (file.size > MAX_BYTES) {
+      return Response.json({ error: `File too large (${file.size} bytes, max ${MAX_BYTES})` }, { status: 413 });
+    }
+
+    const buffer = Buffer.from(await file.arrayBuffer());
+
+    try {
+      const doc = await req.payload.update({
+        collection: "media",
+        id,
+        data: typeof alt === "string" && alt ? { alt } : {},
+        file: {
+          data: buffer,
+          mimetype: contentType,
+          name: file.name || "upload",
+          size: buffer.byteLength,
+        },
+      });
+      return Response.json({ id: doc.id, url: doc.url, alt: doc.alt, filename: doc.filename });
+    } catch (err) {
+      req.payload.logger.error({ err }, "media_agent_replace_file_failed");
+      return Response.json({ error: "Failed to replace media" }, { status: 500 });
+    }
+  },
+};
+
+// Delete a media doc (and its file). Same requireAdmin gate as everything
+// else here — no separate confirmation step server-side, AIwebmaster's own
+// UI is the confirmation gate (see browse.html's dialogConfirm before this
+// ever gets called).
+export const mediaAgentDeleteEndpoint: Endpoint = {
+  path: "/media-agent/delete",
+  method: "post",
+  handler: async (req: PayloadRequest) => {
+    const unauthorized = await requireAdmin(req);
+    if (unauthorized) return unauthorized;
+
+    const body = (await req.json?.()) as { id?: string } | undefined;
+    if (!body?.id) {
+      return Response.json({ error: "id is required" }, { status: 400 });
+    }
+
+    try {
+      await req.payload.delete({ collection: "media", id: body.id });
+      return Response.json({ ok: true, id: body.id });
+    } catch (err) {
+      req.payload.logger.error({ err }, "media_agent_delete_failed");
+      return Response.json({ error: "Failed to delete media" }, { status: 500 });
+    }
+  },
+};

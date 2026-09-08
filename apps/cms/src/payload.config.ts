@@ -17,7 +17,12 @@ import { SiteSettings } from "./globals/SiteSettings";
 import { pageAgentChatEndpoint, pageAgentApplyEndpoint } from "./endpoints/pageAgent";
 import { contentAgentChatEndpoint, contentAgentApplyEndpoint } from "./endpoints/contentAgent";
 import { navigationUpsertEndpoint } from "./endpoints/navigation";
-import { mediaAgentUploadEndpoint } from "./endpoints/mediaAgent";
+import {
+  mediaAgentUploadEndpoint,
+  mediaAgentUploadFileEndpoint,
+  mediaAgentReplaceFileEndpoint,
+  mediaAgentDeleteEndpoint,
+} from "./endpoints/mediaAgent";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -62,6 +67,9 @@ export default buildConfig({
     contentAgentApplyEndpoint,
     navigationUpsertEndpoint,
     mediaAgentUploadEndpoint,
+    mediaAgentUploadFileEndpoint,
+    mediaAgentReplaceFileEndpoint,
+    mediaAgentDeleteEndpoint,
   ],
   cors: [
     "http://localhost:3002",

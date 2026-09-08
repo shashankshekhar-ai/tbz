@@ -13,6 +13,10 @@ services:
     restart: unless-stopped
     ports:
       - "3103:3003"
+    # Same gap as dev's `cms` service (see docker-compose.yml) — uploaded
+    # media had no volume, so every redeploy silently wiped every file.
+    volumes:
+      - cms_media_prod:/app/apps/cms/media
     environment:
       DATABASE_URI: postgresql://tbg:tbg_dev@postgres:5432/tbg_cms_prod
       PAYLOAD_SECRET: ${PAYLOAD_SECRET:-changeme_in_production}
@@ -61,3 +65,4 @@ services:
 
 volumes:
   api_reports_prod:
+  cms_media_prod:
