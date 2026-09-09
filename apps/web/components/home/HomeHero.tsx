@@ -23,11 +23,6 @@ export function HomeHero() {
             <br />
             Start Architecting Human Performance.
           </h1>
-
-          <p className="mt-6 text-[16px] sm:text-[17px] md:text-[18px] lg:text-[19px] font-normal text-slate-200 leading-[1.6] max-w-[760px]">
-            Talk to Columbus in the corner — tell us what you&apos;re working through, and our team will follow up
-            personally.
-          </p>
         </div>
 
         <div className="absolute bottom-[28px] sm:bottom-[32px] left-1/2 -translate-x-1/2 z-20">

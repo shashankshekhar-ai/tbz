@@ -38,14 +38,14 @@ export function HeaderNav({ navItems }: { navItems: NavItem[] }) {
             : "bg-[#0c2940] border-b border-transparent"
         }`}
       >
-        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4 lg:gap-8 h-full">
+        <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4 lg:gap-8 h-full">
           <Link href="/" className="flex items-center shrink-0 transition-transform duration-300 hover:scale-105">
             <BrandLogo />
           </Link>
 
           <nav
             aria-label="Primary Navigation"
-            className="hidden xl:flex items-center justify-center gap-1.5 xl:gap-2.5 2xl:gap-3.5 flex-1 px-2"
+            className="hidden min-[1320px]:flex items-center justify-center gap-1 xl:gap-1.5 2xl:gap-3 flex-1 min-w-0 px-2"
           >
             {navItems.map((item) => {
               const active = isActiveHref(pathname, item.href);
@@ -59,7 +59,7 @@ export function HeaderNav({ navItems }: { navItems: NavItem[] }) {
                     href={item.href}
                     target={item.openInNewTab ? "_blank" : undefined}
                     rel={item.openInNewTab ? "noopener noreferrer" : undefined}
-                    className={`font-h2 text-sm xl:text-[15px] 2xl:text-base font-bold tracking-tight py-2 px-2 xl:px-2.5 transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap focus:outline-none relative ${
+                    className={`font-h2 text-[13px] xl:text-sm 2xl:text-base font-bold tracking-tight py-2 px-1 xl:px-1.5 2xl:px-2.5 transition-all duration-200 flex items-center gap-1 whitespace-nowrap focus:outline-none relative ${
                       active ? "text-white" : "text-slate-300 hover:text-white"
                     }`}
                   >
@@ -85,7 +85,7 @@ export function HeaderNav({ navItems }: { navItems: NavItem[] }) {
                   <Link
                     href={item.href}
                     aria-expanded={isOpen}
-                    className={`font-h2 text-sm xl:text-[15px] 2xl:text-base font-bold tracking-tight py-2 px-2 xl:px-2.5 transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap focus:outline-none relative ${
+                    className={`font-h2 text-[13px] xl:text-sm 2xl:text-base font-bold tracking-tight py-2 px-1 xl:px-1.5 2xl:px-2.5 transition-all duration-200 flex items-center gap-1 whitespace-nowrap focus:outline-none relative ${
                       isOpen || active ? "text-white" : "text-slate-300 hover:text-white"
                     }`}
                   >
@@ -118,13 +118,13 @@ export function HeaderNav({ navItems }: { navItems: NavItem[] }) {
           <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             <Link
               href="/contact"
-              className="group hidden sm:flex bg-[#f8c51c] hover:bg-[#e0b018] text-[#0c2940] font-h2 text-sm sm:text-base font-extrabold h-11 sm:h-12 px-4 sm:px-5 xl:px-6 rounded-lg transition-all duration-200 items-center gap-2.5 shadow-sm hover:shadow-md active:scale-95 shrink-0 whitespace-nowrap"
+              className="group hidden sm:flex bg-[#f8c51c] hover:bg-[#e0b018] text-[#0c2940] font-h2 text-xs xl:text-sm 2xl:text-base font-extrabold h-11 sm:h-12 px-3 xl:px-4 2xl:px-6 rounded-lg transition-all duration-200 items-center gap-1.5 xl:gap-2.5 shadow-sm hover:shadow-md active:scale-95 shrink-0 whitespace-nowrap"
             >
               <span>Book a Discovery Call</span>
               <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.5] group-hover:translate-x-1 transition-transform" />
             </Link>
 
-            <div className="xl:hidden flex items-center space-x-2">
+            <div className="min-[1320px]:hidden flex items-center space-x-2">
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 className="flex items-center justify-center bg-white/10 hover:bg-white/20 border border-white/20 text-white h-11 w-11 sm:h-12 sm:w-12 rounded-lg transition-colors focus:outline-none shrink-0"
@@ -138,7 +138,7 @@ export function HeaderNav({ navItems }: { navItems: NavItem[] }) {
       </header>
 
       {mobileMenuOpen && (
-        <div className="fixed inset-0 z-40 bg-[#0c2940] pt-28 px-6 pb-8 flex flex-col justify-between xl:hidden transition-all animate-fadeIn overflow-y-auto">
+        <div className="fixed inset-0 z-40 bg-[#0c2940] pt-28 px-6 pb-8 flex flex-col justify-between min-[1320px]:hidden transition-all animate-fadeIn overflow-y-auto">
           <div className="space-y-1">
             <div className="pb-4 mb-2 border-b border-[#3f6d67]/30">
               <span className="text-xs uppercase font-inter font-semibold tracking-wider text-[#39918d]">
