@@ -68,11 +68,3 @@ export const QUICK_PROMPTS = [
   "How is TBG different from tutorials?",
   "Book a discovery call",
 ];
-
-export const READINESS_QUESTIONS = [
-  "What's your organization's biggest AI adoption challenge right now?",
-  "Is this primarily for yourself, your team, or your whole organization?",
-  "How would you describe your team's current AI fluency — early, developing, or advanced?",
-  "What's your rough timeline for getting started?",
-  "Who else needs to be involved in this decision?",
-];

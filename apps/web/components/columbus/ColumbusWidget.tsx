@@ -12,6 +12,21 @@ export function ColumbusWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [currentScreen, setCurrentScreen] = useState<ColumbusScreen>("screen1");
   const [initialPrompt, setInitialPrompt] = useState<string | undefined>(undefined);
+  // Above-the-fold content (hero headings, card badges) sits right where this
+  // launcher is fixed on several pages — keeping it hidden until the visitor
+  // scrolls a little avoids covering that content on first paint, without
+  // moving the widget off its usual bottom-right spot once it does appear.
+  const [hasScrolled, setHasScrolled] = useState(false);
+
+  useEffect(() => {
+    if (hasScrolled) return;
+    function handleScroll() {
+      if (window.scrollY > 120) setHasScrolled(true);
+    }
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [hasScrolled]);
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
@@ -35,12 +50,12 @@ export function ColumbusWidget() {
   }, []);
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
+    <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50">
       {!isOpen ? (
         <button
           onClick={() => setIsOpen(true)}
-          aria-label="Open Columbus AI Executive Advisor"
-          className="group relative bg-white px-4 py-3 rounded-[20px] border border-[#E6EAF0] shadow-xl hover:border-[#39918d] transition-all duration-300 flex items-center gap-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#39918d]"
+          aria-label="Open Columbus Voice Assistant"
+          className="group relative bg-white p-1.5 sm:px-4 sm:py-3 rounded-full sm:rounded-[20px] border border-[#E6EAF0] shadow-xl hover:border-[#39918d] transition-all duration-300 flex items-center gap-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#39918d]"
         >
           <AIPulseAvatar size="sm" showMicBadge micAnimated />
 
@@ -50,7 +65,7 @@ export function ColumbusWidget() {
                 Columbus AI
               </span>
               <span className="px-1.5 py-0.5 rounded-full bg-[#39918d]/10 text-[#39918d] font-roboto text-[10px] font-semibold">
-                EXECUTIVE ADVISOR
+                VOICE ASSISTANT
               </span>
             </div>
             <p className="font-roboto text-[11px] text-[#5C6B78] flex items-center gap-1">
@@ -59,7 +74,7 @@ export function ColumbusWidget() {
             </p>
           </div>
 
-          <div className="p-1.5 rounded-full bg-[#F8F9FA] text-[#5C6B78] group-hover:text-[#0c2940] transition-colors">
+          <div className="hidden sm:flex p-1.5 rounded-full bg-[#F8F9FA] text-[#5C6B78] group-hover:text-[#0c2940] transition-colors">
             <Maximize2 size={14} />
           </div>
         </button>
@@ -67,7 +82,7 @@ export function ColumbusWidget() {
         <div
           role="dialog"
           aria-modal="true"
-          aria-label="Columbus AI Executive Advisor"
+          aria-label="Columbus Voice Assistant"
           className="w-[92vw] sm:w-[420px] h-[85vh] sm:h-[640px] lg:h-[680px] bg-white rounded-[20px] border border-[#E6EAF0] p-4 sm:p-5 shadow-2xl shadow-[#0c2940]/12 flex flex-col relative overflow-hidden transition-all duration-300"
         >
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#0c2940] via-[#39918d] to-[#f8c51c]" />

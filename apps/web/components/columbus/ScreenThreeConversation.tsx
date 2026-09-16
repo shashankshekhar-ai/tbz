@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { ChatMessage } from "./types";
-import { READINESS_QUESTIONS } from "./columbusData";
 import {
   Send,
   Mic,
@@ -28,9 +27,9 @@ function now() {
 
 const ROUTE_MAP: Record<string, string> = {
   "for-you": "/ai-fluency-cohort",
-  "for-leaders": "/the-solomon-engine",
-  "for-organizations": "/for-organizations",
-  "our-roi": "/our-ai-return",
+  "for-leaders": "/leaders",
+  "for-organizations": "/organisation",
+  "our-roi": "/roi",
   resources: "/resources",
   insights: "/insights",
   about: "/about",
@@ -51,7 +50,7 @@ export function ScreenThreeConversation({
     {
       id: "welcome",
       sender: "columbus",
-      text: "Greetings. I'm Columbus, your AI Executive Advisor at The Bradbury Group. I'll ask a few quick questions to recommend the right path for you.",
+      text: "Hi, I'm Columbus, The Bradbury Group's voice assistant. I'll ask a few quick questions to recommend the right path for you — tap the mic or type whenever you're ready.",
       timestamp: now(),
     },
   ]);
@@ -61,8 +60,17 @@ export function ScreenThreeConversation({
   const [isListening, setIsListening] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
-  const [activeQuestionIndex, setActiveQuestionIndex] = useState(1);
   const [micDeniedMessage, setMicDeniedMessage] = useState<string | null>(null);
+
+  // Interview state, driven by the backend — it owns the contact step + 5
+  // readiness questions and their order, the widget just displays whatever
+  // phase/question/index it returns.
+  const [sessionToken, setSessionToken] = useState<string | null>(null);
+  const [phase, setPhase] = useState<"contact" | "readiness" | "complete">("contact");
+  const [questionIndex, setQuestionIndex] = useState(1);
+  const [questionCount, setQuestionCount] = useState(2);
+  const [currentQuestion, setCurrentQuestion] = useState("");
+  const [isInterviewComplete, setIsInterviewComplete] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textInputRef = useRef<HTMLInputElement>(null);
@@ -113,11 +121,40 @@ export function ScreenThreeConversation({
     };
   }, []);
 
+// Silently opens the interview session and loads question 1 — no speech,
+  // no message sent, so opening the Talk tab never makes a sound on its own.
+  async function startInterview(): Promise<string | null> {
+    try {
+      const res = await fetch(`${apiBase()}/columbus/start`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ activeSection: pathname.replace("/", "") || "home" }),
+      });
+      if (!res.ok) throw new Error("Columbus session start failed");
+      const data = await res.json();
+      setSessionToken(data.session_token);
+      setPhase(data.phase);
+      setQuestionIndex(data.question_index);
+      setQuestionCount(data.question_count);
+      setCurrentQuestion(data.question);
+      return data.session_token as string;
+    } catch {
+      return null;
+    }
+  }
+
+  useEffect(() => {
+    startInterview();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Pre-fill from a topic CTA, but never send/speak until the visitor
+  // actually initiates — Talk tab opening must stay silent.
   useEffect(() => {
     if (initialSentRef.current) return;
     if (initialPrompt) {
       initialSentRef.current = true;
-      handleSendMessage(initialPrompt);
+      setInput(initialPrompt);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialPrompt]);
@@ -236,7 +273,7 @@ export function ScreenThreeConversation({
 
   async function handleSendMessage(customMessage?: string) {
     const textToSend = (customMessage ?? input).trim();
-    if (!textToSend || isLoading) return;
+    if (!textToSend || isLoading || isInterviewComplete) return;
 
     const userMsg: ChatMessage = { id: Date.now().toString(), sender: "user", text: textToSend, timestamp: now() };
     setMessages((prev) => [...prev, userMsg]);
@@ -244,19 +281,18 @@ export function ScreenThreeConversation({
     setIsLoading(true);
 
     try {
-      const res = await fetch(`${apiBase()}/columbus`, {
+      const token = sessionToken ?? (await startInterview());
+      if (!token) throw new Error("Columbus session unavailable");
+
+      const res = await fetch(`${apiBase()}/columbus/${token}/message`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          prompt: textToSend,
-          context: { activeSection: pathname.replace("/", "") || "home" },
-          history: messages.slice(-6).map((m) => ({ sender: m.sender, text: m.text })),
-        }),
+        body: JSON.stringify({ answer: textToSend }),
       });
       if (!res.ok) throw new Error("Columbus request failed");
       const data = await res.json();
 
-      const replyText = data.reply ?? "I'm ready to guide your executive strategy.";
+      const replyText: string = data.reply ?? "Thanks — noted.";
       setMessages((prev) => [
         ...prev,
         {
@@ -268,9 +304,13 @@ export function ScreenThreeConversation({
         },
       ]);
       speak(replyText);
-      if (activeQuestionIndex < READINESS_QUESTIONS.length) setActiveQuestionIndex((prev) => prev + 1);
+      setPhase(data.phase ?? phase);
+      setQuestionIndex(data.question_index ?? questionIndex);
+      setQuestionCount(data.question_count ?? questionCount);
+      setIsInterviewComplete(Boolean(data.is_complete));
+      setCurrentQuestion(data.is_complete ? "Interview complete — thank you." : replyText);
     } catch {
-      const fallbackText = "I'm ready to assist with your executive strategy. You can explore our paths or book a discovery call directly.";
+      const fallbackText = "I'm having trouble reaching the server right now. You can still explore our paths or book a discovery call directly.";
       setMessages((prev) => [
         ...prev,
         {
@@ -395,8 +435,13 @@ export function ScreenThreeConversation({
               )}
             </p>
             <p className="text-[11px] italic text-[#5C6B78] px-2 truncate max-w-full font-roboto">
-              Question {activeQuestionIndex} of {READINESS_QUESTIONS.length}:{" "}
-              {READINESS_QUESTIONS[activeQuestionIndex - 1]}
+              {isInterviewComplete ? (
+                "Interview complete — thank you."
+              ) : (
+                <>
+                  {phase === "contact" ? "Quick Intro" : "Question"} {questionIndex} of {questionCount}: {currentQuestion}
+                </>
+              )}
             </p>
           </div>
         </div>
@@ -453,7 +498,7 @@ export function ScreenThreeConversation({
             />
             <button
               onClick={() => handleSendMessage()}
-              disabled={!input.trim() || isLoading}
+              disabled={!input.trim() || isLoading || isInterviewComplete}
               className="p-2 rounded-lg bg-[#39918d] hover:bg-[#3f6d67] text-white disabled:opacity-40 transition-all shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#39918d]"
             >
               <Send size={14} />

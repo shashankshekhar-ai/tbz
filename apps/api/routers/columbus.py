@@ -1,35 +1,93 @@
 """
-Columbus — the site's AI executive-advisor chat widget, plus the webhook
+Columbus — the website's Talk-tab readiness interview (/start, /{token}/message,
+admin read endpoints), a legacy free-form chat endpoint, and the webhook
 receiver for the production Columbus voice agent (ElevenLabs Conversational
-AI, agent_9201kp1axxvdfprb99958h8wd89s). That agent's calls are automated
-end-to-end by a separate self-hosted n8n workflow (Gemini analysis, internal
-+ marketing email, Google Sheets, ClickUp); this receiver does not duplicate
-that pipeline. It exists so this app's own lead DB also gets a record of
-every completed Columbus call, independent of n8n.
+AI, agent_9201kp1axxvdfprb99958h8wd89s — embedded separately, on the
+WordPress site, not this app).
 
-The chat endpoint below is stateless: each request gets the recent chat
-history and site context from the client and returns a single reply plus
-optional recommendation links. No conversation is persisted server-side.
+The website interview (/start, /{token}/message) runs in-browser (Web Speech
+API for STT/TTS) against this FastAPI app: a short contact step (name,
+email, optional company) followed by the 5 fixed readiness questions,
+persisted per session. On completion it compiles a readiness report via the
+configured AI provider (core/columbus_report.py), logs it to the audit
+trail, upserts a Lead, creates a ClickUp task, and — via
+core/columbus_n8n_bridge.py — posts an ElevenLabs-shaped, HMAC-signed
+payload directly to the *same* production n8n workflow the real voice agent
+uses (Gemini analysis, Paige's internal report email, caller marketing
+email, Google Sheets log, ClickUp task), reusing that pipeline instead of
+duplicating it. Configured via COLUMBUS_N8N_WEBHOOK_URL /
+COLUMBUS_N8N_WEBHOOK_SECRET; best-effort like every other integration here.
+
+The legacy /columbus chat endpoint is stateless (no persistence, free-form
+Q&A) and is no longer called by the Talk tab, but is left in place.
 """
 import hashlib
 import hmac
 import json
 import logging
+import secrets
 import time
+from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
+import re
+
 from core.ai_provider import AIProviderError, structured_call
+from core.clickup import create_task as clickup_create_task
+from core.columbus_n8n_bridge import send_readiness_interview
+from core.columbus_report import ColumbusReportError, generate_readiness_report
 from core.config import settings
 from core.db import get_db
-from core.integrations import log_audit
+from core.integrations import emit_n8n_event, log_audit
+from middleware.auth import CurrentUser, require_admin
+from models.columbus import ColumbusSession
 from models.lead import Lead, LeadEvent
+from schemas.columbus import (
+    ColumbusMessageOut,
+    ColumbusMessageRequest,
+    ColumbusSessionOut,
+    ColumbusStartOut,
+    ColumbusStartRequest,
+)
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/columbus", tags=["columbus"])
+
+# A short contact step, then the 5 fixed readiness questions — in that
+# order. Single source of truth server-side; the frontend just displays
+# whatever question/phase/index the API returns, it doesn't keep its own
+# copy to drift out of sync.
+CONTACT_QUESTIONS = [
+    "Before we start — what's your name?",
+    "And your email, so Paige can send you a copy of your readiness report? (Feel free to add your company too.)",
+]
+READINESS_QUESTIONS = [
+    "What's your role, and who are you speaking for today — yourself, your team, or your whole organization?",
+    "What's the biggest AI challenge you're facing right now?",
+    "How would you describe your team's current AI knowledge — beginner, developing, or advanced?",
+    "What's your top concern about adopting AI — cost, security, adoption, something else?",
+    "If we could deliver one quick win in the next 30 days, what would matter most to you?",
+]
+ALL_QUESTIONS = CONTACT_QUESTIONS + READINESS_QUESTIONS
+
+_EMAIL_RE = re.compile(r"[\w.+-]+@[\w-]+\.[\w.-]+")
+
+_PATH_TITLES = {
+    "for-you": "For You Path",
+    "for-leaders": "For Leaders Path",
+    "for-organizations": "For Organizations Path",
+}
+
+
+def _phase_info(question_index: int) -> tuple[str, int, int]:
+    """question_index is the 0-based index of the *next* question to ask."""
+    if question_index < len(CONTACT_QUESTIONS):
+        return "contact", question_index + 1, len(CONTACT_QUESTIONS)
+    return "readiness", question_index - len(CONTACT_QUESTIONS) + 1, len(READINESS_QUESTIONS)
 
 # How old a signed webhook timestamp is allowed to be, guarding against replay
 # of a captured request. ElevenLabs sends `t=<unix_seconds>,v0=<hex_hmac>`.
@@ -112,6 +170,198 @@ class ColumbusRequest(BaseModel):
     prompt: str
     context: ColumbusContext = ColumbusContext()
     history: list[ChatHistoryItem] = []
+
+
+def _load_answers(session: ColumbusSession) -> list[dict[str, str]]:
+    return json.loads(session.answers_json) if session.answers_json else []
+
+
+def _get_session_or_404(db: Session, session_token: str) -> ColumbusSession:
+    session = db.query(ColumbusSession).filter(ColumbusSession.session_token == session_token).first()
+    if not session:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Columbus session not found")
+    return session
+
+
+def _session_to_out(s: ColumbusSession) -> ColumbusSessionOut:
+    return ColumbusSessionOut(
+        session_token=s.session_token,
+        status=s.status,
+        current_question_index=s.current_question_index,
+        answers=_load_answers(s),
+        contact_name=s.contact_name,
+        contact_email=s.contact_email,
+        contact_company=s.contact_company,
+        summary=s.summary,
+        recommended_path=s.recommended_path,
+        recommendations=json.loads(s.recommendations_json) if s.recommendations_json else [],
+        completed_at=s.completed_at,
+        created_at=s.created_at,
+    )
+
+
+@router.post("/start", response_model=ColumbusStartOut, status_code=status.HTTP_201_CREATED)
+def start_interview(payload: ColumbusStartRequest, db: Session = Depends(get_db)):
+    session = ColumbusSession(
+        session_token=secrets.token_urlsafe(24),
+        status="in_progress",
+        current_question_index=0,
+        answers_json="[]",
+    )
+    db.add(session)
+    db.commit()
+    db.refresh(session)
+    logger.info("columbus_interview_started token=%s", session.session_token)
+    phase, q_index, q_count = _phase_info(0)
+    return ColumbusStartOut(
+        session_token=session.session_token,
+        phase=phase,
+        question=ALL_QUESTIONS[0],
+        question_index=q_index,
+        question_count=q_count,
+    )
+
+
+@router.post("/{session_token}/message", response_model=ColumbusMessageOut)
+def answer_question(session_token: str, payload: ColumbusMessageRequest, db: Session = Depends(get_db)):
+    session = _get_session_or_404(db, session_token)
+    if session.status != "in_progress":
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Session is {session.status}, not accepting answers")
+
+    idx = session.current_question_index
+    answers = _load_answers(session)
+    answers.append({"question": ALL_QUESTIONS[idx], "answer": payload.answer})
+    session.answers_json = json.dumps(answers)
+
+    if idx == 0:
+        session.contact_name = payload.answer.strip() or None
+    elif idx == 1:
+        match = _EMAIL_RE.search(payload.answer)
+        if match:
+            session.contact_email = match.group(0).lower()
+            rest = (payload.answer[: match.start()] + payload.answer[match.end() :]).strip(" ,.-")
+            session.contact_company = rest or None
+        else:
+            session.contact_company = payload.answer.strip() or None
+
+    session.current_question_index += 1
+    db.commit()
+
+    if session.current_question_index < len(ALL_QUESTIONS):
+        db.refresh(session)
+        phase, q_index, q_count = _phase_info(session.current_question_index)
+        return ColumbusMessageOut(
+            reply=ALL_QUESTIONS[session.current_question_index],
+            phase=phase,
+            question_index=q_index,
+            question_count=q_count,
+            is_complete=False,
+            recommendations=[],
+        )
+
+    readiness_answers = answers[len(CONTACT_QUESTIONS) :]
+
+    try:
+        report = generate_readiness_report(readiness_answers)
+    except ColumbusReportError:
+        logger.exception("columbus_report_generation_failed token=%s", session_token)
+        session.status = "completed"
+        session.completed_at = datetime.now(timezone.utc).isoformat()
+        db.commit()
+        return ColumbusMessageOut(
+            reply="Thanks for sharing all that. I've saved your answers — Paige will follow up personally.",
+            phase="complete",
+            question_index=len(READINESS_QUESTIONS),
+            question_count=len(READINESS_QUESTIONS),
+            is_complete=True,
+            recommendations=[],
+        )
+
+    session.status = "completed"
+    session.completed_at = datetime.now(timezone.utc).isoformat()
+    session.summary = report.summary
+    session.recommended_path = report.recommended_path
+    session.recommendations_json = json.dumps(report.recommendations)
+
+    if session.contact_email:
+        lead = db.query(Lead).filter(Lead.email == session.contact_email).first()
+        name_parts = (session.contact_name or "").split(" ", 1)
+        lead_fields = {
+            "first_name": name_parts[0] or None,
+            "last_name": name_parts[1] if len(name_parts) > 1 else None,
+            "company": session.contact_company,
+            "source": "columbus_web",
+        }
+        lead_fields = {k: v for k, v in lead_fields.items() if v}
+        if lead:
+            for field, value in lead_fields.items():
+                setattr(lead, field, value)
+        else:
+            lead = Lead(email=session.contact_email, **lead_fields)
+            db.add(lead)
+        db.flush()
+        session.lead_id = lead.id
+        db.add(LeadEvent(lead_id=lead.id, event_type="columbus_web_interview_completed"))
+
+    db.commit()
+    db.refresh(session)
+
+    log_audit(
+        db,
+        action="columbus.interview_completed",
+        resource_type="columbus_session",
+        resource_id=str(session.id),
+        metadata={"recommended_path": report.recommended_path, "summary": report.summary},
+    )
+    emit_n8n_event(
+        db,
+        event_type="columbus_interview_completed",
+        lead_id=session.lead_id,
+        payload={"session_token": session_token, "recommended_path": report.recommended_path, "summary": report.summary},
+    )
+    clickup_create_task(
+        db,
+        name=f"Review Columbus readiness interview {session_token[:8]}",
+        description=f"{report.summary}\n\nRecommended path: {report.recommended_path}\n\n" + "\n".join(f"- {r}" for r in report.recommendations),
+        lead_id=session.lead_id,
+    )
+    call_duration_secs = max(1, int((datetime.now(timezone.utc) - session.created_at).total_seconds()))
+    send_readiness_interview(
+        db,
+        session_token=session_token,
+        contact_name=session.contact_name,
+        contact_email=session.contact_email,
+        contact_company=session.contact_company,
+        readiness_answers=readiness_answers,
+        summary=report.summary,
+        call_duration_secs=call_duration_secs,
+    )
+
+    recommendations = [
+        {"title": _PATH_TITLES.get(report.recommended_path, report.recommended_path), "link": f"#{report.recommended_path}", "category": "path"},
+        {"title": "Book Discovery Call", "link": "#book-call", "category": "cta"},
+    ]
+
+    return ColumbusMessageOut(
+        reply=report.summary + " I've put together your readiness snapshot for Paige's personal review.",
+        phase="complete",
+        question_index=len(READINESS_QUESTIONS),
+        question_count=len(READINESS_QUESTIONS),
+        is_complete=True,
+        recommendations=recommendations,
+    )
+
+
+@router.get("/sessions", response_model=list[ColumbusSessionOut])
+def list_interviews(db: Session = Depends(get_db), _: CurrentUser = Depends(require_admin)):
+    """Admin-only: Paige's review queue of completed (and in-progress) readiness interviews."""
+    sessions = db.query(ColumbusSession).order_by(ColumbusSession.created_at.desc()).limit(200).all()
+    return [_session_to_out(s) for s in sessions]
+
+
+@router.get("/sessions/{session_token}", response_model=ColumbusSessionOut)
+def get_interview(session_token: str, db: Session = Depends(get_db), _: CurrentUser = Depends(require_admin)):
+    return _session_to_out(_get_session_or_404(db, session_token))
 
 
 @router.post("")

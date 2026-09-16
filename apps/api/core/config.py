@@ -26,6 +26,20 @@ class Settings(BaseSettings):
     # Unset in dev: signature check is skipped.
     columbus_webhook_secret: str = ""
 
+    # The real production Columbus automation: a self-hosted n8n workflow
+    # (Gemini analysis, Paige's internal report email, caller marketing
+    # email, Google Sheets log, ClickUp task) that normally only fires from
+    # the ElevenLabs voice agent's own post-call webhook. The website's
+    # Talk-tab interview (routers/columbus.py, core/columbus_n8n_bridge.py)
+    # reaches the *same* workflow directly by posting an ElevenLabs-shaped
+    # payload to its webhook URL, signed with its own secret (distinct from
+    # columbus_webhook_secret above, which guards our own /columbus/webhook
+    # receiver instead). Unset in dev: the bridge call is skipped and
+    # recorded in integration_events, same as every other best-effort
+    # integration in this module.
+    columbus_n8n_webhook_url: str = ""
+    columbus_n8n_webhook_secret: str = ""
+
     # HubSpot / ClickUp — direct API clients (core/hubspot.py, core/clickup.py).
     # Unset in dev: calls are skipped and recorded in integration_events as such.
     hubspot_api_key: str = ""
