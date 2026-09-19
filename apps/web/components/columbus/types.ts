@@ -1,19 +1,4 @@
-export type ColumbusScreen = "screen1" | "screen2" | "conversation";
-
-export interface ExpandableItem {
-  id: string;
-  title: string;
-  subtitle: string;
-  content: string;
-  iconName: "HelpCircle" | "Cpu" | "ShieldCheck" | "Sliders";
-}
-
-export interface ChecklistItem {
-  id: string;
-  title: string;
-  description: string;
-  badge?: string;
-}
+export type ColumbusScreen = "screen1" | "screen2" | "consent" | "conversation";
 
 export interface ChatMessage {
   id: string;

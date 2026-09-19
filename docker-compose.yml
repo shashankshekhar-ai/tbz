@@ -22,33 +22,6 @@ services:
       timeout: 5s
       retries: 5
 
-  cms:
-    build:
-      context: .
-      dockerfile: apps/cms/Dockerfile
-    restart: unless-stopped
-    ports:
-      - "127.0.0.1:3003:3003"
-    # Uploaded media (Payload's local disk storage, apps/cms/media) had no
-    # volume — every container recreate (including a routine rebuild from
-    # AIwebmaster's own Deploy page) silently deleted every uploaded file
-    # while leaving its DB row behind, an orphaned doc pointing at nothing.
-    # Found via a real repro: 20 imported files + 1 real upload all vanished
-    # across a container recreate done in this same session.
-    volumes:
-      - cms_media:/app/apps/cms/media
-    environment:
-      DATABASE_URI: postgresql://tbg:tbg_dev@postgres:5432/tbg_cms
-      PAYLOAD_SECRET: ${PAYLOAD_SECRET:-changeme_in_production}
-      NEXT_PUBLIC_WEB_URL: https://tbz-web.vercel.app
-      AI_PROVIDER: ${AI_PROVIDER:-gemini}
-      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
-      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
-      CMS_SERVICE_TOKEN: ${CMS_SERVICE_TOKEN:-}
-    depends_on:
-      postgres:
-        condition: service_healthy
-
   api:
     build:
       context: ./apps/api
@@ -82,7 +55,6 @@ services:
     # NEXT_PUBLIC_* vars are inlined at build time (see apps/web/Dockerfile ARGs),
     # not read at container runtime — setting them here would be a silent no-op.
     depends_on:
-      - cms
       - api
 
   # Standalone ops+content agent — proposes content/nav/git/docker/sql actions,
@@ -100,11 +72,9 @@ services:
       SESSION_SECRET: ${SESSION_SECRET:-}
       AIWEBMASTER_ADMIN_EMAIL: ${AIWEBMASTER_ADMIN_EMAIL:-}
       AIWEBMASTER_ADMIN_PASSWORD: ${AIWEBMASTER_ADMIN_PASSWORD:-}
-      CMS_SERVICE_TOKEN: ${CMS_SERVICE_TOKEN:-}
       AI_PROVIDER: ${AI_PROVIDER:-gemini}
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
       GEMINI_API_KEY: ${GEMINI_API_KEY:-}
-      CMS_URL: http://cms:3003
       REPO_PATH: /repo
       # Real docker compose project name for this stack — every docker/
       # publish/rollback/codegen_agent/Agent Terminal executor passes this
@@ -120,7 +90,6 @@ services:
       # actually lives on the host; override in .env if that ever changes.
       HOST_REPO_PATH: ${HOST_REPO_PATH:-/home/shashank/project/tbg/rewamped-site}
       API_DATABASE_URL: postgresql://tbg:tbg_dev@postgres:5432/tbg_api
-      CMS_DATABASE_URL: postgresql://tbg:tbg_dev@postgres:5432/tbg_cms
       AUTH0_DOMAIN: ${AUTH0_DOMAIN:-}
       AUTH0_CLIENT_ID: ${AUTH0_CLIENT_ID:-}
       AUTH0_CLIENT_SECRET: ${AUTH0_CLIENT_SECRET:-}
@@ -144,16 +113,14 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-      cms:
-        condition: service_started
 
   # Isolated Claude Code CLI sandbox — full agentic tool access (its own
   # file-edit + bash, no propose/approve gate), but structurally cut off
   # from prod: own network (`sandbox`, not attached to any other service —
-  # cannot resolve or route to postgres/cms-prod/etc even if instructed to),
+  # cannot resolve or route to postgres/web-prod/etc even if instructed to),
   # no docker socket, no root .env, no prod DB creds. Only the dev app
   # source directories are bind-mounted, read-write. Every code/docker/git/
-  # sql/publish action still goes through AIwebmaster's existing propose->
+  # sql action still goes through AIwebmaster's existing propose->
   # approve->RBAC->audit pipeline unchanged — this container can edit dev
   # source files, nothing more.
   #
@@ -171,7 +138,6 @@ services:
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
     volumes:
       - ./apps/web:/workspace/apps/web
-      - ./apps/cms:/workspace/apps/cms
       - ./apps/api:/workspace/apps/api
       - ../aiwebmaster:/workspace/apps/aiwebmaster
       - claude_agent_home:/home/node/.claude
@@ -199,7 +165,6 @@ services:
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
     volumes:
       - ./apps/web:/workspace/apps/web
-      - ./apps/cms:/workspace/apps/cms
       - ./apps/api:/workspace/apps/api
       - ../aiwebmaster:/workspace/apps/aiwebmaster
       - codex_agent_home:/root/.codex
@@ -209,15 +174,45 @@ services:
     stdin_open: true
     tty: true
 
+  # Browser IDE (code-server) for editing this repo directly, with push
+  # access — a deliberately different trust model than claude-agent/
+  # codex-agent above: this holds the docker socket and a real deploy SSH
+  # key so `infra/scripts/deploy.sh` (run from its own terminal) can build,
+  # smoke-test, and git-push straight to main, no propose/approve gate.
+  # Password-protected (IDE_PASSWORD, required — see .env) and bound to
+  # 127.0.0.1 only; reached publicly through Caddy's ide.* block, which is
+  # the only thing standing between this and the internet, so keep
+  # IDE_PASSWORD strong and don't reuse it elsewhere.
+  ide:
+    build:
+      context: ./infra/ide
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8010:8080"
+    environment:
+      PASSWORD: ${IDE_PASSWORD:?Set IDE_PASSWORD in .env before starting the ide service}
+    volumes:
+      - .:/home/coder/workspace
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${HOME}/.ssh:/home/coder/.ssh:ro
+      - ide_extensions:/home/coder/.local/share/code-server
+    # docker.sock on the host is owned root:104(docker) — coder (uid/gid
+    # 1000, matching this host's admin user) needs to be in a group with
+    # that gid to use the docker CLI installed in infra/ide/Dockerfile.
+    group_add:
+      - "104"
+    working_dir: /home/coder/workspace
+
 networks:
   sandbox: {}
 
 volumes:
   pgdata:
   api_reports:
-  cms_media:
   aiwebmaster_data:
   claude_agent_home:
   claude_agent_transcripts:
   codex_agent_home:
   codex_agent_transcripts:
+  ide_extensions:

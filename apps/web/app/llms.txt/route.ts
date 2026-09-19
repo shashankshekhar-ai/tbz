@@ -1,4 +1,4 @@
-import { getAllPages, getBlogPosts } from "@/lib/cms";
+import { POSTS } from "@/lib/content/posts";
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://thebradburygroup.net";
 
@@ -7,12 +7,7 @@ const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://thebradburygroup.n
  * markdown index of the site, cheaper to ingest than crawling rendered HTML.
  * GEO counterpart to sitemap.xml/robots.txt, which are SEO-crawler-oriented.
  */
-export async function GET() {
-  const [pages, { docs: posts }] = await Promise.all([
-    getAllPages().catch(() => []),
-    getBlogPosts(50).catch(() => ({ docs: [] })),
-  ]);
-
+export function GET() {
   const lines: string[] = [
     "# The Bradbury Group",
     "",
@@ -32,23 +27,9 @@ export async function GET() {
     "",
   ];
 
-  if (pages.length > 0) {
-    lines.push("## Additional pages", "");
-    for (const p of pages as Array<{ slug: string; title: string; seo?: { aiSummary?: string } }>) {
-      const summary = p.seo?.aiSummary ? `: ${p.seo.aiSummary}` : "";
-      lines.push(`- [${p.title}](${BASE_URL}/${p.slug})${summary}`);
-    }
-    lines.push("");
-  }
-
-  if (posts.length > 0) {
+  if (POSTS.length > 0) {
     lines.push("## Insights (articles)", "");
-    for (const post of posts as Array<{
-      slug: string;
-      title: string;
-      excerpt?: string;
-      seo?: { aiSummary?: string };
-    }>) {
+    for (const post of POSTS) {
       const summary = post.seo?.aiSummary ?? post.excerpt ?? "";
       lines.push(`- [${post.title}](${BASE_URL}/insights/${post.slug})${summary ? `: ${summary}` : ""}`);
     }

@@ -63,7 +63,7 @@ export default async function AdminPage() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-      <h1 className="text-3xl font-bold mb-2">Admin</h1>
+      <h1 className="t-h1 mb-2">Admin</h1>
       <p className="text-sm text-gray-500 mb-2">
         Live read-only view of leads, submissions, downloads, and integration dispatch. Not indexed for search.
       </p>

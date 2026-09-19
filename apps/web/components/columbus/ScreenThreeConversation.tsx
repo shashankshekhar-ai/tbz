@@ -346,7 +346,7 @@ export function ScreenThreeConversation({
             className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg bg-[#F8F9FA] border border-[#E6EAF0] text-xs font-montserrat font-semibold text-[#0c2940] hover:bg-white transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[#39918d]"
           >
             <ArrowLeft size={14} />
-            <span>Back to Prep</span>
+            <span>Back</span>
           </button>
 
           <div className="flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-[11px] font-roboto">
@@ -368,7 +368,7 @@ export function ScreenThreeConversation({
         </div>
 
         <div className="text-center space-y-1">
-          <h2 className="font-montserrat font-bold text-base sm:text-lg md:text-xl text-[#0c2940] tracking-tight">
+          <h2 className="t-h3 text-[#0c2940]">
             Let&rsquo;s Find Your Right Path
           </h2>
           <p className="font-roboto text-xs text-[#5C6B78] max-w-md mx-auto leading-relaxed px-1">

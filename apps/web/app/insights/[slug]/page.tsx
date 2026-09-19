@@ -3,9 +3,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowUpRight, Sparkles } from "lucide-react";
-import { getPostBySlug, getBlogPosts, getRelatedPosts } from "@/lib/cms";
+import { getPostBySlug, getRelatedPosts, POSTS } from "@/lib/content/posts";
 import { buildArticleJsonLd, buildBreadcrumbJsonLd } from "@/lib/jsonLd";
-import { RichText, extractToc } from "@/components/cms/RichText";
+import { RichText, extractToc } from "@/components/richtext/RichText";
 import { Breadcrumbs } from "@/components/insights/Breadcrumbs";
 import { TableOfContents } from "@/components/insights/TableOfContents";
 import { AuthorBio } from "@/components/insights/AuthorBio";
@@ -16,20 +16,13 @@ const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://thebradburygroup.n
 
 type Props = { params: Promise<{ slug: string }> };
 
-export const dynamicParams = true;
-
-export async function generateStaticParams() {
-  try {
-    const { docs } = await getBlogPosts(100);
-    return docs.map((p: { slug: string }) => ({ slug: p.slug }));
-  } catch {
-    return [];
-  }
+export function generateStaticParams() {
+  return POSTS.map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const post = await getPostBySlug(slug);
+  const post = getPostBySlug(slug);
   if (!post) return {};
 
   const title = post.seo?.title || post.title;
@@ -57,13 +50,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function InsightPage({ params }: Props) {
   const { slug } = await params;
-  const post = await getPostBySlug(slug);
+  const post = getPostBySlug(slug);
   if (!post) notFound();
 
-  const [related, toc] = await Promise.all([
-    getRelatedPosts(post, 3),
-    Promise.resolve(extractToc(post.content)),
-  ]);
+  const related = getRelatedPosts(post, 3);
+  const toc = extractToc(post.content);
 
   const articleJsonLd = buildArticleJsonLd(post);
   const breadcrumbJsonLd = buildBreadcrumbJsonLd([
@@ -96,7 +87,7 @@ export default async function InsightPage({ params }: Props) {
             {CATEGORY_LABELS[post.category] ?? post.category}
           </span>
 
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-montserrat font-bold text-white mb-4 leading-tight">
+          <h1 className="t-h1 text-white mb-4">
             {post.title}
           </h1>
 
@@ -169,7 +160,7 @@ export default async function InsightPage({ params }: Props) {
         </div>
 
         <section className="mt-16 text-center bg-[#0c2940] text-white rounded-3xl p-10 sm:p-14">
-          <h2 className="text-2xl sm:text-3xl font-montserrat font-bold mb-4">
+          <h2 className="t-h2 mb-4">
             Ready to turn insight into action?
           </h2>
           <p className="text-[#D9E3E6] font-roboto max-w-xl mx-auto mb-8">

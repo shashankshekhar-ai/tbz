@@ -16,7 +16,7 @@ const SAMPLE_RESULT = {
 export default function DashboardReportPage() {
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-1 text-[var(--color-brand-navy)]">AI Readiness Report</h1>
+      <h1 className="t-h1 mb-1 text-[var(--color-brand-navy)]">AI Readiness Report</h1>
       <p className="text-sm text-gray-500 mb-8">
         Sample preview — your real report will replace this once the assessment ships.
       </p>

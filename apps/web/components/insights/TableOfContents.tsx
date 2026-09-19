@@ -1,4 +1,4 @@
-import type { TocEntry } from "../cms/RichText";
+import type { TocEntry } from "../richtext/RichText";
 
 export function TableOfContents({ toc }: { toc: TocEntry[] }) {
   if (toc.length < 3) return null;

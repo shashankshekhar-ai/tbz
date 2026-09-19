@@ -210,7 +210,7 @@ const flows = [
 export default function DocsPage() {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-      <h1 className="text-3xl font-bold mb-2">Docs</h1>
+      <h1 className="t-h1 mb-2">Docs</h1>
       <p className="text-sm text-gray-500 mb-10">
         Internal build guide for the team — what&apos;s done, what&apos;s planned, where login is required, and how
         the main flows work end-to-end. Not indexed for search.
@@ -229,7 +229,7 @@ export default function DocsPage() {
       </div>
 
       <section className="mb-12">
-        <h2 className="text-xl font-semibold mb-4">Where login is required</h2>
+        <h2 className="t-h3 mb-4">Where login is required</h2>
         <div className="space-y-4">
           {logins.map((l) => (
             <div key={l.where} className="border rounded-lg p-4">
@@ -242,7 +242,7 @@ export default function DocsPage() {
       </section>
 
       <section className="mb-12">
-        <h2 className="text-xl font-semibold mb-4">Flows</h2>
+        <h2 className="t-h3 mb-4">Flows</h2>
         <div className="space-y-6">
           {flows.map((f) => (
             <div key={f.name} className="border rounded-lg p-5">
@@ -258,7 +258,7 @@ export default function DocsPage() {
       </section>
 
       <section>
-        <h2 className="text-xl font-semibold mb-4">Phase-by-phase status</h2>
+        <h2 className="t-h3 mb-4">Phase-by-phase status</h2>
         <div className="space-y-8">
           {phases.map((phase) => (
             <div key={phase.name} className="border rounded-lg p-5">

@@ -85,7 +85,7 @@ const content: Need[] = [
 function NeedTable({ title, rows }: { title: string; rows: Need[] }) {
   return (
     <section className="mb-12">
-      <h2 className="text-xl font-semibold mb-4">{title}</h2>
+      <h2 className="t-h3 mb-4">{title}</h2>
       <div className="space-y-4">
         {rows.map((n) => (
           <div key={n.item} className="border rounded-lg p-4">
@@ -106,7 +106,7 @@ export default function NeedsFromOrgPage() {
       <Link href="/docs" className="text-sm text-[var(--color-brand-gold)] hover:underline">
         ← Back to Docs
       </Link>
-      <h1 className="text-3xl font-bold mt-4 mb-2">What we need from The Bradbury Group</h1>
+      <h1 className="t-h1 mt-4 mb-2">What we need from The Bradbury Group</h1>
       <p className="text-sm text-gray-500 mb-10">
         Everything below is code-complete and feature-flagged safe to ship without it — nothing
         breaks or loses data while these are outstanding. This is the list of decisions and

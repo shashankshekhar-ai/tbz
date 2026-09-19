@@ -5,7 +5,7 @@ export default async function DashboardPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-2">
+      <h1 className="t-h1 mb-2">
         Welcome{user?.firstName ? `, ${user.firstName}` : ""}
       </h1>
       <p className="text-sm text-gray-500 mb-8">

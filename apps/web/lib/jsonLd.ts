@@ -1,6 +1,6 @@
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://thebradburygroup.net";
 
-type SiteSettings = {
+export type SiteSettings = {
   siteName?: string;
   tagline?: string;
   logo?: { url?: string } | null;

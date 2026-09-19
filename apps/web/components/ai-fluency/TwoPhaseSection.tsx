@@ -18,7 +18,7 @@ export function TwoPhaseSection() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section header */}
         <div className="text-center max-w-3xl mx-auto mb-12 md:mb-16">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-montserrat font-bold text-[#0c2940] tracking-tight mb-4">
+          <h2 className="t-h2 text-[#0c2940] mb-4">
             A Two-Phase Path: From Literacy to Fluency
           </h2>
           <p className="text-base sm:text-lg font-roboto text-[#0c2940]/80 leading-relaxed">
@@ -160,7 +160,7 @@ function PhaseCard({
           </span>
         </div>
 
-        <h3 className="text-2xl sm:text-3xl font-montserrat font-bold text-[#0c2940] mb-3">{phase.title}</h3>
+        <h3 className="t-h3 text-[#0c2940] mb-3">{phase.title}</h3>
 
         <p
           className="text-sm sm:text-base font-roboto text-[#0c2940]/80 leading-relaxed mb-8 p-4 rounded-xl border"

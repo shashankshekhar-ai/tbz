@@ -1,13 +1,10 @@
 #!/bin/bash
-# Daily logical backup of all 4 Postgres databases (tbg_api, tbg_cms,
-# tbg_api_prod, tbg_cms_prod — see infra/scripts/init-dbs.sh) into
-# /home/admin/tbg/db-backups on the HOST, outside any container's lifecycle.
+# Daily logical backup of both Postgres databases (tbg_api, tbg_api_prod —
+# see infra/scripts/init-dbs.sh) into /home/admin/tbg/db-backups on the
+# HOST, outside any container's lifecycle.
 #
-# This is separate from (and does not replace) two other existing safety
-# nets: the `pgdata` named Docker volume (survives container recreate but
-# not a bad migration/DELETE), and AIwebmaster's own pre-publish backup of
-# tbg_cms_prod only (core/executors.py run_publish — tied to the publish
-# workflow, not scheduled, not the other 3 databases).
+# This is separate from (and does not replace) the `pgdata` named Docker
+# volume, which survives container recreate but not a bad migration/DELETE.
 #
 # Off-host copy: each dump is also age-encrypted (recipient file below —
 # public key only, safe to commit) and pushed to a dedicated private repo
@@ -19,7 +16,7 @@
 # stored on this host): `age -d -i private-key.txt -o out.sql.gz file.age`.
 # A git/network failure here is logged but never fails the local backup.
 #
-# Dev (tbg_api/tbg_cms) and prod (tbg_api_prod/tbg_cms_prod) go to SEPARATE
+# Dev (tbg_api) and prod (tbg_api_prod) go to SEPARATE
 # branches of the same repo — `dev` in the main clone
 # (db-backups-repo), `prod` in a `git worktree` checkout
 # (db-backups-repo-prod) — so a prod restore can never accidentally pull in
@@ -29,15 +26,14 @@
 # Each database keeps exactly ONE file in the repo (`<db>.sql.gz.age`,
 # overwritten every run) — git's own commit history is the timeline, not a
 # pile of timestamped files. To restore yesterday's (or any day's) dump:
-#   git -C db-backups-repo log --oneline -- tbg_cms.sql.gz.age   # find the commit
-#   git -C db-backups-repo show <sha>:tbg_cms.sql.gz.age > tbg_cms.sql.gz.age
+#   git -C db-backups-repo log --oneline -- tbg_api.sql.gz.age   # find the commit
+#   git -C db-backups-repo show <sha>:tbg_api.sql.gz.age > tbg_api.sql.gz.age
 # See each branch's README.md for the full decrypt+restore flow.
 #
 # Also backs up rewamped-site/.env itself (encrypted, same as the DB dumps)
-# — SESSION_SECRET, CMS_SERVICE_TOKEN, PAYLOAD_SECRET, etc. live ONLY in
-# that file on this host's disk; a restored database is useless without it
-# (nothing can authenticate). Goes to the dev branch — it's one shared
-# config file, not split by environment.
+# — SESSION_SECRET, etc. live ONLY in that file on this host's disk; a
+# restored database is useless without it (nothing can authenticate). Goes
+# to the dev branch — it's one shared config file, not split by environment.
 #
 # Run via systemd timer tbg-db-backup.timer — see
 # /etc/systemd/system/tbg-db-backup.{service,timer}.
@@ -53,9 +49,7 @@ STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
 # database name -> encrypted-repo worktree (branch = the worktree's checked-out branch)
 declare -A REPO_DIR_FOR_DB=(
   [tbg_api]="/home/admin/tbg/db-backups-repo"
-  [tbg_cms]="/home/admin/tbg/db-backups-repo"
   [tbg_api_prod]="/home/admin/tbg/db-backups-repo-prod"
-  [tbg_cms_prod]="/home/admin/tbg/db-backups-repo-prod"
 )
 
 mkdir -p "$BACKUP_DIR"

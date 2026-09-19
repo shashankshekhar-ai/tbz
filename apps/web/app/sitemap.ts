@@ -1,9 +1,9 @@
 import type { MetadataRoute } from "next";
-import { getAllPages, getBlogPosts } from "@/lib/cms";
+import { POSTS } from "@/lib/content/posts";
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://thebradburygroup.net";
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+export default function sitemap(): MetadataRoute.Sitemap {
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: BASE_URL, lastModified: new Date(), priority: 1 },
     { url: `${BASE_URL}/about`, lastModified: new Date(), priority: 0.9 },
@@ -11,31 +11,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE_URL}/insights`, lastModified: new Date(), priority: 0.8 },
     { url: `${BASE_URL}/resources`, lastModified: new Date(), priority: 0.8 },
     { url: `${BASE_URL}/ai-fluency-cohort`, lastModified: new Date(), priority: 0.9 },
-    { url: `${BASE_URL}/the-solomon-engine`, lastModified: new Date(), priority: 0.9 },
-    { url: `${BASE_URL}/for-organizations`, lastModified: new Date(), priority: 0.9 },
-    { url: `${BASE_URL}/our-ai-return`, lastModified: new Date(), priority: 0.8 },
+    { url: `${BASE_URL}/leaders`, lastModified: new Date(), priority: 0.9 },
+    { url: `${BASE_URL}/organisation`, lastModified: new Date(), priority: 0.9 },
+    { url: `${BASE_URL}/roi`, lastModified: new Date(), priority: 0.8 },
   ];
 
-  const [pages, { docs: posts }] = await Promise.all([
-    getAllPages().catch(() => []),
-    getBlogPosts(100).catch(() => ({ docs: [] })),
-  ]);
+  const postRoutes: MetadataRoute.Sitemap = POSTS.map((p) => ({
+    url: `${BASE_URL}/insights/${p.slug}`,
+    lastModified: p.updatedAt ? new Date(p.updatedAt) : p.publishedAt ? new Date(p.publishedAt) : new Date(),
+    priority: 0.6,
+  }));
 
-  const cmsRoutes: MetadataRoute.Sitemap = pages
-    .filter((p: { slug: string }) => !["home"].includes(p.slug))
-    .map((p: { slug: string; updatedAt?: string }) => ({
-      url: `${BASE_URL}/${p.slug}`,
-      lastModified: p.updatedAt ? new Date(p.updatedAt) : new Date(),
-      priority: 0.7,
-    }));
-
-  const postRoutes: MetadataRoute.Sitemap = posts.map(
-    (p: { slug: string; updatedAt?: string; publishedAt?: string }) => ({
-      url: `${BASE_URL}/insights/${p.slug}`,
-      lastModified: p.updatedAt ? new Date(p.updatedAt) : p.publishedAt ? new Date(p.publishedAt) : new Date(),
-      priority: 0.6,
-    })
-  );
-
-  return [...staticRoutes, ...cmsRoutes, ...postRoutes];
+  return [...staticRoutes, ...postRoutes];
 }

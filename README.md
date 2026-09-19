@@ -6,10 +6,9 @@ It converts the TBG 45-day MVP plan and the Website Content Architecture into a 
 
 ## Primary build goal
 
-Build a CMS-driven AI-native website platform for The Bradbury Group using:
+Build an AI-native website platform for The Bradbury Group using:
 
-- Next.js 15 for the public website and lightweight lead portal
-- Payload CMS with PostgreSQL for editable marketing content
+- Next.js 15 for the public website and lightweight lead portal (all content hardcoded in code — no CMS)
 - FastAPI for business logic, AI scoring, webhooks, and integrations
 - AWS credits-first infrastructure
 - HubSpot, ClickUp, n8n, SES, Clerk, Cal.com, and Columbus integration
@@ -36,7 +35,7 @@ Do not let AI coding agents re-decide product strategy. Claude/Codex should exec
 ## Current build status
 
 - **Design system**: Home, About, Footer, Header, and the Columbus AI widget are locked to the reference designs unzipped under `/project/tbg/reference/updates/` (Home-V2, About-V2, columbus-ui) — those references are the master design. Match their exact Tailwind classnames, hex colors, and font-utility classes rather than remapping to custom tokens.
-- **Local dev**: `apps`, `apps/cms` (Payload), and `apps/api` (FastAPI) run via the root `docker-compose.yml`, exposed at `localhost:3002`. Standard change loop: `npx tsc --noEmit` (from `apps/web`) → `docker compose build web` → `docker compose up -d web` → curl smoke test.
+- **Local dev**: `apps/web` (Next.js) and `apps/api` (FastAPI) run via the root `docker-compose.yml`, exposed at `localhost:3002`. Standard change loop: `npx tsc --noEmit` (from `apps/web`) → `docker compose build web` → `docker compose up -d web` → curl smoke test.
 - **AIwebmaster is not in this repo at all** — own repo (`git@github-tbz:shashankshekhar-ai/aiwebmaster.git`), checked out as a **sibling directory**, `../aiwebmaster` relative to this repo's root (e.g. if this repo is at `~/project/tbg/rewamped-site`, AIwebmaster must be at `~/project/tbg/aiwebmaster`). `docker-compose.yml`'s `aiwebmaster`/`claude-agent`/`codex-agent` services build/mount from that path directly. Deliberately separate so a revert/reset on this repo can never touch AIwebmaster's own code or history — there's nothing of it here to revert. Clone it yourself before running `docker compose up`: `git clone git@github-tbz:shashankshekhar-ai/aiwebmaster.git ../aiwebmaster` (adjust the remote alias/path to your own SSH config).
 - **Deploy**: `apps/web` deploys to Vercel automatically on push to `origin/main`. Local docker rebuild is separate from the Vercel deploy — a `git push` is required for prod to pick up changes.
 - **CI**: the GitHub Actions workflow (`.github/workflows/ci.yml`) was removed — pre-existing lint/typecheck debt across `apps/api` and `apps/web` predates active work on this repo and isn't gating deploys.

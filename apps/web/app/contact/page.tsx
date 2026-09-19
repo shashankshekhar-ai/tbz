@@ -15,7 +15,7 @@ export default function ContactPage() {
           <span className="text-xs font-inter font-bold tracking-widest text-[#39918d] uppercase block mb-3">
             Contact
           </span>
-          <h1 className="text-4xl sm:text-5xl font-montserrat font-bold text-white mb-4">Let&apos;s talk</h1>
+          <h1 className="t-h1 text-white mb-4">Let&apos;s talk</h1>
           <p className="text-lg font-roboto text-[#D9E3E6] max-w-xl">
             Whether you&apos;re looking for training, consulting, or a keynote speaker — the first
             step is a conversation.
@@ -27,7 +27,7 @@ export default function ContactPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
           {/* Contact form — wired to FastAPI /contact in Phase 5 */}
           <div>
-            <h2 className="text-xl font-montserrat font-bold text-[#0c2940] mb-6">Send a message</h2>
+            <h2 className="t-h3 text-[#0c2940] mb-6">Send a message</h2>
             <form className="space-y-4" aria-label="Contact form">
               <div>
                 <label htmlFor="name" className="block text-sm font-roboto font-medium text-[#60707A] mb-1">
@@ -105,7 +105,7 @@ export default function ContactPage() {
           {/* Booking + info */}
           <div className="space-y-8">
             <div className="p-6 rounded-2xl bg-[#F7F8F9] border border-[#D9E3E6]">
-              <h2 className="text-xl font-montserrat font-bold text-[#0c2940] mb-4">Book directly</h2>
+              <h2 className="t-h3 text-[#0c2940] mb-4">Book directly</h2>
               <p className="text-[#60707A] font-roboto text-sm mb-4">
                 Prefer to skip the form? Book a discovery call directly on the calendar.
               </p>
@@ -119,7 +119,7 @@ export default function ContactPage() {
             </div>
 
             <div>
-              <h2 className="text-xl font-montserrat font-bold text-[#0c2940] mb-4">Speaking inquiries</h2>
+              <h2 className="t-h3 text-[#0c2940] mb-4">Speaking inquiries</h2>
               <p className="text-[#60707A] font-roboto text-sm mb-4">
                 Paige is available for keynotes, panels, and workshops on AI fluency, responsible AI
                 implementation, and the future of learning.
@@ -131,7 +131,7 @@ export default function ContactPage() {
             </div>
 
             <div>
-              <h2 className="text-xl font-montserrat font-bold text-[#0c2940] mb-4">Connect</h2>
+              <h2 className="t-h3 text-[#0c2940] mb-4">Connect</h2>
               <a
                 href="https://linkedin.com/in/paigebradbury"
                 target="_blank"

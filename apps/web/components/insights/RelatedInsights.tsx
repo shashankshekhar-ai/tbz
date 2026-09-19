@@ -6,7 +6,7 @@ export function RelatedInsights({ insights }: { insights: Insight[] }) {
 
   return (
     <section aria-labelledby="continue-exploring" className="pt-4">
-      <h2 id="continue-exploring" className="text-2xl font-montserrat font-bold text-[#0c2940] mb-8">
+      <h2 id="continue-exploring" className="t-h2 text-[#0c2940] mb-8">
         Continue exploring
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

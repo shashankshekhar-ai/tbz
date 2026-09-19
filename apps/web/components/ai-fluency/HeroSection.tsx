@@ -34,7 +34,7 @@ export function HeroSection() {
           </div>
         </div>
 
-        <h1 className="font-inter text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-white leading-[1.1] mb-6 max-w-3xl mx-auto">
+        <h1 className="t-h1 text-white mb-6 max-w-3xl mx-auto">
           AI Fluency Cohort
         </h1>
 

@@ -1,13 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getBlogPosts, getFeaturedPost } from "@/lib/cms";
+import { listPosts, getFeaturedPost } from "@/lib/content/posts";
 import { FeaturedInsight } from "@/components/insights/FeaturedInsight";
 import { InsightCard } from "@/components/insights/InsightCard";
 import { InsightsFilterBar } from "@/components/insights/InsightsFilterBar";
 import { Pagination } from "@/components/insights/Pagination";
 import type { Insight } from "@/components/insights/types";
-
-export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "Insights",
@@ -18,7 +16,7 @@ export const metadata: Metadata = {
 const PAGE_SIZE = 9;
 
 type Props = {
-  searchParams: Promise<{ topic?: string; q?: string; page?: string }>;
+  searchParams: Promise<{ topic?: string; q?: string; page?: string }>
 };
 
 export default async function InsightsPage({ searchParams }: Props) {
@@ -26,10 +24,13 @@ export default async function InsightsPage({ searchParams }: Props) {
   const page = Math.max(1, Number(pageParam) || 1);
   const hasFilters = Boolean(topic) || Boolean(q);
 
-  const [{ docs: insights, totalPages }, featured] = await Promise.all([
-    getBlogPosts(PAGE_SIZE, page, { category: topic, search: q }),
-    hasFilters || page > 1 ? Promise.resolve(null) : getFeaturedPost(),
-  ]);
+  const { docs: insights, totalPages } = listPosts({
+    limit: PAGE_SIZE,
+    page,
+    category: topic,
+    search: q,
+  });
+  const featured = hasFilters || page > 1 ? null : getFeaturedPost();
 
   const gridInsights: Insight[] =
     featured && page === 1 && !hasFilters
@@ -53,7 +54,7 @@ export default async function InsightsPage({ searchParams }: Props) {
           <span className="text-xs font-inter font-bold tracking-widest text-[#39918d] uppercase block mb-3">
             Insights
           </span>
-          <h1 className="text-3xl sm:text-4xl font-montserrat font-bold text-white mb-4 max-w-3xl">
+          <h1 className="t-h1 text-white mb-4 max-w-3xl">
             Ideas and perspectives for building stronger organizations
           </h1>
           <p className="text-base sm:text-lg font-roboto text-[#D9E3E6] max-w-2xl">
@@ -70,7 +71,7 @@ export default async function InsightsPage({ searchParams }: Props) {
 
         {gridInsights.length === 0 ? (
           <div className="text-center py-16 space-y-3">
-            <h2 className="text-xl font-montserrat font-bold text-[#0c2940]">No insights found</h2>
+            <h2 className="t-h3 text-[#0c2940]">No insights found</h2>
             <p className="text-[#60707A] font-roboto">Try adjusting your search or selecting another topic.</p>
             <Link
               href="/insights"

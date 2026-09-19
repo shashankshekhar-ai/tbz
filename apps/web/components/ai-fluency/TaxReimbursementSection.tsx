@@ -13,7 +13,7 @@ export function TaxReimbursementSection() {
             </div>
 
             <div className="space-y-3.5 flex-1">
-              <h2 className="text-xl sm:text-2xl font-montserrat font-bold text-[#0c2940]">
+              <h2 className="t-h2 text-[#0c2940]">
                 Tax &amp; Employer Reimbursement
               </h2>
               <p className="text-sm sm:text-base font-roboto text-[#0c2940]/80 leading-relaxed">

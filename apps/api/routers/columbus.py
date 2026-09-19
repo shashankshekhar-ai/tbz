@@ -62,7 +62,8 @@ router = APIRouter(prefix="/columbus", tags=["columbus"])
 # whatever question/phase/index the API returns, it doesn't keep its own
 # copy to drift out of sync.
 CONTACT_QUESTIONS = [
-    "Before we start — what's your name?",
+    "To start, what's the best phone number for our team to reach you?",
+    "And your name?",
     "And your email, so Paige can send you a copy of your readiness report? (Feel free to add your company too.)",
 ]
 READINESS_QUESTIONS = [
@@ -121,15 +122,15 @@ def _field(collection: dict, key: str) -> str | None:
     entry = collection.get(key) or {}
     return entry.get("value") or None
 
-SYSTEM_PROMPT = """You are Columbus, the AI executive advisor for The Bradbury Group (TBG), \
+SYSTEM_PROMPT = """You are Columbus, an AI voice assistant for The Bradbury Group (TBG), \
 a human-centered AI transformation consultancy. TBG offers three engagement paths: \
 "For You" (individual executive coaching, personal AI workflows), "For Leaders" (team \
 enablement, leadership AI architecture), and "For Organizations" (enterprise-wide AI \
 transformation). TBG's philosophy is frameworks over tutorials, people over tech stack, \
 proven results over promises.
 
-Answer the visitor's question in 2-4 concise, confident sentences in an executive-advisor \
-tone. Suggest 0-3 relevant next steps from: "For You Path" (#for-you), "For Leaders Path" \
+Answer the visitor's question in 2-4 concise, confident sentences in a friendly, plain-spoken \
+tone, as a guide who routes visitors to the right page or a human, not a decision-maker. Suggest 0-3 relevant next steps from: "For You Path" (#for-you), "For Leaders Path" \
 (#for-leaders), "For Organizations Path" (#for-organizations), "See Our Resources" \
 (#resources), "Read Our Insights" (#insights), "Book Discovery Call" (#book-call). Only \
 suggest links that are genuinely relevant to what was asked."""
@@ -233,9 +234,9 @@ def answer_question(session_token: str, payload: ColumbusMessageRequest, db: Ses
     answers.append({"question": ALL_QUESTIONS[idx], "answer": payload.answer})
     session.answers_json = json.dumps(answers)
 
-    if idx == 0:
+    if idx == 1:
         session.contact_name = payload.answer.strip() or None
-    elif idx == 1:
+    elif idx == 2:
         match = _EMAIL_RE.search(payload.answer)
         if match:
             session.contact_email = match.group(0).lower()
@@ -290,6 +291,7 @@ def answer_question(session_token: str, payload: ColumbusMessageRequest, db: Ses
             "first_name": name_parts[0] or None,
             "last_name": name_parts[1] if len(name_parts) > 1 else None,
             "company": session.contact_company,
+            "phone": (answers[0]["answer"].strip() if answers else None),
             "source": "columbus_web",
         }
         lead_fields = {k: v for k, v in lead_fields.items() if v}

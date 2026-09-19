@@ -33,7 +33,7 @@ export function FeaturedInsight({ insight }: { insight: Insight }) {
           {insight.category ? ` · ${CATEGORY_LABELS[insight.category] ?? insight.category}` : ""}
         </span>
 
-        <h2 className="text-2xl sm:text-3xl font-montserrat font-bold text-[#0c2940] mb-3 group-hover:text-[#39918d] transition-colors">
+        <h2 className="t-h2 text-[#0c2940] mb-3 group-hover:text-[#39918d] transition-colors">
           {insight.title}
         </h2>
 

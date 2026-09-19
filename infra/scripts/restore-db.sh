@@ -1,7 +1,7 @@
 #!/bin/bash
 # Restore one database from a backup-dbs.sh dump.
 # Usage: restore-db.sh <database> [path-to-dump.sql.gz]
-#   database: tbg_api | tbg_cms | tbg_api_prod | tbg_cms_prod
+#   database: tbg_api | tbg_api_prod
 #   dump: defaults to the most recent backup for that database in
 #         /home/admin/tbg/db-backups
 #
@@ -18,7 +18,7 @@ for arg in "$@"; do
 done
 
 if [ -z "$DB" ]; then
-  echo "Usage: $0 <tbg_api|tbg_cms|tbg_api_prod|tbg_cms_prod> [dump.sql.gz] [-y]" >&2
+  echo "Usage: $0 <tbg_api|tbg_api_prod> [dump.sql.gz] [-y]" >&2
   exit 1
 fi
 
@@ -27,8 +27,8 @@ fi
 # against a fixed enum before invoking this script, but check it here too
 # so the script stays safe even if something else ever calls it directly.
 case "$DB" in
-  tbg_api|tbg_cms|tbg_api_prod|tbg_cms_prod) ;;
-  *) echo "Refusing unknown database '$DB' — must be one of: tbg_api, tbg_cms, tbg_api_prod, tbg_cms_prod" >&2; exit 1 ;;
+  tbg_api|tbg_api_prod) ;;
+  *) echo "Refusing unknown database '$DB' — must be one of: tbg_api, tbg_api_prod" >&2; exit 1 ;;
 esac
 
 if [ -z "$DUMP" ] || [ "$DUMP" = "-y" ]; then

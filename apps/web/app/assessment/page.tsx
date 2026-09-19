@@ -81,7 +81,7 @@ export default function AssessmentPage() {
           <span className="inline-block text-xs font-inter font-bold tracking-widest uppercase text-[#39918d] mb-3">
             Free Assessment
           </span>
-          <h1 className="text-3xl md:text-4xl font-montserrat font-bold mb-4 text-[#0c2940]">
+          <h1 className="t-h1 mb-4 text-[#0c2940]">
             AI Readiness Assessment
           </h1>
           <p className="font-roboto text-[#60707A] mb-8">
@@ -143,7 +143,7 @@ export default function AssessmentPage() {
             />
           </div>
 
-          <h2 className="text-xl font-montserrat font-bold mb-6 text-[#0c2940]">
+          <h2 className="t-h3 mb-6 text-[#0c2940]">
             {QUESTIONS[step].prompt}
           </h2>
 
@@ -202,7 +202,7 @@ export default function AssessmentPage() {
 
       {stage === "results" && session?.result && (
         <div className="bg-white border border-[#D9E3E6] rounded-2xl p-8">
-          <h2 className="text-2xl font-montserrat font-bold mb-6 text-[#0c2940]">
+          <h2 className="t-h2 mb-6 text-[#0c2940]">
             Your AI Readiness Result
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-[220px_1fr] gap-8 items-start">
@@ -233,7 +233,7 @@ export default function AssessmentPage() {
 
       {stage === "error" && (
         <div className="text-center py-16">
-          <h2 className="text-xl font-montserrat font-bold mb-2 text-[#0c2940]">
+          <h2 className="t-h3 mb-2 text-[#0c2940]">
             We couldn&apos;t score your assessment right now
           </h2>
           <p className="font-roboto text-[#60707A] mb-6">

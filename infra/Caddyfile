@@ -1,4 +1,4 @@
-# Reverse proxy for thebradburygroup.net — all four public services share
+# Reverse proxy for thebradburygroup.net — all public services share
 # one AWS Elastic IP; Caddy routes by subdomain to the local port each
 # service listens on. PostgreSQL has no server block here — never exposed
 # publicly, reachable only on localhost/internal docker network.
@@ -11,10 +11,14 @@ api.thebradburygroup.net {
 	reverse_proxy localhost:8000
 }
 
-cms.thebradburygroup.net {
-	reverse_proxy localhost:3003
-}
-
 webmaster.thebradburygroup.net {
 	reverse_proxy localhost:8001
+}
+
+ide.thebradburygroup.net {
+	reverse_proxy localhost:8010
+}
+
+preview.thebradburygroup.net {
+	reverse_proxy localhost:3012
 }

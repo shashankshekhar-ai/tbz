@@ -6,7 +6,15 @@ import { ColumbusScreen } from "./types";
 import { AIPulseAvatar } from "./AIPulseAvatar";
 import { ScreenOneGuidance } from "./ScreenOneGuidance";
 import { ScreenTwoHeadsUp } from "./ScreenTwoHeadsUp";
+import { ScreenConsent } from "./ScreenConsent";
 import { ScreenThreeConversation } from "./ScreenThreeConversation";
+
+const STEPS: { id: ColumbusScreen; label: string }[] = [
+  { id: "screen1", label: "Expectations" },
+  { id: "screen2", label: "Prep" },
+  { id: "consent", label: "Consent" },
+  { id: "conversation", label: "Talk" },
+];
 
 export function ColumbusWidget() {
   const [isOpen, setIsOpen] = useState(false);
@@ -50,7 +58,7 @@ export function ColumbusWidget() {
   }, []);
 
   return (
-    <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50">
+    <div className="fixed bottom-[14vh] right-4 sm:right-6 z-50">
       {!isOpen ? (
         <button
           onClick={() => setIsOpen(true)}
@@ -60,17 +68,12 @@ export function ColumbusWidget() {
           <AIPulseAvatar size="sm" showMicBadge micAnimated />
 
           <div className="text-left hidden sm:block">
-            <div className="flex items-center gap-1.5">
-              <span className="font-montserrat font-bold text-xs sm:text-sm text-[#0c2940] group-hover:text-[#39918d] transition-colors">
-                Columbus AI
-              </span>
-              <span className="px-1.5 py-0.5 rounded-full bg-[#39918d]/10 text-[#39918d] font-roboto text-[10px] font-semibold">
-                VOICE ASSISTANT
-              </span>
-            </div>
+            <span className="font-montserrat font-bold text-xs sm:text-sm text-[#0c2940] group-hover:text-[#39918d] transition-colors">
+              Columbus
+            </span>
             <p className="font-roboto text-[11px] text-[#5C6B78] flex items-center gap-1">
               <Mic size={10} className="text-[#39918d]" />
-              Talk to Assistant
+              Chat with Columbus
             </p>
           </div>
 
@@ -83,64 +86,39 @@ export function ColumbusWidget() {
           role="dialog"
           aria-modal="true"
           aria-label="Columbus Voice Assistant"
-          className="w-[92vw] sm:w-[420px] h-[85vh] sm:h-[640px] lg:h-[680px] bg-white rounded-[20px] border border-[#E6EAF0] p-4 sm:p-5 shadow-2xl shadow-[#0c2940]/12 flex flex-col relative overflow-hidden transition-all duration-300"
+          className="w-[92vw] sm:w-[420px] h-[85vh] sm:h-[640px] lg:h-[680px] max-h-[calc(86vh-1rem)] bg-white rounded-[20px] border border-[#E6EAF0] p-4 sm:p-5 shadow-2xl shadow-[#0c2940]/12 flex flex-col relative overflow-hidden transition-all duration-300"
         >
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#0c2940] via-[#39918d] to-[#f8c51c]" />
 
           <header className="flex items-center justify-between pb-3 mb-2 border-b border-[#E6EAF0] relative z-20 shrink-0 bg-white">
-            <nav className="flex items-center gap-1 sm:gap-2">
-              <button
-                onClick={() => setCurrentScreen("screen1")}
-                aria-current={currentScreen === "screen1" ? "step" : undefined}
-                className={`flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-full text-[11px] sm:text-xs font-montserrat transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[#39918d] ${
-                  currentScreen === "screen1"
-                    ? "border border-[#39918d] bg-[#39918d]/10 text-[#39918d] font-semibold shadow-xs"
-                    : currentScreen === "screen2" || currentScreen === "conversation"
-                      ? "bg-[#F8F9FA] text-[#39918d] font-medium border border-[#E6EAF0]"
-                      : "text-[#5C6B78] opacity-60 hover:opacity-100"
-                }`}
-              >
-                {currentScreen === "screen2" || currentScreen === "conversation" ? (
-                  <Check size={12} className="stroke-[3] text-[#39918d]" />
-                ) : (
-                  <span className="font-semibold text-[11px]">①</span>
-                )}
-                <span>Expectations</span>
-              </button>
-
-              <span className="text-[#E6EAF0] text-xs font-light">/</span>
-
-              <button
-                onClick={() => setCurrentScreen("screen2")}
-                aria-current={currentScreen === "screen2" ? "step" : undefined}
-                className={`flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-full text-[11px] sm:text-xs font-montserrat transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[#39918d] ${
-                  currentScreen === "screen2"
-                    ? "border border-[#39918d] bg-[#39918d]/10 text-[#39918d] font-semibold shadow-xs"
-                    : currentScreen === "conversation"
-                      ? "bg-[#F8F9FA] text-[#39918d] font-medium border border-[#E6EAF0]"
-                      : "text-[#5C6B78] opacity-60 hover:opacity-100"
-                }`}
-              >
-                {currentScreen === "conversation" ? (
-                  <Check size={12} className="stroke-[3] text-[#39918d]" />
-                ) : (
-                  <span className="font-semibold text-[11px]">②</span>
-                )}
-                <span>Prep</span>
-              </button>
-
-              <span className="text-[#E6EAF0] text-xs font-light">/</span>
-
-              <button
-                onClick={() => setCurrentScreen("conversation")}
-                aria-current={currentScreen === "conversation" ? "step" : undefined}
-                className={`flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-full text-[11px] sm:text-xs font-montserrat transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[#39918d] ${
-                  currentScreen === "conversation" ? "border border-[#39918d] bg-[#39918d]/10 text-[#39918d] font-semibold shadow-xs" : "text-[#5C6B78] opacity-60 hover:opacity-100"
-                }`}
-              >
-                <span className="font-semibold text-[11px]">③</span>
-                <span>Talk</span>
-              </button>
+            <nav className="flex items-center gap-0.5 sm:gap-1">
+              {STEPS.map((step, idx) => {
+                const currentIdx = STEPS.findIndex((x) => x.id === currentScreen);
+                const isActive = idx === currentIdx;
+                const isDone = idx < currentIdx;
+                return (
+                  <span key={step.id} className="flex items-center">
+                    <button
+                      onClick={() => setCurrentScreen(step.id === "conversation" && currentScreen !== "conversation" ? "consent" : step.id)}
+                      aria-current={isActive ? "step" : undefined}
+                      className={`flex items-center gap-1 px-2 py-1.5 rounded-full text-[11px] font-montserrat transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[#39918d] ${
+                        isActive
+                          ? "border border-[#39918d] bg-[#39918d]/10 text-[#2d7773] font-semibold shadow-xs"
+                          : isDone
+                            ? "bg-[#F8F9FA] text-[#2d7773] font-medium border border-[#E6EAF0]"
+                            : "text-[#5C6B78] opacity-70 hover:opacity-100"
+                      }`}
+                    >
+                      {isDone ? (
+                        <Check size={12} className="stroke-[3] text-[#39918d]" />
+                      ) : (
+                        <span className="font-semibold text-[11px]">{idx + 1}</span>
+                      )}
+                      <span>{step.label}</span>
+                    </button>
+                  </span>
+                );
+              })}
             </nav>
 
             <button
@@ -155,10 +133,13 @@ export function ColumbusWidget() {
           <main className="relative z-10 flex-1 overflow-hidden">
             {currentScreen === "screen1" && <ScreenOneGuidance onNext={() => setCurrentScreen("screen2")} />}
             {currentScreen === "screen2" && (
-              <ScreenTwoHeadsUp onBack={() => setCurrentScreen("screen1")} onStartTalk={() => setCurrentScreen("conversation")} />
+              <ScreenTwoHeadsUp onBack={() => setCurrentScreen("screen1")} onNext={() => setCurrentScreen("consent")} />
+            )}
+            {currentScreen === "consent" && (
+              <ScreenConsent onBack={() => setCurrentScreen("screen2")} onStartTalk={() => setCurrentScreen("conversation")} />
             )}
             {currentScreen === "conversation" && (
-              <ScreenThreeConversation onBackToPrep={() => setCurrentScreen("screen2")} initialPrompt={initialPrompt} />
+              <ScreenThreeConversation onBackToPrep={() => setCurrentScreen("consent")} initialPrompt={initialPrompt} />
             )}
           </main>
         </div>
