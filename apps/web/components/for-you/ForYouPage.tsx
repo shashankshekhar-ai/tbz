@@ -251,7 +251,7 @@ export function ForYouPage() {
 
         <ParticleBackground variant="dark" className="z-0" />
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="relative z-10 w-full max-w-[1420px] mx-auto px-4 sm:px-6 lg:px-0">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-stretch">
             <div className="lg:col-span-7 space-y-4">
               <h1 className="t-h1 text-white">
@@ -346,7 +346,7 @@ export function ForYouPage() {
       {/* ============================================================ */}
       {/* SECTION 2: BUSINESS CASE */}
       {/* ============================================================ */}
-      <section className="py-16 md:py-24 bg-white border-b border-[#3f6d67]/20"><div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+      <section className="py-16 md:py-24 bg-white border-b border-[#3f6d67]/20"><div className="w-full max-w-[1420px] mx-auto px-4 sm:px-6 lg:px-0 space-y-8">
         <div className="text-center max-w-4xl mx-auto space-y-3">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#39918d]/10 border border-[#39918d]/30 text-[#39918d] font-montserrat font-bold text-xs uppercase tracking-wider">
             <span>01 / BUSINESS CASE</span>
@@ -389,7 +389,7 @@ export function ForYouPage() {
       {/* ============================================================ */}
       {/* SECTION 3: DECISION FRAMEWORK (Phase 1 vs Phase 2) */}
       {/* ============================================================ */}
-      <section className="py-16 md:py-24 bg-[#f7f9fa] border-b border-[#3f6d67]/20"><div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+      <section className="py-16 md:py-24 bg-[#f7f9fa] border-b border-[#3f6d67]/20"><div className="w-full max-w-[1420px] mx-auto px-4 sm:px-6 lg:px-0 space-y-8">
         <div className="text-center max-w-4xl mx-auto space-y-3">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#39918d]/10 border border-[#39918d]/30 text-[#39918d] font-montserrat font-bold text-xs uppercase tracking-wider">
             <span>02 / DECISION FRAMEWORK</span>
@@ -594,7 +594,7 @@ export function ForYouPage() {
       {/* ============================================================ */}
       {/* SECTION 4: WHAT YOU'LL MASTER (DOL competencies) */}
       {/* ============================================================ */}
-      <section className="py-16 md:py-24 bg-white border-b border-[#3f6d67]/20"><div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+      <section className="py-16 md:py-24 bg-white border-b border-[#3f6d67]/20"><div className="w-full max-w-[1420px] mx-auto px-4 sm:px-6 lg:px-0 space-y-6">
         <div className="text-center max-w-3xl mx-auto space-y-3">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#39918d]/10 border border-[#39918d]/30 text-[#39918d] font-montserrat font-bold text-xs uppercase tracking-wider">
             <span>03 / WHAT YOU&apos;LL MASTER</span>
@@ -645,7 +645,7 @@ export function ForYouPage() {
       {/* ============================================================ */}
       {/* SECTION 5: PROOF FROM REAL COHORTS */}
       {/* ============================================================ */}
-      <section className="py-16 md:py-24 bg-[#f7f9fa] border-b border-[#3f6d67]/20"><div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+      <section className="py-16 md:py-24 bg-[#f7f9fa] border-b border-[#3f6d67]/20"><div className="w-full max-w-[1420px] mx-auto px-4 sm:px-6 lg:px-0 space-y-8">
         <div className="text-center max-w-3xl mx-auto space-y-3">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#39918d]/10 border border-[#39918d]/30 text-[#39918d] font-montserrat font-bold text-xs uppercase tracking-wider">
             <span>04 / PROOF</span>
@@ -736,7 +736,7 @@ export function ForYouPage() {
       {/* ============================================================ */}
       {/* SECTION 6: WHAT YOU'LL EARN */}
       {/* ============================================================ */}
-      <section className="py-16 md:py-24 bg-white border-b border-[#3f6d67]/20"><div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ">
+      <section className="py-16 md:py-24 bg-white border-b border-[#3f6d67]/20"><div className="w-full max-w-[1420px] mx-auto px-4 sm:px-6 lg:px-0 ">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           <div className="lg:col-span-7 space-y-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#39918d]/10 border border-[#39918d]/30 text-[#39918d] font-montserrat font-bold text-xs uppercase tracking-wider">
@@ -821,7 +821,7 @@ export function ForYouPage() {
       {/* ============================================================ */}
       {/* SECTION 7: THE INVESTMENT & ROI */}
       {/* ============================================================ */}
-      <section id="investment-roi" className="py-16 md:py-24 bg-[#f7f9fa] border-b border-[#3f6d67]/20 scroll-mt-24"><div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ">
+      <section id="investment-roi" className="py-16 md:py-24 bg-[#f7f9fa] border-b border-[#3f6d67]/20 scroll-mt-24"><div className="w-full max-w-[1420px] mx-auto px-4 sm:px-6 lg:px-0 ">
         <div className="text-center max-w-4xl mx-auto space-y-3 mb-8">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#39918d]/10 border border-[#39918d]/30 text-[#39918d] font-montserrat font-bold text-xs uppercase tracking-wider">
             <span>06 / INVESTMENT &amp; ROI</span>
@@ -994,7 +994,7 @@ export function ForYouPage() {
       {/* ============================================================ */}
       {/* SECTION 8: MANAGER RECOMMENDATION LETTER */}
       {/* ============================================================ */}
-      <section id="manager-letter" className="py-16 md:py-24 bg-white border-b border-[#3f6d67]/20 scroll-mt-24"><div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ">
+      <section id="manager-letter" className="py-16 md:py-24 bg-white border-b border-[#3f6d67]/20 scroll-mt-24"><div className="w-full max-w-[1420px] mx-auto px-4 sm:px-6 lg:px-0 ">
         <div className="rounded-2xl bg-[#0c2940] text-white p-6 sm:p-10">
           <div className="max-w-2xl mb-6">
             <h2 className="t-h2 mb-2">
@@ -1081,7 +1081,7 @@ export function ForYouPage() {
         id="contact"
         className="w-full bg-[#f7f9fa] px-4 sm:px-6 lg:px-8 py-16 md:py-24 scroll-mt-24"
       >
-        <div className="max-w-7xl mx-auto bg-white border border-[#d9e6eb] rounded-3xl p-6 sm:p-10 shadow-md relative overflow-hidden">
+        <div className="max-w-[1420px] mx-auto bg-white border border-[#d9e6eb] rounded-3xl p-6 sm:p-10 shadow-md relative overflow-hidden">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start relative z-10">
             <div className="lg:col-span-4 space-y-4">
               <div>

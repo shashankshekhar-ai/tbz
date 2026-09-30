@@ -22,70 +22,187 @@ export const Hero: React.FC = () => {
         relative
         w-full
         h-screen
-        min-h-[700px]
+        min-h-[680px]
         overflow-hidden
         text-white
       "
-      style={{
-        backgroundImage: "url('/hero-image-bg.png')",
-        backgroundSize: "cover",
-        backgroundPosition: "center center",
-        backgroundRepeat: "no-repeat",
-      }}
     >
-      {/* Dark Overlay */}
-      <div className="absolute inset-0 bg-black/35" />
+      {/* ======================================================= */}
+      {/* BACKGROUND                                              */}
+      {/* ======================================================= */}
 
-      {/* ========================================================= */}
-      {/* HERO CONTENT */}
-      {/* ========================================================= */}
+      <div
+        className="
+          absolute
+          inset-0
+          z-0
+          bg-[url('/hero-image-bg.png')]
+          bg-cover
+          bg-center
+          bg-no-repeat
+          md:bg-[position:60%_center]
+          lg:bg-[position:center_center]
+        "
+      />
+
+      {/* ======================================================= */}
+      {/* DARK OVERLAY                                             */}
+      {/* ======================================================= */}
+
+      <div
+        className="
+          absolute
+          inset-0
+          z-[1]
+          bg-black/35
+          pointer-events-none
+        "
+      />
+
+      {/* ======================================================= */}
+      {/* MAIN HERO CONTAINER                                     */}
+      {/* ======================================================= */}
+
       <div
         className="
           relative
           z-10
+          w-full
           h-full
-          max-w-7xl
+          max-w-[1536px]
           mx-auto
           px-6
-          lg:px-8
-          pt-[125px]
+          sm:px-8
+          md:px-10
+          lg:px-10
+          xl:px-12
+          2xl:px-16
         "
       >
-        {/* ======================================================= */}
-        {/* TEXT CONTENT */}
-        {/* ======================================================= */}
+        {/* ===================================================== */}
+        {/* HERO TEXT                                             */}
+        {/* ===================================================== */}
+
         <div
           className="
             absolute
-            left-6
-            lg:left-8
+            z-30
+            left-0
             top-[43%]
             -translate-y-1/2
-            w-full
-            max-w-[1200px]
-            pr-8
+            overflow-visible
           "
         >
-          {/* Main Heading */}
-          <h1 className="t-h1 text-white max-w-[1200px]">
-            <span className="block text-[clamp(2.25rem,1.2rem+3.2vw,4rem)]">Stop Implementing AI Tools.</span>
-            <span className="block mt-1 text-[clamp(1.6rem,1rem+2.3vw,2.9rem)] bg-gradient-to-r from-[#c57b4b] to-[#f8c51c] bg-clip-text text-transparent">
+          {/* =================================================== */}
+          {/* HEADING                                              */}
+          {/* =================================================== */}
+
+          <h1
+            className="
+              m-0
+              p-0
+              font-bold
+              tracking-[-0.025em]
+              leading-[1.05]
+              text-white
+              overflow-visible
+              whitespace-normal
+            "
+          >
+            {/* ================================================= */}
+            {/* FIRST LINE                                         */}
+            {/* ================================================= */}
+
+            <span
+              className="
+                block
+                whitespace-normal
+                sm:whitespace-nowrap
+                text-[38px]
+                sm:text-[46px]
+                md:text-[54px]
+                lg:text-[60px]
+                xl:text-[66px]
+                2xl:text-[70px]
+                leading-[1.05]
+              "
+            >
+              Stop Implementing AI Tools.
+            </span>
+
+            {/* ================================================= */}
+            {/* GRADIENT LINE                                      */}
+            {/* ================================================= */}
+
+            <span
+              className="
+                block
+                mt-1
+                max-w-full
+                md:max-w-[760px]
+                lg:max-w-[820px]
+                xl:max-w-[900px]
+                whitespace-normal
+                text-[28px]
+                sm:text-[32px]
+                md:text-[38px]
+                lg:text-[40px]
+                xl:text-[44px]
+                2xl:text-[48px]
+                leading-[1.05]
+                bg-gradient-to-r
+                from-[#c57b4b]
+                via-[#d98d4a]
+                to-[#f8c51c]
+                bg-clip-text
+                text-transparent
+              "
+            >
               Start Architecting Human Performance
             </span>
           </h1>
+
+          {/* =================================================== */}
+          {/* DESCRIPTION                                          */}
+          {/* =================================================== */}
+
+          <h3
+            className="
+              mt-6
+              sm:mt-6
+              md:mt-7
+              max-w-[850px]
+              text-[16px]
+              sm:text-[16px]
+              md:text-[18px]
+              lg:text-[21px]
+              xl:text-[24px]
+              leading-[1.45]
+              font-medium
+              tracking-[-0.01em]
+              text-white
+              whitespace-normal
+            "
+          >
+            Tell us what you're working through, and our team will follow up
+            personally.
+          </h3>
         </div>
 
-        {/* ======================================================= */}
-        {/* SCROLL DOWN */}
-        {/* ======================================================= */}
+        {/* ===================================================== */}
+        {/* SCROLL DOWN                                           */}
+        {/* ===================================================== */}
+
         <div
           className="
             absolute
-            bottom-[28px]
-            sm:bottom-[32px]
+            z-30
+            bottom-5
+            sm:bottom-6
+            md:bottom-7
+            lg:bottom-8
             left-1/2
             -translate-x-1/2
-            z-20
           "
         >
           <button
@@ -99,51 +216,116 @@ export const Hero: React.FC = () => {
               gap-1.5
               group
               cursor-pointer
+              focus:outline-none
             "
           >
-            {/* Scroll Label */}
             <span
               className="
-                text-[10px]
-                sm:text-[11px]
+                text-[8px]
+                sm:text-[9px]
+                md:text-[10px]
+                lg:text-[11px]
                 tracking-[0.25em]
                 text-slate-300
-                group-hover:text-[#f8c51c]
                 transition-colors
+                duration-200
+                group-hover:text-[#f8c51c]
               "
             >
               SCROLL DOWN
             </span>
 
-            {/* Arrow Circle */}
             <div
               className="
-                w-10
-                h-10
+                w-8
+                h-8
+                sm:w-9
+                sm:h-9
+                md:w-10
+                md:h-10
                 rounded-full
                 border
                 border-slate-400
                 flex
                 items-center
                 justify-center
+                transition-colors
+                duration-200
                 group-hover:border-[#f8c51c]
-                transition-all
               "
             >
               <ChevronDown
                 className="
-                  w-4
-                  h-4
+                  w-3.5
+                  h-3.5
+                  sm:w-4
+                  sm:h-4
                   text-white
                   animate-bounce
-                  group-hover:text-[#f8c51c]
                   transition-colors
+                  duration-200
+                  group-hover:text-[#f8c51c]
                 "
               />
             </div>
           </button>
         </div>
       </div>
+
+      {/* ======================================================= */}
+      {/* RESPONSIVE BACKGROUND                                   */}
+      {/* ======================================================= */}
+
+      <style>{`
+        /* ================================================ */
+        /* TABLET                                           */
+        /* ================================================ */
+
+        @media (min-width: 768px) and (max-width: 1023px) {
+          #hero > div:first-child {
+            background-position: 62% center !important;
+          }
+        }
+
+        /* ================================================ */
+        /* MOBILE                                           */
+        /* ================================================ */
+
+        @media (max-width: 767px) {
+          #hero {
+            height: 100svh;
+            min-height: 650px;
+          }
+
+          #hero > div:first-child {
+            background-position: 69% center !important;
+          }
+
+          #hero h1 span:first-child {
+            white-space: normal !important;
+          }
+
+          #hero h1 span:nth-child(2) {
+            width: auto !important;
+            max-width: 100% !important;
+            white-space: normal !important;
+          }
+        }
+
+        /* ================================================ */
+        /* SMALL MOBILE                                     */
+        /* ================================================ */
+
+        @media (max-width: 480px) {
+          #hero {
+            min-height: 630px;
+          }
+
+          #hero > div:first-child {
+            background-position: 73% center !important;
+          }
+        }
+      `}</style>
     </section>
   );
 };

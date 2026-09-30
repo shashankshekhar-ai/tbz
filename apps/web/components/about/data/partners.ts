@@ -43,20 +43,6 @@ export const PARTNERS_DATA: Partner[] = [
     category: 'Ethical AI Governance',
   },
   {
-    id: 'trainingpros',
-    name: 'TRAININGPROS',
-    focus: 'Instructional Design & Custom Talent Solutions',
-    isPending: true,
-    category: 'Instructional Architecture',
-  },
-  {
-    id: 'sweetrush',
-    name: 'SWEETRUSH',
-    focus: 'Immersive Learning & Cultural Transformation',
-    isPending: true,
-    category: 'Learning Ecosystems',
-  },
-  {
     id: 'workfast-consulting',
     name: 'WORKFAST CONSULTING',
     founder: 'James Stovall',
@@ -73,8 +59,8 @@ export const PARTNERS_DATA: Partner[] = [
     category: 'Market Intelligence',
   },
   {
-    id: 'lda',
-    name: 'LDA',
+    id: 'eta',
+    name: 'ETA',
     focus: 'Learning & Development Advisory',
     isPending: true,
     category: 'Talent Development',
