@@ -2,31 +2,87 @@
 
 import React, { useRef, useState, useEffect } from 'react';
 import { ArrowLeft, ArrowRight, Newspaper } from 'lucide-react';
+import type { SheetUpdateCard } from '@/app/api/updates/route';
 
 interface UpdateCard {
   id: string;
   title: string;
   description: string;
   ctaText: string;
+  imageUrl?: string;
+  link?: string;
+  status?: 'upcoming' | 'live';
 }
 
-const CARDS: UpdateCard[] = [1, 2, 3, 4, 5].map((n) => ({
+const PLACEHOLDER_CARDS: UpdateCard[] = [1, 2, 3, 4, 5].map((n) => ({
   id: String(n),
   title: '[Title]',
   description: 'Learn more',
   ctaText: 'Click here',
 }));
 
+// Poll our own /api/updates route (which proxies the published Google Sheet
+// CSV server-side, avoiding CORS) every 5 minutes so a new sheet row shows
+// up without anyone touching the code or reloading the page.
+const POLL_INTERVAL_MS = 5 * 60 * 1000;
+
+function useSheetUpdates(): UpdateCard[] {
+  const [cards, setCards] = useState<UpdateCard[] | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const load = async () => {
+      try {
+        const res = await fetch('/api/updates', { cache: 'no-store' });
+        const data: { cards: SheetUpdateCard[] } = await res.json();
+        if (cancelled) return;
+        if (data.cards && data.cards.length > 0) {
+          setCards(
+            data.cards.map((c) => ({
+              id: c.id,
+              title: c.title,
+              description: c.details,
+              ctaText: 'Learn more',
+              imageUrl: c.imageUrl,
+              link: c.link,
+              status: c.status,
+            }))
+          );
+        }
+      } catch {
+        // Network hiccup or sheet unreachable — keep whatever we last had
+        // (or the placeholders), never blank the section.
+      }
+    };
+
+    load();
+    const interval = setInterval(load, POLL_INTERVAL_MS);
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
+  }, []);
+
+  return cards ?? PLACEHOLDER_CARDS;
+}
+
+const STATUS_BADGE: Record<'upcoming' | 'live', { label: string; className: string }> = {
+  live: { label: 'LIVE', className: 'bg-[#39918d] text-white' },
+  upcoming: { label: 'UPCOMING', className: 'bg-[#f8c51c] text-[#0c2940]' },
+};
+
 export const UpdatesCarousel: React.FC = () => {
   const trackRef = useRef<HTMLDivElement>(null);
   const [index, setIndex] = useState(0);
+  const cards = useSheetUpdates();
 
   const goTo = (i: number) => {
     const track = trackRef.current;
 
     if (!track) return;
 
-    const next = Math.max(0, Math.min(CARDS.length - 1, i));
+    const next = Math.max(0, Math.min(cards.length - 1, i));
 
     track.scrollTo({
       left: next * track.clientWidth,
@@ -54,6 +110,10 @@ export const UpdatesCarousel: React.FC = () => {
       track.removeEventListener('scroll', onScroll);
     };
   }, []);
+
+  useEffect(() => {
+    setIndex((i) => Math.min(i, Math.max(0, cards.length - 1)));
+  }, [cards.length]);
 
   const arrow =
     'absolute top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white border border-[#D9E3E8] shadow-md text-[#0c2940] hover:border-[#39918d] hover:text-[#2d7773] disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center transition-all duration-200 cursor-pointer';
@@ -97,7 +157,7 @@ export const UpdatesCarousel: React.FC = () => {
           <button
             type="button"
             onClick={() => goTo(index + 1)}
-            disabled={index === CARDS.length - 1}
+            disabled={index === cards.length - 1}
             aria-label="Next update"
             className={`${arrow} right-[-24px] sm:right-[-60px]`}
           >
@@ -116,7 +176,9 @@ export const UpdatesCarousel: React.FC = () => {
               no-scrollbar
             "
           >
-            {CARDS.map((card, i) => (
+            {cards.map((card, i) => {
+              const badge = card.status ? STATUS_BADGE[card.status] : null;
+              return (
               <article
                 key={card.id}
                 className="
@@ -152,29 +214,39 @@ export const UpdatesCarousel: React.FC = () => {
                     justify-center
                   "
                   style={{
-                    backgroundImage:
-                      'linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(135deg, #0c2940, #1a4a5c 55%, #39918d)',
-                    backgroundSize:
-                      '32px 32px, 32px 32px, auto',
+                    backgroundImage: card.imageUrl
+                      ? `url(${card.imageUrl})`
+                      : 'linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(135deg, #0c2940, #1a4a5c 55%, #39918d)',
+                    backgroundSize: card.imageUrl ? 'cover' : '32px 32px, 32px 32px, auto',
+                    backgroundPosition: 'center',
                   }}
                 >
-                  <span
-                    className="
-                      w-32
-                      h-32
-                      rounded-[2rem]
-                      bg-white/10
-                      border
-                      border-white/20
-                      backdrop-blur-sm
-                      flex
-                      items-center
-                      justify-center
-                      text-white
-                    "
-                  >
-                    <Newspaper className="w-12 h-12" />
-                  </span>
+                  {badge && (
+                    <span
+                      className={`absolute top-5 left-5 px-3 py-1 rounded-full text-xs font-montserrat font-bold tracking-wider ${badge.className}`}
+                    >
+                      {badge.label}
+                    </span>
+                  )}
+                  {!card.imageUrl && (
+                    <span
+                      className="
+                        w-32
+                        h-32
+                        rounded-[2rem]
+                        bg-white/10
+                        border
+                        border-white/20
+                        backdrop-blur-sm
+                        flex
+                        items-center
+                        justify-center
+                        text-white
+                      "
+                    >
+                      <Newspaper className="w-12 h-12" />
+                    </span>
+                  )}
                 </div>
 
                 {/* RIGHT CONTENT PANEL */}
@@ -224,39 +296,65 @@ export const UpdatesCarousel: React.FC = () => {
                       mt-auto
                     "
                   >
-                    <button
-                      type="button"
-                      className="
-                        inline-flex
-                        items-center
-                        gap-2
-                        px-7
-                        py-3.5
-                        rounded-full
-                        bg-[#39918d]
-                        hover:bg-[#3f6d67]
-                        text-white
-                        font-semibold
-                        transition-colors
-                        shadow-md
-                        cursor-pointer
-                      "
-                    >
-                      {card.ctaText}
+                    {card.link ? (
+                      <a
+                        href={card.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="
+                          inline-flex
+                          items-center
+                          gap-2
+                          px-7
+                          py-3.5
+                          rounded-full
+                          bg-[#39918d]
+                          hover:bg-[#3f6d67]
+                          text-white
+                          font-semibold
+                          transition-colors
+                          shadow-md
+                          cursor-pointer
+                        "
+                      >
+                        {card.ctaText}
+                        <ArrowRight className="w-4 h-4" />
+                      </a>
+                    ) : (
+                      <button
+                        type="button"
+                        className="
+                          inline-flex
+                          items-center
+                          gap-2
+                          px-7
+                          py-3.5
+                          rounded-full
+                          bg-[#39918d]
+                          hover:bg-[#3f6d67]
+                          text-white
+                          font-semibold
+                          transition-colors
+                          shadow-md
+                          cursor-pointer
+                        "
+                      >
+                        {card.ctaText}
 
-                      <ArrowRight className="w-4 h-4" />
-                    </button>
+                        <ArrowRight className="w-4 h-4" />
+                      </button>
+                    )}
 
                     <span className="font-montserrat text-sm text-slate-500">
                       <span className="font-bold text-[#0c2940]">
                         {String(i + 1).padStart(2, '0')}
                       </span>{' '}
-                      / {String(CARDS.length).padStart(2, '0')}
+                      / {String(cards.length).padStart(2, '0')}
                     </span>
                   </div>
                 </div>
               </article>
-            ))}
+            );})}
           </div>
 
           {/* MOBILE NAVIGATION */}
@@ -287,7 +385,7 @@ export const UpdatesCarousel: React.FC = () => {
             <button
               type="button"
               onClick={() => goTo(index + 1)}
-              disabled={index === CARDS.length - 1}
+              disabled={index === cards.length - 1}
               aria-label="Next update"
               className="
                 w-10

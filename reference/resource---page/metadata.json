@@ -1,0 +1,6 @@
+{
+  "name": "Bradbury Group - Enterprise AI Transformation",
+  "description": "Enterprise AI transformation, learning architecture, and comprehensive workshop catalog for organizational workforce upskilling.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

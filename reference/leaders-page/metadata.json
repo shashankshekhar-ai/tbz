@@ -1,0 +1,6 @@
+{
+  "name": "The Solomon Engine — Executive AI Cohort",
+  "description": "We redesign how work moves through your organization, so AI adoption becomes sustainable, not just shiny.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

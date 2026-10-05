@@ -2,40 +2,43 @@
 
 import React, { useState } from 'react';
 import { Hero } from '@/components/organisation/components/Hero';
-import { LearningArchitecture } from '@/components/organisation/components/LearningArchitecture';
-import { NcemchPartnership } from '@/components/organisation/components/NcemchPartnership';
-import { ChooseYourPath } from '@/components/organisation/components/ChooseYourPath';
-import { CommunityAndWorkshops } from '@/components/organisation/components/CommunityAndWorkshops';
-import { ValueLostSection } from '@/components/organisation/components/ValueLostSection';
-import { NextStepsConsultation } from '@/components/organisation/components/NextStepsConsultation';
-import { DiscoveryCallModal } from '@/components/organisation/components/DiscoveryCallModal';
+import { HowItWorks } from '@/components/organisation/components/HowItWorks';
+import { Proof } from '@/components/organisation/components/Proof';
+import { EngagementPaths } from '@/components/organisation/components/EngagementPaths';
+import { Community } from '@/components/organisation/components/Community';
+import { ValueGaps } from '@/components/organisation/components/ValueGaps';
+import { ConsultationCTA } from '@/components/organisation/components/ConsultationCTA';
+import { ConsultationModal } from '@/components/organisation/components/ConsultationModal';
 
 export default function OrganisationPage() {
-  const [isDiscoveryModalOpen, setIsDiscoveryModalOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedScope, setSelectedScope] = useState('Pilot');
 
-  const scrollToSection = (sectionId: string) => {
-    const el = document.getElementById(sectionId);
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  const handleOpenConsultation = (scope = 'Pilot') => {
+    setSelectedScope(scope);
+    setModalOpen(true);
   };
 
   return (
     // Header is fixed (~96-108px tall); this cancels the layout's compensating
     // pt since Hero already bakes in that top spacing.
     <div className="-mt-24 sm:-mt-[102px] lg:-mt-[108px]">
-    <div className="zip-organisation min-h-screen bg-[#ffffff]">
+    <div className="zip-organisation min-h-screen bg-[#f8fafc] overflow-x-hidden">
       <main>
-        <Hero onSeeHowItWorksClick={() => scrollToSection('proof-ncemch')} />
-        <LearningArchitecture />
-        <NcemchPartnership />
-        <ChooseYourPath onSelectPath={() => setIsDiscoveryModalOpen(true)} />
-        <CommunityAndWorkshops onExploreCommunityClick={() => setIsDiscoveryModalOpen(true)} />
-        <ValueLostSection />
-        <NextStepsConsultation onScheduleClick={() => setIsDiscoveryModalOpen(true)} />
+        <Hero onOpenConsultation={() => handleOpenConsultation('Pilot')} />
+        <HowItWorks />
+        <Proof />
+        <EngagementPaths onSelectScope={handleOpenConsultation} />
+        <Community onOpenConsultation={handleOpenConsultation} />
+        <ValueGaps />
+        <ConsultationCTA onOpenConsultation={() => handleOpenConsultation('Pilot')} />
       </main>
 
-      <DiscoveryCallModal
-        isOpen={isDiscoveryModalOpen}
-        onClose={() => setIsDiscoveryModalOpen(false)}
+      <ConsultationModal
+        key={selectedScope}
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        initialScope={selectedScope}
       />
     </div>
     </div>

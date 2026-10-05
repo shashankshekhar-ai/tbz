@@ -54,6 +54,10 @@ services:
       - "127.0.0.1:3002:3002"
     # NEXT_PUBLIC_* vars are inlined at build time (see apps/web/Dockerfile ARGs),
     # not read at container runtime — setting them here would be a silent no-op.
+    # GOOGLE_SHEET_UPDATES_CSV_URL is server-only (read in app/api/updates/route.ts
+    # at request time via process.env), so it belongs here, not as a build ARG.
+    environment:
+      GOOGLE_SHEET_UPDATES_CSV_URL: ${GOOGLE_SHEET_UPDATES_CSV_URL:-}
     depends_on:
       - api
 
@@ -188,6 +192,10 @@ services:
       context: ./infra/ide
       dockerfile: Dockerfile
     restart: unless-stopped
+    # Cap the IDE (tsserver, extension hosts) so a runaway dev process can't
+    # starve the prod containers sharing this host.
+    mem_limit: 3500m
+    memswap_limit: 5500m
     ports:
       - "127.0.0.1:8010:8080"
     environment:

@@ -2,98 +2,138 @@
 
 import React from 'react';
 import { motion } from 'motion/react';
-import { ArrowRight } from 'lucide-react';
-import { ParticleBackground } from './ParticleBackground';
+import { ArrowRight, Check } from 'lucide-react';
+import { HeroParticleConstellation } from './HeroParticleConstellation';
 
 interface HeroProps {
-  onSeeHowItWorksClick: () => void;
+  onOpenConsultation: () => void;
 }
 
-export const Hero: React.FC<HeroProps> = ({ onSeeHowItWorksClick }) => {
+export const Hero: React.FC<HeroProps> = ({ onOpenConsultation }) => {
+  const statPoints = [
+    '7+ active use cases implemented across departments',
+    'AI Champions program',
+    '22 literacy lessons built for team',
+    'Executive Director unlocks AI as thought partner',
+    '$0 new tools',
+  ];
+
   return (
-    <section
-      id="hero"
-      className="relative bg-[#0c2940] text-white min-h-[85vh] flex flex-col justify-center pt-[calc(108px+3vh)] pb-[3vh] overflow-hidden border-b border-white/10"
-    >
-      {/* Interactive dynamic particle network background */}
-      <ParticleBackground />
+    <section className="relative overflow-hidden bg-[#0c2940] px-6 pt-[calc(96px+4rem)] pb-20 sm:pt-[calc(102px+5rem)] sm:pb-28 lg:pt-[calc(108px+5rem)] border-b border-[#39918d]/30 text-[#ffffff]">
+      {/* 50% Opacity Constellation Node Particle Animation (matching reference screenshot) */}
+      <HeroParticleConstellation />
 
-      {/* Ambient background glow elements */}
-      <div className="absolute top-0 right-1/4 w-96 h-96 bg-[#39918d]/20 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-1/4 w-80 h-80 bg-[#f8c51c]/10 rounded-full blur-3xl pointer-events-none" />
-
-      <div className="w-full max-w-7xl 2xl:max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center flex flex-col items-center justify-center my-auto">
-        
-        {/* Eyebrow / Organizational Hook */}
+      <div className="relative z-10 mx-auto max-w-6xl">
+        {/* Brand Kicker */}
         <motion.div
-          initial={{ opacity: 0, y: -10 }}
+          initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-[#39918d]/20 border border-[#39918d]/40 mb-4 sm:mb-5"
+          transition={{ duration: 0.45 }}
+          className="flex items-center gap-3"
         >
-          <span style={{ fontFamily: "'Montserrat', sans-serif" }} className="text-xs sm:text-xs font-bold uppercase tracking-widest text-[#f8c51c]">
-            Organizational Hook & Learning Architecture
-          </span>
-        </motion.div>
-
-        {/* H1: Headline */}
-        <motion.h1
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="t-h1 text-white mb-5 sm:mb-6 w-full max-w-6xl 2xl:max-w-7xl mx-auto"
-        >
-          Your Team Doesn't Need More AI Tools.<br className="hidden sm:inline" /> They Need a Better Way to Think With Them.
-        </motion.h1>
-
-        {/* Subheading */}
-        <motion.p
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          style={{ fontFamily: "'Montserrat', sans-serif" }}
-          className="text-base sm:text-lg md:text-xl 2xl:text-2xl text-[#f8c51c] w-full max-w-5xl 2xl:max-w-6xl mx-auto mb-5 sm:mb-6 font-medium leading-relaxed"
-        >
-          We redesign how work moves through your organization, so AI adoption becomes sustainable, not just shiny.
-        </motion.p>
-
-        {/* Body Copy */}
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.25 }}
-          style={{ fontFamily: "'Roboto', sans-serif" }}
-          className="text-sm sm:text-base 2xl:text-lg text-white/90 w-full max-w-5xl 2xl:max-w-6xl mx-auto mb-6 sm:mb-8 leading-relaxed font-light space-y-3"
-        >
-          <p>
-            Most organizations bolt AI onto existing workflows and wonder why nothing changes.
-          </p>
-          <p>
-            We start with the human side: how your team processes information, makes decisions, and communicates results. One organization recovered 50% of their executive's time and compressed 4-month review cycles to 30 days. Not by adding tools. By redesigning how work moves.
-          </p>
-          <p className="font-medium text-white">
-            We call it Learning Architecture. And we build it with you.
+          <div className="h-0.5 w-6 bg-[#f8c51c]" aria-hidden="true" />
+          <p className="font-[family-name:var(--font-montserrat)] text-xs font-bold uppercase tracking-[0.3em] text-[#f8c51c]">
+            The Bradbury Group
           </p>
         </motion.div>
 
-        {/* CTA Button: SEE HOW IT WORKS → */}
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="flex items-center justify-center"
-        >
-          <button
-            id="hero-see-how-it-works-btn"
-            onClick={onSeeHowItWorksClick}
-            style={{ fontFamily: "'Montserrat', sans-serif" }}
-            className="w-full sm:w-auto bg-[#f8c51c] hover:bg-[#ebba15] text-[#0c2940] font-bold text-sm sm:text-base px-9 py-3.5 rounded-full transition-all duration-200 shadow-lg shadow-[#f8c51c]/20 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center space-x-2 cursor-pointer"
-          >
-            <span>SEE HOW IT WORKS</span>
-            <ArrowRight className="w-4 h-4 text-[#0c2940]" />
-          </button>
-        </motion.div>
+        {/* Main Grid: Storyline & Side Stat Card (Adjacently Aligned) */}
+        <div className="mt-8 grid items-stretch gap-10 lg:gap-12 lg:grid-cols-12">
+          {/* Left Column (7 cols) */}
+          <div className="lg:col-span-7 flex flex-col justify-between h-full">
+            <div>
+              <motion.h1
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.55, delay: 0.1 }}
+                className="font-[family-name:var(--font-inter)] text-3xl font-bold leading-[1.18] tracking-tight sm:text-4xl lg:text-[2.85rem] text-[#ffffff]"
+                style={{ textWrap: 'balance' }}
+              >
+                One team turned a 3-week workflow into 8 hours, using tools they already had.
+              </motion.h1>
 
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.55, delay: 0.18 }}
+                className="mt-6 font-[family-name:var(--font-opensans)] text-base leading-relaxed max-w-2xl text-[#ffffff] text-opacity-90"
+              >
+                Most organizations bolt AI onto existing workflows and wonder why nothing changes. We
+                redesign how work moves through your team: how people process information, make
+                decisions, and communicate results. We call it Learning Architecture, and we build
+                it with you, and it’s the part most AI training skips entirely.
+              </motion.p>
+            </div>
+
+            {/* CTAs aligned adjacently */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.55, delay: 0.28 }}
+              className="mt-8 pt-4 flex flex-wrap gap-4 items-center"
+            >
+              <button
+                onClick={() => {
+                  const el = document.getElementById('how');
+                  el?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="group inline-flex items-center gap-2 rounded-full bg-[#f8c51c] px-7 py-3.5 font-[family-name:var(--font-montserrat)] text-sm font-bold uppercase tracking-wide text-[#0c2940] transition-all duration-200 hover:bg-[#ffffff] hover:shadow-lg hover:shadow-[#f8c51c]/25 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+              >
+                <span>See how it works</span>
+                <ArrowRight
+                  size={15}
+                  className="transition-transform duration-200 group-hover:translate-x-1"
+                />
+              </button>
+
+              <button
+                onClick={onOpenConsultation}
+                className="inline-flex items-center gap-2 rounded-full border border-white/35 px-7 py-3.5 font-[family-name:var(--font-montserrat)] text-sm font-semibold text-[#ffffff] transition-all duration-200 hover:bg-white/10 hover:border-white/60 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#f8c51c]"
+              >
+                Schedule a consultation
+              </button>
+            </motion.div>
+          </div>
+
+          {/* Right Column: Side Stat Card (5 cols) in Navy backdrop */}
+          <div className="lg:col-span-5 flex flex-col h-full">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, delay: 0.25 }}
+              className="rounded-2xl border-2 border-[#39918d]/40 bg-[#0c2940]/80 p-6 sm:p-7 backdrop-blur-md shadow-2xl shadow-black/40 h-full flex flex-col justify-between text-[#ffffff]"
+            >
+              <div>
+                {/* Header Tag */}
+                <div className="pb-4 border-b border-white/10">
+                  <h3 className="font-[family-name:var(--font-montserrat)] font-medium text-sm sm:text-base text-[#f8c51c]">
+                    NCEMCH at Georgetown University · 6-month embedded partnership
+                  </h3>
+                </div>
+
+                {/* Bullets */}
+                <ul className="mt-6 space-y-4">
+                  {statPoints.map((point, index) => (
+                    <li key={index} className="flex items-start gap-3">
+                      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#39918d]/30 text-[#f8c51c] mt-0.5 border border-[#39918d]/50">
+                        <Check size={12} strokeWidth={3} />
+                      </span>
+                      <span className="font-[family-name:var(--font-opensans)] text-sm leading-relaxed text-[#ffffff] text-opacity-95">
+                        {point}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Bottom decorative anchor matching left CTA baseline */}
+              <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between font-[family-name:var(--font-opensans)] text-xs text-[#ffffff]/60 italic">
+                <span>The Bradbury Group Partnership</span>
+                <span className="text-[#39918d] font-semibold not-italic">6-Month Outcomes</span>
+              </div>
+            </motion.div>
+          </div>
+        </div>
       </div>
     </section>
   );

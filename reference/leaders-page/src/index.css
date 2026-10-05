@@ -1,0 +1,58 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --color-navy: #0c2940;
+    --color-teal-deep: #3f6d67;
+    --color-teal-mid: #39918d;
+    --color-terracotta: #c57b4b;
+    --color-gold: #f8c51c;
+    --color-white: #ffffff;
+  }
+
+  body {
+    font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: #0c2940;
+    background-color: #ffffff;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, .font-h1 {
+    font-family: 'Inter', sans-serif;
+    font-weight: 800;
+  }
+
+  h2, .font-h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+  }
+
+  .font-subtitle {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+  }
+
+  h3, .font-h3 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+  }
+
+  h4, h5, h6 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+  }
+
+  .font-caption, .caption-italic, figcaption {
+    font-family: 'Open Sans', sans-serif;
+    font-style: italic;
+  }
+}
+
+/* Custom scrollbar and utility classes */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

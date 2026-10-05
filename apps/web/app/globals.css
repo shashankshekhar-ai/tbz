@@ -197,20 +197,35 @@ html {
 
 /* Leaders.zip */
 @layer base {
-  .zip-leaders h1 {
+  .zip-leaders h1,
+  .zip-leaders .font-h1 {
     font-family: var(--font-inter), sans-serif;
+    font-weight: 800;
+  }
+  .zip-leaders h2,
+  .zip-leaders .font-h2 {
+    font-family: var(--font-montserrat), sans-serif;
     font-weight: 700;
   }
-  .zip-leaders h2 {
+  .zip-leaders .font-subtitle {
     font-family: var(--font-montserrat), sans-serif;
     font-weight: 600;
   }
-  .zip-leaders h3 {
+  .zip-leaders h3,
+  .zip-leaders .font-h3 {
     font-family: var(--font-montserrat), sans-serif;
     font-weight: 500;
   }
+  .zip-leaders h4,
+  .zip-leaders h5,
+  .zip-leaders h6 {
+    font-family: var(--font-montserrat), sans-serif;
+    font-weight: 600;
+  }
   .zip-leaders .caption,
-  .zip-leaders .font-caption {
+  .zip-leaders .font-caption,
+  .zip-leaders .caption-italic,
+  .zip-leaders figcaption {
     font-family: var(--font-opensans), sans-serif;
     font-style: italic;
   }
@@ -228,52 +243,21 @@ html {
   font-family: var(--font-opensans), sans-serif;
 }
 
-/* organisation.zip — original wraps everything, including the
-   .font-h1/.font-h2/.font-h3/.font-caption class rules, in
-   @layer base (unlike Home-V.3, which keeps those class rules
-   unlayered). Matched exactly here. */
-@layer base {
-  .zip-organisation h1,
-  .zip-organisation .font-h1 {
-    font-family: var(--font-inter), sans-serif;
-    font-weight: 800;
-  }
-  .zip-organisation h2,
-  .zip-organisation .font-h2,
-  .zip-organisation .font-subtitle {
-    font-family: var(--font-montserrat), sans-serif;
-    font-weight: 700;
-  }
-  .zip-organisation h3,
-  .zip-organisation .font-h3 {
-    font-family: var(--font-montserrat), sans-serif;
-    font-weight: 500;
-  }
-  .zip-organisation h4,
-  .zip-organisation h5,
-  .zip-organisation h6 {
-    font-family: var(--font-montserrat), sans-serif;
-    font-weight: 600;
-  }
-  .zip-organisation p,
-  .zip-organisation span,
-  .zip-organisation div,
-  .zip-organisation li,
-  .zip-organisation td,
-  .zip-organisation th,
-  .zip-organisation input,
-  .zip-organisation textarea,
-  .zip-organisation select,
-  .zip-organisation button,
-  .zip-organisation label {
-    font-family: var(--font-roboto), sans-serif;
-  }
-  .zip-organisation .font-caption,
-  .zip-organisation .caption-italic,
-  .zip-organisation figcaption {
-    font-family: var(--font-opensans), sans-serif;
-    font-style: italic;
-  }
+/* Organization Page (Oct 2026 reference) — its index.css sets these as
+   plain unlayered element rules, so they win over utility classes
+   there. Kept unlayered and scoped here to behave the same. */
+.zip-organisation {
+  font-family: var(--font-opensans), sans-serif;
+}
+.zip-organisation h1 {
+  font-family: var(--font-inter), sans-serif;
+}
+.zip-organisation h2 {
+  font-family: var(--font-montserrat), sans-serif;
+}
+.zip-organisation h3 {
+  font-family: var(--font-montserrat), sans-serif;
+  font-weight: 500;
 }
 
 /* Resources Page.zip — no @layer wrapper in the original, so this

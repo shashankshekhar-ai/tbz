@@ -1,0 +1,45 @@
+@import "tailwindcss";
+
+@theme {
+  --font-h1: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-h2: 'Montserrat', sans-serif;
+  --font-h3: 'Montserrat', sans-serif;
+  --font-caption: 'Open Sans', sans-serif;
+
+  --color-brand-navy: #0c2940;
+  --color-brand-sage: #3f6d67;
+  --color-brand-teal: #39918d;
+  --color-brand-terracotta: #c57b4b;
+  --color-brand-gold: #f8c51c;
+  --color-brand-white: #ffffff;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-h2);
+  background-color: #ffffff;
+  color: #0c2940;
+}
+
+h1, .font-h1 {
+  font-family: var(--font-h1);
+  font-weight: 700;
+}
+
+h2, .font-h2 {
+  font-family: var(--font-h2);
+  font-weight: 700;
+}
+
+h3, .font-h3 {
+  font-family: var(--font-h3);
+  font-weight: 500;
+}
+
+.font-caption {
+  font-family: var(--font-caption);
+  font-style: italic;
+}

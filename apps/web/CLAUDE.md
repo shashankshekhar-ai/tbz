@@ -11,8 +11,9 @@ server hot-reloads.
 | `/about` | `app/about/page.tsx` | `components/about/data/partners.ts`, `components/about/data/testimonials.ts`, rest inline in `components/about/components/*` |
 | `/organisation` | `app/organisation/page.tsx` | Inline in `components/organisation/components/*` (no separate data file) |
 | `/roi` | `app/roi/page.tsx` | `components/roi/data.ts` (all stats/case studies), `components/roi/types.ts` |
-| `/leaders` | `app/leaders/page.tsx` | `components/leaders/data/cohortData.ts`, rest inline in `components/leaders/components/*` |
-| `/resources` | `app/resources/page.tsx` | `components/resources/data/resources.ts` (every resource card: title, category, download copy) |
+| `/leaders` | `app/leaders/page.tsx` | Inline in `components/leaders/components/Section*.tsx` (`data/cohortData.ts` is no longer imported) |
+| `/for-you` | `app/for-you/page.tsx` | `components/for-you/data.ts`, `components/for-you/types.ts`, rest inline in `components/for-you/components/*`; composed in `components/for-you/ForYouPage.tsx` |
+| `/resources` | `app/resources/page.tsx` | Card copy and the downloaded `.txt` content are inline in `components/resources/components/PlaybookPage.tsx`; `components/resources/data/resources.ts` still feeds the email gate and document viewer (same six resources, same order) |
 | Header/Footer/nav (every page) | `components/layout/Header.tsx`, `Footer.tsx` | Nav structure/labels in `components/layout/navigationData.ts` |
 
 Email gate: `components/resources/components/EmailCaptureModal.tsx` saves to
@@ -20,6 +21,25 @@ Email gate: `components/resources/components/EmailCaptureModal.tsx` saves to
 API (`POST /resources/download`, see `apps/api/routers/resources.py`) via
 `submitResourceDownload` in `lib/api.ts`. Set `NEXT_PUBLIC_API_URL` for the deployed API.
 Glossary still needs the Maven link from Paige.
+
+## Home "What's Moving?" carousel — Google Sheet driven
+
+`components/home/components/UpdatesCarousel.tsx` polls `GET /api/updates`
+(`app/api/updates/route.ts`) every 5 minutes and renders whatever rows come
+back, falling back to `[Title]` placeholders if the feed is empty or
+unreachable — the section is never blank.
+
+The API route fetches `GOOGLE_SHEET_UPDATES_CSV_URL` (a Google Sheet
+published to the web as CSV: File > Share > Publish to web > CSV) and parses
+it with `lib/csv.ts`. Expected columns, in this order, with a header row:
+
+`Image URL | Title | Details | Link | Status`
+
+`Status` is `Upcoming`, `Live`, or `Ended` (case-insensitive). `Ended` rows
+are dropped server-side and never reach the browser. Anything else (blank,
+typo) is treated as `Live` so a bad value never hides real content.
+Add/edit/delete a row in the sheet — no redeploy needed, it shows up within
+5 minutes.
 
 ## Insights (blog)
 
